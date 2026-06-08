@@ -1,0 +1,33 @@
+[2026-06-08 22:24:06.109460] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+A  Helper/__init__.py
+A  "Main Scripts/1.py"
+A  "Main Scripts/News/__init__.py"
+A  "Main Scripts/News/__pycache__/__init__.cpython-313.pyc"
+A  "Main Scripts/News/__pycache__/gemini_ai.cpython-313.pyc"
+A  "Main Scripts/News/__pycache__/news_scraper.cpython-313.pyc"
+A  "Main Scripts/News/gemini_ai.py"
+A  "Main Scripts/News/news_scraper.py"
+A  System/.env
+A  System/Warden.py
+A  System/__pycache__/Warden.cpython-313.pyc
+A  System/python_path.txt
+A  System/run.bat
+A  UI_Scripts/__init__.py
+A  UI_Scripts/__pycache__/__init__.cpython-313.pyc
+A  UI_Scripts/__pycache__/center_workspace.cpython-313.pyc
+A  UI_Scripts/__pycache__/left_panel.cpython-313.pyc
+A  UI_Scripts/__pycache__/main_window.cpython-313.pyc
+A  UI_Scripts/__pycache__/right_panel.cpython-313.pyc
+A  UI_Scripts/center_workspace.py
+A  UI_Scripts/custom_title_bar.py
+A  UI_Scripts/left_panel.py
+A  UI_Scripts/main_window.py
+A  UI_Scripts/right_panel.py
+AM agent/auto_sync.py
+A  agent/lessonlearn.md
+A  agent/user_context.md
+A  debug_rss.json
+Đang tiến hành sync lên GitHub...
+Sync thất bại khi push. Có thể do chưa thiết lập chứng thực (credentials).
+----------------------------------------
