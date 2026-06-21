@@ -45,11 +45,14 @@ class MainWindow(QMainWindow):
         self.right_dock.setWidget(self.right_panel)
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.right_dock)
         
+        # Kết nối logger từ RightPanel vào CenterWorkspace
+        self.center_workspace.set_logger(self.right_panel)
+        
         # Kết nối sự kiện Click từ Left Panel
         self.left_panel.item_clicked_signal.connect(self.handle_navigation)
         
     def handle_navigation(self, item_name):
-        self.right_panel.log_area.append(f"[System] Đã mở tab: {item_name}")
+        self.right_panel.log("System", f"Đã mở tab: {item_name}")
         if "News" in item_name:
             self.center_workspace.stacked_widget.setCurrentIndex(1)
         else:

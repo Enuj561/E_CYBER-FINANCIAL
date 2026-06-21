@@ -61,7 +61,7 @@ def main():
     print(log_msg)
     
     # Ghi lại lịch sử chạy vào file sync_log.txt để bạn tiện theo dõi
-    log_file_path = os.path.join(PROJECT_DIR, "agent", "sync_log.txt")
+    log_file_path = os.path.join(PROJECT_DIR, "Main Scripts", "Auto", "sync_log.txt")
     with open(log_file_path, "a", encoding="utf-8") as f:
         f.write(log_msg + "-"*40 + "\n")
 

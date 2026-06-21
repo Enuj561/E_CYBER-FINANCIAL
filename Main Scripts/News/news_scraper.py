@@ -64,23 +64,25 @@ RSS_FEEDS = {
     }
 }
 
-def fetch_news(source, category, timeframe="24h"):
+def fetch_news(source, category):
     news_items = []
     debug_logs = []
     now = datetime.now()
     
-    # Logic xác định khung giờ thông minh
-    if now.hour < 12:
-        start_morning = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        end_morning = now.replace(hour=11, minute=59, second=59)
-        yesterday = now - timedelta(days=1)
-        start_afternoon = yesterday.replace(hour=12, minute=0, second=0, microsecond=0)
-        end_afternoon = yesterday.replace(hour=23, minute=59, second=59)
+    # Logic khung giờ: 18:00 hôm trước → 18:00 hôm nay
+    # Chu kỳ "ngày tài chính" neo tại 18:00
+    today_18 = now.replace(hour=18, minute=0, second=0, microsecond=0)
+    
+    if now.hour >= 18:
+        # Đã qua 18:00 → chu kỳ mới: hôm nay 18:00 → hiện tại
+        start_time = today_18
+        end_time = now
     else:
-        start_morning = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        end_morning = now.replace(hour=11, minute=59, second=59)
-        start_afternoon = now.replace(hour=12, minute=0, second=0, microsecond=0)
-        end_afternoon = now.replace(hour=23, minute=59, second=59)
+        # Chưa đến 18:00 → chu kỳ cũ: hôm qua 18:00 → hôm nay 18:00
+        start_time = today_18 - timedelta(days=1)
+        end_time = today_18
+        
+    debug_logs.append(f"📅 Khung giờ lấy tin: {start_time.strftime('%d/%m %H:%M')} → {end_time.strftime('%d/%m %H:%M')}")
         
     urls_to_fetch = []
     if source == "Tổng hợp":
@@ -111,16 +113,7 @@ def fetch_news(source, category, timeframe="24h"):
                     pub_dt = datetime(*pub_tuple[:6])
                     pub_dt = pub_dt + timedelta(hours=7)
                     
-                    valid = False
-                    if timeframe == "24h":
-                        if now - pub_dt <= timedelta(hours=24):
-                            valid = True
-                    elif timeframe == "morning":
-                        if start_morning <= pub_dt <= end_morning:
-                            valid = True
-                    elif timeframe == "afternoon":
-                        if start_afternoon <= pub_dt <= end_afternoon:
-                            valid = True
+                    valid = start_time <= pub_dt <= end_time
                             
                     if valid:
                         fetched_count += 1
