@@ -1,0 +1,8 @@
+[2026-06-22 21:00:03] Auto News Collector khởi chạy.
+📰 Chưa có file 'News_22_06_26.json'. Bắt đầu cào tin tức...
+✅ Đã lưu 9 bài viết vào: C:\Users\HP\Documents\E_CYBER-FINANCIAL\News_JSON\News_22_06_26.json
+   📂 Vĩ mô & Tiền tệ: 5 bài
+   📂 Thị trường & Đầu tư: 3 bài
+   📂 Công nghệ: 1 bài
+
+--------------------------------------------------
