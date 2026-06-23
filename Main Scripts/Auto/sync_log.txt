@@ -1,3 +1,11 @@
 [2026-06-21 23:06:36.476205] Bắt đầu kiểm tra thay đổi dự án...
 Không có thay đổi nào mới. Bỏ qua sync.
 ----------------------------------------
+[2026-06-22 23:00:01.874915] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+?? "Main Scripts/Auto/news_log.txt"
+?? "Main Scripts/Auto/sync_log.txt"
+?? News_JSON/News_22_06_26.json
+Đang tiến hành sync lên GitHub...
+Sync thành công lên GitHub!
+----------------------------------------
