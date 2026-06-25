@@ -64,23 +64,42 @@ RSS_FEEDS = {
     }
 }
 
-def fetch_news(source, category):
+def fetch_news(source, category, target_date=None):
+    """
+    Cào tin tức từ RSS feeds.
+    
+    Args:
+        source: Tên nguồn báo hoặc "Tổng hợp"
+        category: Lĩnh vực tin tức
+        target_date: (Optional) datetime.date - Ngày cần lấy tin.
+                     Nếu None → dùng logic realtime (datetime.now()).
+                     Nếu truyền vào → lấy tin trong khung giờ của ngày đó.
+    """
     news_items = []
     debug_logs = []
     now = datetime.now()
     
     # Logic khung giờ: 18:00 hôm trước → 18:00 hôm nay
     # Chu kỳ "ngày tài chính" neo tại 18:00
-    today_18 = now.replace(hour=18, minute=0, second=0, microsecond=0)
-    
-    if now.hour >= 18:
-        # Đã qua 18:00 → chu kỳ mới: hôm nay 18:00 → hiện tại
-        start_time = today_18
-        end_time = now
+    if target_date is not None:
+        # Backfill / Batch mode: lấy trọn chu kỳ "ngày tài chính"
+        # Chu kỳ = hôm trước 18:00 → ngày target 18:00 (24 tiếng)
+        target_dt = datetime.combine(target_date, datetime.min.time())
+        target_18 = target_dt.replace(hour=18, minute=0, second=0, microsecond=0)
+        start_time = target_18 - timedelta(days=1)  # Hôm trước 18:00
+        end_time = target_18                         # Ngày target 18:00
     else:
-        # Chưa đến 18:00 → chu kỳ cũ: hôm qua 18:00 → hôm nay 18:00
-        start_time = today_18 - timedelta(days=1)
-        end_time = today_18
+        # Realtime mode: logic hiện tại (dùng datetime.now())
+        today_18 = now.replace(hour=18, minute=0, second=0, microsecond=0)
+        
+        if now.hour >= 18:
+            # Đã qua 18:00 → chu kỳ mới: hôm nay 18:00 → hiện tại
+            start_time = today_18
+            end_time = now
+        else:
+            # Chưa đến 18:00 → chu kỳ cũ: hôm qua 18:00 → hôm nay 18:00
+            start_time = today_18 - timedelta(days=1)
+            end_time = today_18
         
     debug_logs.append(f"📅 Khung giờ lấy tin: {start_time.strftime('%d/%m %H:%M')} → {end_time.strftime('%d/%m %H:%M')}")
         

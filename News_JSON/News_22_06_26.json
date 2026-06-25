@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "collected_at": "2026-06-22 21:00:17",
-    "total_articles": 9,
+    "collected_at": "2026-06-25 20:41:49",
+    "total_articles": 84,
     "categories": [
       "Vĩ mô & Tiền tệ",
       "Thị trường & Đầu tư",
@@ -17,62 +17,512 @@
   "news": {
     "Vĩ mô & Tiền tệ": [
       {
-        "title": "CEO Techcombank: Biến động năng lượng toàn cầu không làm chệch hướng tăng trưởng của Việt Nam",
-        "summary": "Trả lời phỏng vấn trên kênh truyền hình tài chính danh tiếng CNBC, Tổng giám đốc Techcombank, ông Jens Lottner, nhận định: Dù chịu áp lực lạm phát và biến động khó lường của thị trường năng lượng toàn cầu, kinh tế Việt Nam vẫn giữ vững đà tăng trưởng. Lãnh đạo Techcombank nhấn mạnh, các đầu tàu kinh tế và khối doanh nghiệp lớn tại Việt Nam hiện chưa ghi nhận ảnh hưởng rõ rệt, đồng thời vẫn kiên định với các kế hoạch đầu tư dài hạn.",
-        "link": "https://vneconomy.vn/ceo-techcombank-bien-dong-nang-luong-toan-cau-khong-lam-chech-huong-tang-truong-cua-viet-nam.htm",
-        "published": "2026-06-22 18:17:14"
+        "title": "Dự kiến bổ sung điều kiện về xếp hạng tín nhiệm với nhà đầu tư nước ngoài mua cổ phần ngân hàng",
+        "summary": "Ngân hàng Nhà nước đang lấy ý kiến đối với dự thảo Nghị định sửa đổi Nghị định 86/2024/NĐ-CP và Nghị định 01/2014/NĐ-CP, trong đó đề xuất bổ sung điều kiện xếp hạng tín nhiệm đối với tổ chức nước ngoài mua từ 10% vốn điều lệ của tổ chức tín dụng Việt Nam, đồng thời rút ngắn thời gian chấp thuận hồ sơ từ 40 ngày xuống còn 19 ngày làm việc...",
+        "link": "https://vneconomy.vn/du-kien-bo-sung-dieu-kien-ve-xep-hang-tin-nhiem-voi-nha-dau-tu-nuoc-ngoai-mua-co-phan-ngan-hang.htm",
+        "published": "2026-06-22 15:23:09"
       },
       {
-        "title": "Nga cáo buộc Ukraine đe dọa chủ quyền của Belarus",
-        "summary": "Trong cuộc họp báo hàng ngày hôm nay (22/6), người phát ngôn Điện Kremlin Dmitry Peskov đã đề cập tới lời đe dọa của Tổng thống Ukraine Volodymyr Zelensky với Belarus.",
-        "link": "https://vietnamnet.vn/nga-cao-buoc-ukraine-de-doa-chu-quyen-cua-belarus-2528245.html",
-        "published": "2026-06-22 19:50:13"
+        "title": "Tín dụng bất động sản: Không nên \"siết\" đồng loạt, cần phân loại rủi ro và giảm dần phụ thuộc vào ngân hàng",
+        "summary": "Sau giai đoạn tăng nóng, suy giảm thanh khoản rồi phục hồi từng phần của thị trường bất động sản, một thực tế ngày càng rõ nét là tín dụng ngân hàng vẫn đang gánh vai trò cung ứng vốn chủ đạo cho lĩnh vực này. Tuy nhiên, vấn đề đặt ra không phải là mở hay siết tín dụng bất động sản, mà là phân bổ dòng vốn theo mức độ rủi ro, hướng vào nhu cầu thực và giảm dần sự phụ thuộc của thị trường vào hệ thống ngân hàng.",
+        "link": "https://vneconomy.vn/tin-dung-bat-dong-san-khong-nen-siet-dong-loat-can-phan-loai-rui-ro-va-giam-dan-phu-thuoc-vao-ngan-hang.htm",
+        "published": "2026-06-22 13:58:08"
       },
       {
-        "title": "AEON Finance tăng vốn điều lệ lên 2.550 tỷ đồng",
-        "summary": "Công ty Tài chính tín dụng tiêu dùng trách nhiệm hữu hạn một thành viên AEON (AEON Finance) công bố vừa được Ngân hàng Nhà nước Việt Nam chấp thuận tăng vốn điều lệ từ 1.830 tỷ đồng lên 2.550 tỷ đồng.",
-        "link": "https://vietnamnet.vn/aeon-finance-tang-von-dieu-le-len-2-550-ty-dong-2528243.html",
-        "published": "2026-06-22 20:30:00"
+        "title": "Biên độ tăng của giá vàng trong nước nới rộng",
+        "summary": "Sau khi tăng phổ biến 500 nghìn đồng/lượng trong phiên cuối tuần trước (20/6), biên độ tăng của giá vàng miếng SJC cùng vàng nhẫn ngay khi mở cửa phiên sáng nay tăng gấp 3 lần, chủ yếu 1,5 triệu đồng/lượng mỗi chiều…",
+        "link": "https://vneconomy.vn/bien-do-tang-cua-gia-vang-trong-nuoc-noi-rong.htm",
+        "published": "2026-06-22 13:46:18"
       },
       {
-        "title": "Giá vàng hôm nay 22/6/2026: Kết phiên tăng 1,4 triệu đồng/lượng",
-        "summary": "Giá vàng hôm nay 22/6/2026 sau nhịp rung lắc mạnh trong phiên vẫn tăng khoảng 1,4 triệu đồng/lượng so với cuối tuần trước. Vàng miếng SJC và vàng nhẫn tiếp tục neo trên mốc 148 triệu đồng/lượng ở chiều bán ra.",
-        "link": "https://vietnamnet.vn/gia-vang-hom-nay-22-6-2026-fed-gay-suc-ep-vang-sjc-kho-tang-manh-2527891.html",
-        "published": "2026-06-22 20:27:56"
+        "title": "Giá USD tự do tăng gần 1% trong một phiên giữa lúc nhập siêu nới rộng",
+        "summary": "Giá USD trên thị trường tự do tăng vọt trở lại sau gần 1 tháng hạ nhiệt, vượt xa mức niêm yết của các ngân hàng, phản ánh áp lực trên thị trường ngoại hối đang gia tăng. Trong bối cảnh cán cân thương mại tiếp tục thâm hụt, chỉ số DXY duy trì trên 100 điểm và Fed vẫn theo đuổi chính sách tiền tệ thắt chặt…",
+        "link": "https://vneconomy.vn/gia-usd-tu-do-tang-gan-1-trong-mot-phien-giua-luc-nhap-sieu-noi-rong.htm",
+        "published": "2026-06-22 11:49:21"
       },
       {
-        "title": "Bộ Tài chính tiếp tục sắp xếp cơ quan thuế, hải quan",
-        "summary": "Bộ Tài chính sẽ rà soát chức năng, nhiệm vụ, cơ cấu tổ chức của các ngành dọc (thuế, hải quan, kho bạc, thống kê, bảo hiểm xã hội), báo cáo Bộ Chính trị xem xét việc sắp xếp.",
-        "link": "https://vietnamnet.vn/bo-tai-chinh-tiep-tuc-sap-xep-co-quan-thue-hai-quan-2528212.html",
-        "published": "2026-06-22 20:24:55"
+        "title": "Tiếp cận vốn ngân hàng: Vì sao doanh nghiệp nhỏ và vừa vẫn gặp khó?",
+        "summary": "Không chỉ bài toán về vốn và khả năng tiếp cận vốn, yêu cầu thích ứng nhanh với chính sách cũng được đặt ra tại Hội nghị dành cho SME - nơi các cơ quan Nhà nước, tổ chức tài chính, các chuyên gia và doanh nghiệp cùng trao đổi, định hướng và thảo luận giải pháp phù hợp trong bối cảnh hiện nay…",
+        "link": "https://vneconomy.vn/tiep-can-von-ngan-hang-vi-sao-doanh-nghiep-nho-va-vua-van-gap-kho.htm",
+        "published": "2026-06-22 08:00:00"
+      },
+      {
+        "title": "Nhập siêu tăng nhanh, áp sát 17 tỷ USD sau gần nửa đầu năm 2026",
+        "summary": "Gần 17 tỷ USD nhập siêu sau nửa đầu năm 2026 đang cho thấy một thực tế: phần lớn ngoại tệ thu được từ xuất khẩu không ở lại nền kinh tế mà quay vòng cho nhập khẩu. Điều này có thể tạo áp lực nhất định lên diễn biến tỷ giá trong thời gian tới...",
+        "link": "https://vneconomy.vn/nhap-sieu-tang-nhanh-ap-sat-17-ty-usd-sau-gan-nua-dau-nam-2026.htm",
+        "published": "2026-06-22 07:54:14"
+      },
+      {
+        "title": "Sự cứng rắn của Fed đe dọa mốc 4.000 USD/oz của giá vàng",
+        "summary": "Giới phân tích cho rằng mốc 4.000 USD/oz của giá vàng trở nên mong manh bởi khả năng Fed tăng lãi suất trong thời gian từ nay đến cuối năm đang tăng lên...",
+        "link": "https://vneconomy.vn/su-cung-ran-cua-fed-de-doa-moc-4000-usdoz-cua-gia-vang.htm",
+        "published": "2026-06-22 07:50:26"
+      },
+      {
+        "title": "Cầu nội địa yếu, Trung Quốc khó chuyển đổi mô hình tăng trưởng dựa vào xuất khẩu",
+        "summary": "Trung Quốc muốn dựa vào nhu cầu trong nước để thúc đẩy tăng trưởng kinh tế, nhưng thực tế cho thấy việc này không hề dễ dàng...",
+        "link": "https://vneconomy.vn/cau-noi-dia-yeu-trung-quoc-kho-chuyen-doi-mo-hinh-tang-truong-dua-vao-xuat-khau.htm",
+        "published": "2026-06-22 16:43:37"
+      },
+      {
+        "title": "Trung Quốc hạn chế xuất khẩu và cấm mua sắm công đối với hàng chục công ty Mỹ",
+        "summary": "Ngày thứ Hai (22/6), Trung Quốc công bố các biện pháp hạn chế thương mại mới đối với hàng chục doanh nghiệp và tổ chức của Mỹ...",
+        "link": "https://vneconomy.vn/trung-quoc-han-che-xuat-khau-va-cam-mua-sam-cong-doi-voi-hang-chuc-cong-ty-my.htm",
+        "published": "2026-06-22 16:35:11"
+      },
+      {
+        "title": "Điện than Trung Quốc : Từ gánh nặng carbon sang trụ đỡ cho năng lượng tái tạo",
+        "summary": "Không còn là nguồn phát thải carbon thuần túy, các nhà máy điện than Trung Quốc đang được chuyển đổi linh hoạt, tái định vị thành trụ đỡ cho hệ thống năng lượng tái tạo. Đây là một bước chuyển chiến lược giúp dung hòa giữa an ninh năng lượng và cam kết khí hậu, đồng thời tiết kiệm hàng tỷ USD chi phí chuyển đổi…",
+        "link": "https://vneconomy.vn/dien-than-trung-quoc-tu-ganh-nang-carbon-sang-tru-do-cho-nang-luong-tai-tao.htm",
+        "published": "2026-06-22 16:34:20"
+      },
+      {
+        "title": "Amazon vượt Walmart trở thành công ty có doanh thu lớn nhất tại Mỹ",
+        "summary": "Sau hơn một thập kỷ giữ vị trí dẫn đầu Fortune 500 - bảng xếp hạng 500 doanh nghiệp lớn nhất tại Mỹ tính theo doanh thu - Walmart đã bị Amazon vượt qua trong danh sách năm 2026...",
+        "link": "https://vneconomy.vn/amazon-vuot-walmart-tro-thanh-cong-ty-co-doanh-thu-lon-nhat-tai-my.htm",
+        "published": "2026-06-22 14:20:29"
+      },
+      {
+        "title": "Mỹ và Iran nhất trí lộ trình đi đến thỏa thuận cuối cùng",
+        "summary": "Trong ngày thứ hai của cuộc đàm phán giữa Mỹ và Iran tại Thụy Sỹ, hai bên đã đạt được những bước tiến quan trọng, mở ra hy vọng về một thỏa thuận cuối cùng trong vòng 60 ngày tới...",
+        "link": "https://vneconomy.vn/my-va-iran-nhat-tri-lo-trinh-di-den-thoa-thuan-cuoi-cung.htm",
+        "published": "2026-06-22 14:19:52"
+      },
+      {
+        "title": "Những nhà thầu lớn nhất của Chính phủ Mỹ",
+        "summary": "Mỗi năm, Chính phủ Mỹ chi hàng trăm tỷ USD cho các hợp đồng với khu vực tư nhân. Tuy nhiên, phần lớn các hợp đồng này tập trung vào số ít doanh nghiệp, chủ yếu là các tập đoàn quốc phòng, y tế và công nghệ...",
+        "link": "https://vneconomy.vn/nhung-nha-thau-lon-nhat-cua-chinh-phu-my.htm",
+        "published": "2026-06-22 14:19:40"
+      },
+      {
+        "title": "WGC cảnh báo về nạn buôn lậu vàng",
+        "summary": "Theo người đứng đầu Hội đồng Vàng Thế giới (WGC), giá trị vàng bất hợp pháp lưu thông trên toàn cầu hiện đã vượt 120 tỷ USD mỗi năm...",
+        "link": "https://vneconomy.vn/wgc-canh-bao-ve-nan-buon-lau-vang.htm",
+        "published": "2026-06-22 10:01:28"
+      },
+      {
+        "title": "Trái phiếu ngân hàng thiết lập mặt bằng lãi suất mới",
+        "summary": "Với mức lãi suất phổ biến trên 8,3%/năm – tăng tới 3 điểm phần trăm so với cùng kỳ, nhóm ngân hàng đang tăng tốc huy động hàng chục nghìn tỷ đồng qua kênh trái phiếu để giải quyết áp lực thiếu hụt vốn và đáp ứng nhu cầu tín dụng đang hồi phục mạnh mẽ.",
+        "link": "https://vnbusiness.vn//trai-phieu-ngan-hang-thiet-lap-mat-bang-lai-suat-moi.html",
+        "published": "2026-06-22 16:09:18"
+      },
+      {
+        "title": "Lãi suất khó giảm sâu khi thanh khoản hệ thống tiếp tục chịu áp lực",
+        "summary": "Nhiều tổ chức phân tích cho rằng dư địa giảm lãi suất trong năm 2026 không còn nhiều. Áp lực thanh khoản, nhu cầu tín dụng gia tăng cùng yêu cầu ổn định tỷ giá đang tạo ra bài toán cân bằng ngày càng khó cho chính sách tiền tệ.",
+        "link": "https://vnbusiness.vn//lai-suat-kho-giam-sau-khi-thanh-khoan-he-thong-tiep-tuc-chiu-ap-luc.html",
+        "published": "2026-06-22 12:32:06"
+      },
+      {
+        "title": "Kiểm toán không thể xác nhận khoản tồn kho hơn 950 tỷ đồng của Hóa chất Đức Giang",
+        "summary": "Báo cáo tài chính kiểm toán năm 2025 của Hóa chất Đức Giang xuất hiện ý kiến ngoại trừ liên quan khoản hàng tồn kho trị giá hơn 950 tỷ đồng. Đơn vị kiểm toán cho biết chưa thu thập được đầy đủ bằng chứng để xác nhận giá trị và tính hiện hữu của khoản mục này.",
+        "link": "https://vnbusiness.vn//kiem-toan-khong-the-xac-nhan-khoan-ton-kho-hon-950-ty-dong-cua-hoa-chat-duc-giang.html",
+        "published": "2026-06-22 12:30:36"
+      },
+      {
+        "title": "Cú đảo chiều chính sách giúp giải vây thanh khoản kỳ hạn dài cho các ngân hàng?",
+        "summary": "Lần đầu tiên sau nhiều năm, Ngân hàng Nhà nước đề xuất nới tỷ lệ vốn ngắn hạn cho vay trung dài hạn. Quyết định này được xem là chiếc \"phao cứu sinh\" cho thanh khoản kỳ hạn, giúp giải phóng nguồn lực khổng lồ đang bị bó hẹp bởi các quy định an toàn vốn.",
+        "link": "https://vnbusiness.vn//cu-dao-chieu-chinh-sach-giup-giai-vay-thanh-khoan-ky-han-dai-cho-cac-ngan-hang.html",
+        "published": "2026-06-22 10:46:48"
+      },
+      {
+        "title": "Trong vòng chưa đầy một tháng, giá vàng trong nước đã ‘bay’ hơn 11 triệu đồng/lượng",
+        "summary": "Giá vàng trong nước ổn định lại sau nhiều phiên lao dốc, trong khi thế giới hồi phục nhẹ. Với mức giá hiện tại, giá bán ra tại hầu hết các thương hiệu đã sụt giảm khoảng 11,3 triệu đồng/lượng so với cột mốc đầu tháng (ngày 1/6).",
+        "link": "https://vnbusiness.vn//trong-vong-chua-day-mot-thang-gia-vang-trong-nuoc-da-bay-hon-11-trieu-dongluong.html",
+        "published": "2026-06-22 08:03:09"
+      },
+      {
+        "title": "Nga chặn 80 UAV của Ukraine lao về phía Moscow",
+        "summary": "Theo Thị trưởng Moscow Sergey Sobyanin, 80 máy bay không người lái (UAV) của Ukraine bay về phía thủ đô Nga đã bị bắn hạ kể từ nửa đêm 21/6.",
+        "link": "https://vietnamnet.vn/nga-chan-80-uav-cua-ukraine-lao-ve-phia-moscow-2528176.html",
+        "published": "2026-06-22 16:43:17"
+      },
+      {
+        "title": "Thủ tướng Anh công bố lịch trình từ chức",
+        "summary": "Thủ tướng Anh Keir Starmer hôm nay (22/6) tuyên bố sẽ từ chức lãnh đạo chính phủ và lãnh đạo Công đảng cầm quyền. Ông Starmer cho biết đã thông báo quyết định này cho Vua Charles.",
+        "link": "https://vietnamnet.vn/thu-tuong-anh-cong-bo-lich-trinh-tu-chuc-2528164.html",
+        "published": "2026-06-22 16:18:37"
+      },
+      {
+        "title": "Trung Quốc lần đầu &amp;apos;phô diễn&amp;apos; sức mạnh thực chiến của tên lửa DF-17",
+        "summary": "Truyền thông Trung Quốc cuối tuần trước đã công bố hình ảnh quân đội nước này thực hiện bài phóng thử tên lửa đạn đạo tầm trung DF-17.",
+        "link": "https://vietnamnet.vn/trung-quoc-lan-dau-pho-dien-suc-manh-thuc-chien-cua-ten-lua-df-17-2528077.html",
+        "published": "2026-06-22 14:00:00"
+      },
+      {
+        "title": "Iran - Mỹ thiết lập đường dây liên lạc để xử lý sự cố ở eo biển Hormuz",
+        "summary": "Trong tuyên bố chung về vòng đàm phán vừa kết thúc tại Thụy Sĩ, các nhà trung gian hòa giải Qatar và Pakistan cho biết Iran và Mỹ nhất trí thiết lập một đường dây liên lạc để quản lý các sự cố ở eo biển Hormuz.",
+        "link": "https://vietnamnet.vn/iran-my-thiet-lap-duong-day-lien-lac-de-xu-ly-su-co-o-eo-bien-hormuz-2528071.html",
+        "published": "2026-06-22 11:21:00"
+      },
+      {
+        "title": "Nổ lớn làm rung chuyển trung tâm xử lý khí đốt của Qatar",
+        "summary": "Một vụ nổ và hỏa hoạn lớn đã xảy ra tại khu công nghiệp Ras Laffan của Qatar. Nguyên nhân vụ việc được cho là sự cố kỹ thuật trong quá trình vận hành, không phải do bị tấn công.",
+        "link": "https://vietnamnet.vn/no-lon-lam-rung-chuyen-trung-tam-xu-ly-khi-dot-cua-qatar-2528026.html",
+        "published": "2026-06-22 09:42:30"
+      },
+      {
+        "title": "Nga tiếp tục không kích, Crưm ngừng bán xăng vì Ukraine tấn công mạnh",
+        "summary": "Nga tiếp tục thực hiện các đợt không kích quy mô lớn, trong khi các lực lượng Ukraine tấn công mạnh bán đảo Crưm bằng máy bay không người lái (UAV).",
+        "link": "https://vietnamnet.vn/nga-tiep-tuc-khong-kich-crum-ngung-ban-xang-vi-ukraine-tan-cong-manh-2527994.html",
+        "published": "2026-06-22 07:43:36"
+      },
+      {
+        "title": "Đàm phán Mỹ - Iran có dấu hiệu đình trệ sau cảnh báo của ông Trump",
+        "summary": "Các cuộc đàm phán giữa Mỹ và Iran tại Thụy Sĩ đang tạm thời bị gián đoạn sau khi Tổng thống Mỹ Donald Trump cảnh báo có thể kiểm soát eo biển Hormuz và nối lại chiến dịch không kích.",
+        "link": "https://vietnamnet.vn/dam-phan-my-iran-co-dau-hieu-dinh-tre-sau-canh-bao-cua-ong-trump-2527992.html",
+        "published": "2026-06-22 06:49:41"
+      },
+      {
+        "title": "Ông Trump dọa thâu tóm eo biển Hormuz nếu Iran không thỏa thuận",
+        "summary": "Tổng thống Mỹ Donald Trump cảnh báo nước này có thể giành quyền kiểm soát eo biển Hormuz và tấn công mạnh vào Iran nếu hai bên không đạt thỏa thuận.",
+        "link": "https://vietnamnet.vn/ong-trump-doa-thau-tom-eo-bien-hormuz-neu-iran-khong-thoa-thuan-2527975.html",
+        "published": "2026-06-22 06:02:07"
+      },
+      {
+        "title": "Iran đang sở hữu những máy bay chiến đấu nào?",
+        "summary": "Dù chịu nhiều lệnh cấm vận trong nhiều thập kỷ, Iran vẫn duy trì một lực lượng không quân đáng gờm với sự kết hợp giữa tiêm kích Nga hiện đại và các máy bay Mỹ từ thời Chiến tranh Lạnh.",
+        "link": "https://vietnamnet.vn/iran-dang-so-huu-nhung-may-bay-chien-dau-nao-2527310.html",
+        "published": "2026-06-22 05:34:00"
+      },
+      {
+        "title": "Tin tức Thế giới 22/6: Phó Tổng thống Mỹ lên đường tới Thuỵ Sĩ đàm phán với Iran",
+        "summary": "Tổng thống Mỹ Donald Trump dọa thu phí tàu thuyền đi qua eo biển Hormuz; Tổng thống Ukraine cảnh báo về đợt không kích quy mô lớn của Nga là những tin tức thế giới đáng chú ý ngày 22/6.",
+        "link": "https://vietnamnet.vn/tin-tuc-the-gioi-22-6-jd-vance-len-duong-toi-thuy-si-dam-phan-voi-iran-2527907.html",
+        "published": "2026-06-22 05:15:00"
+      },
+      {
+        "title": "Người dân Brazil bất ngờ nhận được cảnh báo về người ngoài hành tinh",
+        "summary": "Do hệ thống của Cơ quan Phòng vệ Dân sự Brazil bị xâm nhập, hàng nghìn người dân ở quốc gia Nam Mỹ này đã nhận được thông báo về cuộc tấn công của người ngoài hành tinh.",
+        "link": "https://vietnamnet.vn/nguoi-dan-brazil-bat-ngo-nhan-duoc-canh-bao-ve-nguoi-ngoai-hanh-tinh-2527944.html",
+        "published": "2026-06-21 21:28:30"
+      },
+      {
+        "title": "Nga tung video không kích hàng loạt cơ sở quân sự và năng lượng của Ukraine",
+        "summary": "Quân đội Nga đã triển khai một đợt không kích quy mô lớn nhắm vào hàng loạt cơ sở quân sự và năng lượng của Ukraine tại tiền tuyến.",
+        "link": "https://vietnamnet.vn/nga-tung-video-khong-kich-hang-loat-co-so-quan-su-va-nang-luong-cua-ukraine-2527956.html",
+        "published": "2026-06-21 20:38:46"
+      },
+      {
+        "title": "Nga không kỳ vọng vào thỏa thuận với Mỹ, tập trung vào &amp;apos;chiến thắng&amp;apos; ở Ukraine",
+        "summary": "Điện Kremlin khẳng định Nga không chờ đợi việc thực thi các thỏa thuận đã đạt được với Mỹ, mà chỉ tập trung vào việc đạt những mục tiêu đã đề ra trong chiến dịch quân sự đặc biệt ở Ukraine.",
+        "link": "https://vietnamnet.vn/nga-khong-ky-vong-vao-thoa-thuan-voi-my-tap-trung-vao-chien-thang-o-ukraine-2527951.html",
+        "published": "2026-06-21 19:32:24"
+      },
+      {
+        "title": "Iran tiết lộ mục tiêu chính trong cuộc đàm phán với Mỹ",
+        "summary": "Mục tiêu hàng đầu của Iran trong cuộc gặp với Mỹ là đánh giá mức độ tuân thủ của Washington đối với các cam kết được nêu trong biên bản ghi nhớ vừa ký kết.",
+        "link": "https://vietnamnet.vn/iran-tiet-lo-muc-tieu-chinh-trong-cuoc-dam-phan-voi-my-2527939.html",
+        "published": "2026-06-21 18:19:17"
+      },
+      {
+        "title": "Giá bạc hôm nay 22/6/2026 bật tăng mạnh, có nơi thêm hơn 1,6 triệu đồng/kg",
+        "summary": "Giá bạc hôm nay 22/6/2026 đồng loạt tăng mạnh tại các thương hiệu lớn. Chỉ sau vài lần điều chỉnh trong phiên sáng 22/6, giá bạc thỏi đã tăng từ gần 1 triệu đến hơn 1,6 triệu đồng/kg.",
+        "link": "https://vietnamnet.vn/gia-bac-hom-nay-22-6-2026-giam-manh-3-trieu-kg-bac-the-gioi-thung-day-6-thang-2527932.html",
+        "published": "2026-06-22 08:47:18"
+      },
+      {
+        "title": "Thế hệ thứ 2 lộ diện, con trai ông Nguyễn Đức Thụy nắm loạt công ty lớn, khối tài sản khủng",
+        "summary": "Thế hệ thứ 2 nhà doanh nhân Nguyễn Đức Thụy xuất hiện ấn tượng với khối tài sản chục nghìn tỷ đồng và nằm trong bộ máy quản trị của nhiều doanh nghiệp thuộc lĩnh vực ngân hàng, chứng khoán, thể thao và tài sản số.",
+        "link": "https://vietnamnet.vn/the-he-thu-2-lo-dien-con-bau-thuy-nam-loat-dn-lon-co-khoi-tai-san-khung-2527512.html",
+        "published": "2026-06-22 06:39:36"
+      },
+      {
+        "title": "6 ngân hàng giảm lãi suất cho vay trong tháng 5",
+        "summary": "Tính đến 21/6/2026, đã có 22 ngân hàng công bố lãi suất cho vay bình quân tháng 5 và chênh lệch lãi suất cho vay, lãi suất huy động.",
+        "link": "https://vietnamnet.vn/6-ngan-hang-giam-lai-suat-cho-vay-binh-quan-thang-5-2527859.html",
+        "published": "2026-06-22 05:45:00"
+      },
+      {
+        "title": "Giá vàng lao dốc, giới đầu tư tranh cãi về cơ hội nghìn tỷ",
+        "summary": "Giá vàng đã giảm khoảng 26% từ đỉnh 5.589 USD/ounce (tháng 1/2026) xuống quanh 4.157 USD/ounce hiện nay, nhưng các công ty khai thác vàng vừa ghi nhận quý lợi nhuận cao nhất lịch sử.",
+        "link": "https://vietnamnet.vn/gia-vang-lao-doc-gioi-dau-tu-tranh-cai-ve-co-hoi-nghin-ty-2527920.html",
+        "published": "2026-06-22 08:16:52"
       }
     ],
     "Thị trường & Đầu tư": [
       {
-        "title": "Thanh khoản lại \"teo tóp\", cá nhân mua ròng hơn 500 tỷ",
-        "summary": "Nhà đầu tư cá nhân mua ròng 325,1 tỷ đồng, trong đó họ mua ròng khớp lệnh 543,5 tỷ đồng.",
-        "link": "https://vneconomy.vn/thanh-khoan-lai-teo-top-ca-nhan-mua-rong-hon-500-ty.htm",
-        "published": "2026-06-22 19:20:47"
+        "title": "Blog chứng khoán: Dòng tiền âm thầm chọn lọc",
+        "summary": "Cặp trụ VIC và VHM cùng kịch trần hôm nay đảm bảo VNI có một phiên tăng ấn tượng. Tuy vậy hiện tượng “xanh vỏ đỏ lòng” cũng không khiến giao dịch quá tệ, dù độ rộng vẫn nghiêng hẳn về phía giảm. Biên độ dao động giá hẹp trên nền thanh khoản thấp vẫn tạo trạng thái ổn định tạm thời về cung cầu.",
+        "link": "https://vneconomy.vn/blog-chung-khoan-dong-tien-am-tham-chon-loc.htm",
+        "published": "2026-06-22 16:32:53"
       },
       {
-        "title": "Khởi công 2 tuyến metro tỷ đô, Ocean City trở thành tâm điểm dòng tiền",
-        "summary": "Trong 5 tuyến metro vừa khởi công ngày 22/6, tuyến số 8 và số 14 kết nối trực tiếp với khu Đông Thủ đô. Ocean City với nhà ga được quy hoạch ngay “ngưỡng cửa” hưởng lợi nhiều nhất từ hạ tầng thế kỷ và nhận cơ hội tái định vị trên bản đồ BĐS Thủ đô.",
-        "link": "https://vietnamnet.vn/khoi-cong-2-tuyen-metro-ty-do-ocean-city-tro-thanh-tam-diem-dong-tien-2528254.html",
-        "published": "2026-06-22 20:30:00"
+        "title": "Tiền ngại “xanh vỏ đỏ lòng”, thanh khoản lại xuống đáy",
+        "summary": "Cả VIC lẫn VHM đồng loạt tăng kịch trần đã “thổi” VN-Index tăng tới 1,83%, mức kỷ lục kể từ đầu tháng 4/2026. Tuy nhiên phản ứng của nhà đầu tư vẫn là “quan sát”, khiến thanh khoản khớp lệnh sàn HoSE giảm mạnh 20% còn 12.261 tỷ đồng, tương đương ngưỡng thấp kỷ lục cách đây 2 tuần.",
+        "link": "https://vneconomy.vn/tien-ngai-xanh-vo-do-long-thanh-khoan-lai-xuong-day.htm",
+        "published": "2026-06-22 15:21:16"
       },
       {
-        "title": "Sun Group Nam Hà Nội bổ sung nguồn cung căn hộ gần các đại công viên",
-        "summary": "Chiều ngày 20/6, tại Nhà thi đấu Hà Nam, sự kiện giới thiệu căn hộ Park Residence và nhà phố, biệt thự Kim Ngân thu hút gần 800 khách hàng quan tâm.",
-        "link": "https://vietnamnet.vn/sun-group-nam-ha-noi-bo-sung-nguon-cung-can-ho-gan-cac-dai-cong-vien-2528199.html",
-        "published": "2026-06-22 19:00:00"
+        "title": "Mỹ và Iran nhất trí lộ trình đi đến thỏa thuận cuối cùng",
+        "summary": "Trong ngày thứ hai của cuộc đàm phán giữa Mỹ và Iran tại Thụy Sỹ, hai bên đã đạt được những bước tiến quan trọng, mở ra hy vọng về một thỏa thuận cuối cùng trong vòng 60 ngày tới...",
+        "link": "https://vneconomy.vn/my-va-iran-nhat-tri-lo-trinh-di-den-thoa-thuan-cuoi-cung.htm",
+        "published": "2026-06-22 14:19:52"
+      },
+      {
+        "title": "Áp lực chốt lời có thể xuất hiện ở các cổ phiếu đã tăng theo kỳ vọng nâng hạng?",
+        "summary": "KBSV cho rằng việc MSCI giữ nguyên chưa đưa Việt Nam vào danh sách theo dõi nâng hạng sẽ tác động lên thị trường chứng khoán. Áp lực chốt lời ngắn hạn có thể xuất hiện tại các nhóm cổ phiếu đã tăng theo kỳ vọng nâng hạng.",
+        "link": "https://vneconomy.vn/ap-luc-chot-loi-co-the-xuat-hien-o-cac-co-phieu-da-tang-theo-ky-vong-nang-hang.htm",
+        "published": "2026-06-22 13:48:05"
+      },
+      {
+        "title": "Indonesia đứng trước rủi ro vốn ngoại chảy ngược: 5 bài học cho thị trường chứng khoán Việt Nam",
+        "summary": "Số 13 tỷ USD rủi ro rút vốn của Indonesia minh họa rất rõ độ nhạy của index fund với thay đổi phân loại. Bài học cho Việt Nam là dòng vốn thụ động có thể đến rất nhanh, nhưng cũng có thể đi rất nhanh nếu sau này không duy trì được tiêu chuẩn.",
+        "link": "https://vneconomy.vn/indonesia-dung-truoc-rui-ro-von-ngoai-chay-nguoc-5-bai-hoc-cho-thi-truong-chung-khoan-viet-nam.htm",
+        "published": "2026-06-22 13:47:28"
+      },
+      {
+        "title": "Phía trước VN-Index là vùng cản khá dày, thị trường sẽ điều chỉnh?",
+        "summary": "Trong kịch bản cơ sở, MBS cho rằng thị trường nhiều khả năng sẽ tiếp tục dao động the xu hướng đi ngang trong tuần tới, vùng hỗ trợ xung quanh ngưỡng tâm lý 1.800 điểm.",
+        "link": "https://vneconomy.vn/phia-truoc-vn-index-la-vung-can-kha-day-thi-truong-se-dieu-chinh.htm",
+        "published": "2026-06-22 13:44:40"
+      },
+      {
+        "title": "Cổ phiếu trụ “một mình một chợ”, VN-Index tăng mạnh nhất 2 tháng",
+        "summary": "Sắc đỏ lan tràn trên bảng điện trong phiên sáng nay không ngăn được VN-Index xác lập kỷ lục tăng mạnh nhất 2 tháng. Chỉ số “nhảy” +1,77% lên mức 1856,81 điểm thuần túy nhờ vài cổ phiếu vốn hóa lớn.",
+        "link": "https://vneconomy.vn/co-phieu-tru-mot-minh-mot-cho-vn-index-tang-manh-nhat-2-thang.htm",
+        "published": "2026-06-22 12:10:13"
+      },
+      {
+        "title": "WGC cảnh báo về nạn buôn lậu vàng",
+        "summary": "Theo người đứng đầu Hội đồng Vàng Thế giới (WGC), giá trị vàng bất hợp pháp lưu thông trên toàn cầu hiện đã vượt 120 tỷ USD mỗi năm...",
+        "link": "https://vneconomy.vn/wgc-canh-bao-ve-nan-buon-lau-vang.htm",
+        "published": "2026-06-22 10:01:28"
+      },
+      {
+        "title": "Làn sóng dịch chuyển tài sản toàn cầu đang thay đổi bản đồ cạnh tranh châu Âu",
+        "summary": "Một làn sóng dịch chuyển tài sản toàn cầu đang làm thay đổi bản đồ sức hấp dẫn của các nước châu Âu...",
+        "link": "https://vneconomy.vn/lan-song-dich-chuyen-tai-san-toan-cau-dang-thay-doi-ban-do-canh-tranh-chau-au.htm",
+        "published": "2026-06-22 10:00:40"
+      },
+      {
+        "title": "Chiến tranh Iran khiến thế giới mất hơn 1 tỷ thùng dầu",
+        "summary": "Eo biển Hormuz đã mở cửa trở lại sau khi Iran và Mỹ ký biên bản ghi nhớ trong tuần trước. Tuy nhiên, thiệt hại đối với nguồn cung dầu toàn cầu là quá lớn để có thể bù đắp trong ngắn hạn...",
+        "link": "https://vneconomy.vn/chien-tranh-iran-khien-the-gioi-mat-hon-1-ty-thung-dau.htm",
+        "published": "2026-06-22 08:56:20"
+      },
+      {
+        "title": "Áp dụng cơ chế đặc thù về quỹ đất lấn biển cho dự án BT phục vụ APEC 2027 tại Phú Quốc",
+        "summary": "Để xử lý khó khăn, vướng mắc trong việc sử dụng quỹ đất lấn biển để thanh toán cho nhà đầu tư thực hiện dự án BT, Chính phủ cho phép UBND tỉnh An Giang được sử dụng khu vực định hướng lấn biển thuộc Đặc khu Phú Quốc trong Quy hoạch tỉnh hoặc Quy hoạch chung Đặc khu Phú Quốc để tạo quỹ đất thanh toán cho nhà đầu tư thực hiện công trình, dự án BT...",
+        "link": "https://vneconomy.vn/ap-dung-co-che-dac-thu-ve-quy-dat-lan-bien-cho-du-an-bt-phuc-vu-apec-2027-tai-phu-quoc.htm",
+        "published": "2026-06-22 14:55:41"
+      },
+      {
+        "title": "Nhà nước không bao cấp nhà ở, cũng không để thị trường tự điều tiết",
+        "summary": "Phát triển nhà ở trong giai đoạn tới theo cơ chế thị trường có sự định hướng, quản lý hiệu quả của Nhà nước. Nhà nước không bao cấp về nhà ở nhưng cũng không hoàn toàn để thị trường tự điều tiết. Nhà nước giữ vai trò kiến tạo thông qua xây dựng thể chế, chính sách, quy hoạch...",
+        "link": "https://vneconomy.vn/nha-nuoc-khong-bao-cap-nha-o-cung-khong-de-thi-truong-tu-dieu-tiet.htm",
+        "published": "2026-06-22 14:25:52"
+      },
+      {
+        "title": "Ra mắt không gian ẩm thực Á Đông tại Hanoi Signature by Swiss-Belhotel",
+        "summary": "Hanoi Signature by Swiss-Belhotel tiếp tục hoàn thiện hệ tiện ích nội khu với việc ra mắt không gian ẩm thực phong cách Á Đông.",
+        "link": "https://vneconomy.vn/ra-mat-khong-gian-am-thuc-a-dong-tai-hanoi-signature-by-swiss-belhotel.htm",
+        "published": "2026-06-22 13:55:09"
+      },
+      {
+        "title": "Nhà ở xã hội cho thuê: Giải pháp an cư bền vững cho người lao động tại TP. Hồ Chí Minh",
+        "summary": "Trong bối cảnh giá nhà đất tại các đô thị lớn như TP. Hồ Chí Minh ngày càng tăng cao, việc phát triển nhà ở xã hội cho thuê đang trở thành một giải pháp an sinh quan trọng, giúp người lao động ổn định cuộc sống…",
+        "link": "https://vneconomy.vn/nha-o-xa-hoi-cho-thue-giai-phap-an-cu-ben-vung-cho-nguoi-lao-dong-tai-tp-ho-chi-minh.htm",
+        "published": "2026-06-22 08:53:49"
+      },
+      {
+        "title": "Sự kiện giới thiệu Khải Hoàn Imperial: Trải nghiệm không dành cho số đông",
+        "summary": "Với Khải Hoàn Imperial, sự khan hiếm không chỉ bởi số lượng giới hạn, mà còn đến từ giá trị “may đo” khó có thể sao chép hay đại trà hóa. Chính điều đó góp phần định hình sức hấp dẫn riêng của dòng căn hộ Bespoke trong mắt giới tinh hoa.",
+        "link": "https://vneconomy.vn/su-kien-gioi-thieu-khai-hoan-imperial-trai-nghiem-khong-danh-cho-so-dong.htm",
+        "published": "2026-06-22 08:00:00"
+      },
+      {
+        "title": "Quy định về cấp và thu hồi giấy phép xây dựng từ 1/7",
+        "summary": "Chính phủ vừa ban hành Nghị định số 217/2026/NĐ-CP quy định chi tiết một số điều của Luật Xây dựng về quản lý hoạt động xây dựng. Nghị định quy định rõ điều kiện cấp giấy phép xây dựng, thẩm quyền cấp phép và các trường hợp phải thu hồi giấy phép xây dựng từ 1/7/2026…",
+        "link": "https://vneconomy.vn/quy-dinh-ve-cap-va-thu-hoi-giay-phep-xay-dung-tu-17.htm",
+        "published": "2026-06-22 07:57:55"
+      },
+      {
+        "title": "Từ 1/7, sẽ vận hành Hệ thống truy xuất nguồn gốc nông lâm thủy sản",
+        "summary": "Bộ Nông nghiệp và Môi trường đang gấp rút hoàn tất các khâu chuẩn bị cuối cùng để đưa Hệ thống truy xuất nguồn gốc nông lâm thủy sản vào vận hành từ ngày 1/7/2026. Đến nay, hạ tầng kỹ thuật, kết nối dữ liệu và các mô hình thí điểm đã đạt nhiều kết quả tích cực, tạo nền tảng nâng cao tính minh bạch, hiệu quả quản lý và khả năng đáp ứng yêu cầu của thị trường trong nước và quốc tế...",
+        "link": "https://vneconomy.vn/tu-17-se-van-hanh-he-thong-truy-xuat-nguon-goc-nong-lam-thuy-san.htm",
+        "published": "2026-06-22 16:32:57"
+      },
+      {
+        "title": "C.P. Việt Nam thúc đẩy an toàn sinh học, phát triển bền vững",
+        "summary": "Từ thực tiễn vận hành Feed - Farm - Food, C.P. Việt Nam chia sẻ kinh nghiệm chăn nuôi heo bền vững tại IPVS 2026.",
+        "link": "https://vneconomy.vn/cp-viet-nam-thuc-day-an-toan-sinh-hoc-phat-trien-ben-vung.htm",
+        "published": "2026-06-22 15:41:24"
+      },
+      {
+        "title": "Tăng tự chủ để ngành phân bón phát triển bền vững",
+        "summary": "Ngành phân bón đang nỗ lực tự chủ nguồn cung khi sản xuất trong nước đáp ứng khoảng 80% nhu cầu. Dù phân bón hữu cơ phát triển mạnh và dư thừa NPK, ngành vẫn phải giải bài toán phụ thuộc nhập khẩu kali, SA nhằm đảm bảo sản xuất bền vững trước những biến động địa chính trị và thị trường toàn cầu.",
+        "link": "https://vneconomy.vn/tang-tu-chu-de-nganh-phan-bon-phat-trien-ben-vung.htm",
+        "published": "2026-06-22 14:19:58"
+      },
+      {
+        "title": "Xây dựng đề án tăng tổng chi cho hoạt động R&D",
+        "summary": "Điểm nghẽn lớn nhất để Việt Nam đạt mục tiêu tăng trưởng GDP bình quân 10%/năm trong 20 năm tới, theo GS. TS Nguyễn Thiện Nhân, chính là tình trạng thiếu hụt nguồn nhân lực chất lượng cao trong lĩnh vực khoa học công nghệ và đổi mới sáng tạo.",
+        "link": "https://vneconomy.vn/xay-dung-de-an-tang-tong-chi-cho-hoat-dong-rd.htm",
+        "published": "2026-06-22 09:20:21"
+      },
+      {
+        "title": "EVN cảnh báo hàng loạt thủ đoạn lừa đảo bằng tin nhắn OTP giả mạo",
+        "summary": "Theo Tập đoàn Điện lực Việt Nam, gần đây xuất hiện loạt thủ đoạn lừa đảo mới bằng tin nhắn OTP giả mạo của kẻ xấu nhằm lừa đảo, đánh cắp thông tin cá nhân, tài khoản ngân hàng và dữ liệu khách hàng.",
+        "link": "https://vnbusiness.vn//evn-canh-bao-hang-loat-thu-doan-lua-dao-bang-tin-nhan-otp-gia-mao.html",
+        "published": "2026-06-22 17:34:05"
+      },
+      {
+        "title": "Hãng hàng không nào chậm, hủy chuyến nhiều nhất trước ngày siết quy định bồi thường?",
+        "summary": "Số liệu thống kê mới nhất của Cục Hàng không Việt Nam cho thấy tỷ lệ đúng giờ giữa các hãng chênh lệch lớn. Thông tin này gây chú ý trước thềm Nghị định 208 (có hiệu lực từ 1/7), vốn siết chặt quy định bồi thường khi chậm, hủy chuyến.",
+        "link": "https://vnbusiness.vn//hang-hang-khong-nao-cham-huy-chuyen-nhieu-nhat-truoc-ngay-siet-quy-dinh-boi-thuong.html",
+        "published": "2026-06-22 10:47:53"
+      },
+      {
+        "title": "Giá cà phê đi ngang sát ngưỡng 90.000 đồng/kg",
+        "summary": "Giá cà phê trong nước hôm nay (22/6) đi ngang so với phiên liền trước, dao động trong biên độ hẹp từ 89.000 – 89.300 đồng/kg, phản ánh rõ tâm lý phòng vệ và nghe ngóng tín hiệu từ các sàn kỳ hạn quốc tế của cả đơn vị thu mua lẫn đại lý.",
+        "link": "https://vnbusiness.vn//gia-ca-phe-di-ngang-sat-nguong-90000-dongkg.html",
+        "published": "2026-06-22 09:09:48"
+      },
+      {
+        "title": "S-Light Tower: Tòa tháp đôi soi bóng sông Hàn, trung tâm Nam Đà Nẵng",
+        "summary": "Tháng 6/2026, Sun Property chính thức giới thiệu tổ hợp căn hộ S-Light Tower thuộc Khu đô thị Sun NeO City (Hòa Xuân, Đà Nẵng). Sở hữu tọa độ tâm điểm kết nối, hệ tiện ích đa dạng cùng pháp lý lâu dài, dự án sẽ thiết lập chuẩn sống đẳng cấp và mang đến cơ hội đầu tư bền vững tại khu vực trung tâm Nam Đà Nẵng.",
+        "link": "https://vnbusiness.vn//s-light-tower-toa-thap-doi-soi-bong-song-han-trung-tam-nam-da-nang.html",
+        "published": "2026-06-22 17:25:21"
+      },
+      {
+        "title": "Đường vượt biển 93.000 tỷ đồng khởi công ngày 2/7: Hạ tầng thế kỷ mở chu kỳ bứt phá cho Cần Giờ",
+        "summary": "Tuyến đường vượt biển hơn 93.000 tỷ đồng nối Cần Giờ - Vũng Tàu, chính thức khởi công vào ngày 2/7 tới, được xem là hạ tầng thế kỷ khai thông một trục không gian kinh tế mới ở phía Nam. Theo các chuyên gia tại talkshow Paradise Series - The CEO, siêu hạ tầng này kết hợp cùng siêu đô thị lấn biển lớn nhất Việt Nam sẽ mở ra một chu kỳ bứt phá ngoạn mục cho Cần Giờ và bất động sản ven biển của TP.HCM, đặc biệt là bộ sưu tập giới hạn Lagoonia Legacy.",
+        "link": "https://vnbusiness.vn//duong-vuot-bien-93000-ty-dong-khoi-cong-ngay-27-ha-tang-the-ky-mo-chu-ky-but-pha-cho-can-gio.html",
+        "published": "2026-06-22 17:24:45"
+      },
+      {
+        "title": "Vành đai 4 và lựa chọn của Bầu Hiển trong cấu trúc phát triển trăm năm của Thủ đô",
+        "summary": "Vành đai 4 không chỉ được kỳ vọng giảm áp lực giao thông cho Thủ đô mà còn mở ra không gian phát triển mới cho các địa phương, khu công nghiệp và trung tâm logistics của miền Bắc. Việc T&T Group tham gia đầu tư vào hợp phần cao tốc giữ vai trò trung tâm của toàn tuyến cũng cho thấy sự quan tâm của doanh nghiệp đối với những dự án hạ tầng có ý nghĩa lâu dài đối với nền kinh tế.",
+        "link": "https://vnbusiness.vn//vanh-dai-4-va-lua-chon-cua-bau-hien-trong-cau-truc-phat-trien-tram-nam-cua-thu-do.html",
+        "published": "2026-06-22 08:02:45"
+      },
+      {
+        "title": "Vay tiền 'đu sóng' bất động sản giờ ra sao?",
+        "summary": "Khi cơn sốt nhà đất đi qua, thanh khoản ì ạch, áp lực từ đòn bẩy tài chính khiến ngay cả các “tay to” cũng rơi vào thế tiến thoái lưỡng nan, giữ tài sản thì tiếp tục gồng lãi, bán ra thì chấp nhận thua lỗ.",
+        "link": "https://vnbusiness.vn//vay-tien-du-song-bat-dong-san-gio-ra-sao.html",
+        "published": "2026-06-22 08:00:11"
+      },
+      {
+        "title": "Căn hộ thương mại dịch vụ tại Đà Nẵng bứt tốc nhờ lực cầu thuê nhà cao cấp tăng mạnh",
+        "summary": "Trong bối cảnh Đà Nẵng tiếp tục khẳng định vị thế là “thành phố đáng sống” và trung tâm kinh tế - dịch vụ của miền Trung, làn sóng dịch chuyển của lao động trẻ, chuyên gia trong nước và quốc tế đang tạo áp lực rõ nét lên thị trường nhà ở cho thuê, đặc biệt tại khu vực trung tâm.",
+        "link": "https://vnbusiness.vn//can-ho-thuong-mai-dich-vu-tai-da-nang-but-toc-nho-luc-cau-thue-nha-cao-cap-tang-manh.html",
+        "published": "2026-06-22 07:59:25"
+      },
+      {
+        "title": "Vốn chủ sở hữu âm gần 400 tỷ đồng, Xây dựng 3 vẫn nợ trái phiếu hơn 2.200 tỷ đồng",
+        "summary": "Thua lỗ kéo dài nhiều năm đã đẩy vốn chủ sở hữu của Công ty TNHH Phát triển Kinh doanh Xây dựng 3 xuống mức âm gần 400 tỷ đồng. Trong khi đó, doanh nghiệp vẫn đang gánh dư nợ trái phiếu hơn 2.200 tỷ đồng và phát sinh gần 131 tỷ đồng gốc, lãi chậm thanh toán.",
+        "link": "https://vnbusiness.vn//von-chu-so-huu-am-gan-400-ty-dong-xay-dung-3-van-no-trai-phieu-hon-2200-ty-dong.html",
+        "published": "2026-06-22 17:23:34"
+      },
+      {
+        "title": "CC1 không bán hết 100 triệu cổ phiếu giữa áp lực nợ vay và hạn chế giao dịch",
+        "summary": "Tổng Công ty Xây dựng Số 1 – CTCP (CC1) đã không phân phối hết toàn bộ 100 triệu cổ phiếu đăng ký chào bán, trong bối cảnh cổ phiếu CC1 đang bị hạn chế giao dịch và doanh nghiệp vẫn mang gánh nặng đòn bẩy tài chính lớn.",
+        "link": "https://vnbusiness.vn//cc1-khong-ban-het-100-trieu-co-phieu-giua-ap-luc-no-vay-va-han-che-giao-dich.html",
+        "published": "2026-06-22 12:31:39"
+      },
+      {
+        "title": "Dragon Capital liên tiếp ‘xả hàng’ địa ốc",
+        "summary": "Các quỹ thành viên thuộc Dragon Capital đồng loạt bán ra cổ phiếu TAL, KDH, DXG và TCH, nối dài xu hướng thu hẹp tỷ trọng bất động sản trong bối cảnh ngành địa ốc vẫn đối mặt nhiều thách thức về dòng tiền và tín dụng.",
+        "link": "https://vnbusiness.vn//dragon-capital-lien-tiep-xa-hang-dia-oc.html",
+        "published": "2026-06-22 10:46:18"
+      },
+      {
+        "title": "Thị trường chứng khoán trước bước ngoặt nửa cuối năm",
+        "summary": "Đầu tư công, tăng trưởng lợi nhuận doanh nghiệp, nâng hạng thị trường và sự phục hồi của bất động sản là 4 động lực chính giúp thị trường chứng khoán nửa cuối năm được kỳ vọng duy trì triển vọng tích cực.",
+        "link": "https://vnbusiness.vn//thi-truong-chung-khoan-truoc-buoc-ngoat-nua-cuoi-nam.html",
+        "published": "2026-06-22 08:01:57"
+      },
+      {
+        "title": "Hà Nội: Quy trình 15 ngày tính tiền sử dụng đất khi chuyển đất ao vườn lên đất ở",
+        "summary": "Người dân Hà Nội có nhu cầu tính hoặc tính lại tiền sử dụng đất trong trường hợp chuyển đất vườn, ao, đất nông nghiệp sang đất ở sẽ được giải quyết trong thời gian tối đa 15 ngày làm việc và không phải nộp lệ phí.",
+        "link": "https://vietnamnet.vn/ha-noi-quy-trinh-15-ngay-tinh-tien-su-dung-dat-khi-chuyen-dat-ao-vuon-len-dat-o-2528108.html",
+        "published": "2026-06-22 15:38:19"
+      },
+      {
+        "title": "‘Mục tiêu của thành phố là xây dựng thị trường nhà ở cho thuê chuyên nghiệp&amp;apos;",
+        "summary": "Chủ tịch UBND TP Hà Nội Vũ Đại Thắng cho biết mục tiêu của thành phố là xây dựng thị trường nhà ở cho thuê chuyên nghiệp, chất lượng cao, giá cả phù hợp; đồng thời góp phần giảm áp lực sở hữu nhà ở bằng mọi giá.",
+        "link": "https://vietnamnet.vn/muc-tieu-cua-thanh-pho-la-xay-dung-thi-truong-nha-o-cho-thue-chuyen-nghiep-2528054.html",
+        "published": "2026-06-22 12:13:20"
+      },
+      {
+        "title": "Miền sống mới dành cho công dân toàn cầu sắp xuất hiện tại Phú Quốc",
+        "summary": "MeyGroup chuẩn bị ra mắt Meypearl Ciel Phu Quoc - dự án tổ hợp căn hộ cao cấp kiến tạo một miền sống mới dành cho thế hệ công dân toàn cầu giữa trung tâm đảo Ngọc.",
+        "link": "https://vietnamnet.vn/mien-song-moi-danh-cho-cong-dan-toan-cau-sap-xuat-hien-tai-phu-quoc-2528012.html",
+        "published": "2026-06-22 09:04:07"
+      },
+      {
+        "title": "S-Light Tower - Tòa tháp đôi tại trung tâm Nam Đà Nẵng soi bóng sông Hàn",
+        "summary": "Tháng 6/2026, Sun Property giới thiệu tổ hợp căn hộ S-Light Tower thuộc Khu đô thị Sun NeO City (Hòa Xuân, Đà Nẵng), thiết lập chuẩn sống đẳng cấp và mang đến cơ hội đầu tư bền vững tại trung tâm Nam Đà Nẵng.",
+        "link": "https://vietnamnet.vn/s-light-tower-toa-thap-doi-tai-trung-tam-nam-da-nang-soi-bong-song-han-2528005.html",
+        "published": "2026-06-22 09:52:01"
+      },
+      {
+        "title": "Giới đầu tư chuyển hướng sang bất động sản tạo dòng tiền",
+        "summary": "Trước đây nhiều người ưu tiên đất ở khu vực thưa dân để chờ quy hoạch và tăng giá. Hiện nay xu hướng này đã thay đổi khi nhà đầu tư chuyển hướng ưu tiên những bất động sản có thể khai thác và tạo dòng tiền ngay sau khi sở hữu.",
+        "link": "https://vietnamnet.vn/gioi-dau-tu-chuyen-huong-sang-bat-dong-san-tao-dong-tien-2527710.html",
+        "published": "2026-06-22 08:00:00"
+      },
+      {
+        "title": "Lý giải sức hút của bất động sản khu Nam TP.HCM",
+        "summary": "Sở hữu hệ sinh thái ven sông cùng mạng lưới giao thông ngày càng hoàn thiện, khu Nam TP.HCM không chỉ là điểm đến an cư lý tưởng, nơi đây còn hứa hẹn tiềm năng sinh lời vượt trội.",
+        "link": "https://vietnamnet.vn/ly-giai-suc-hut-cua-bat-dong-san-khu-nam-tp-hcm-2527331.html",
+        "published": "2026-06-22 08:00:00"
+      },
+      {
+        "title": "Hà Nội làm rõ ký hiệu &amp;apos;T&amp;apos; trên sổ đỏ, liên quan trực tiếp quyền lợi người dân",
+        "summary": "Cử tri xã Quốc Oai (Hà Nội) kiến nghị UBND Thành phố xem xét thống nhất cách giải thích và quy định rõ về phân loại đất chữ “T” trong giấy chứng nhận quyền sử dụng đất (sổ đỏ) của nhân dân.",
+        "link": "https://vietnamnet.vn/ha-noi-lam-ro-ky-hieu-t-tren-so-do-lien-quan-truc-tiep-quyen-loi-nguoi-dan-2527989.html",
+        "published": "2026-06-22 06:38:20"
       }
     ],
     "Công nghệ": [
       {
-        "title": "Đảng ủy VUSTA sơ kết 6 tháng đầu năm và trao huy hiệu Đảng cho 14 đảng viên",
-        "summary": "Trong những tháng cuối năm 2026, Đảng ủy Liên hiệp Hội Việt Nam tiếp tục tập trung thực hiện các nhiệm vụ trọng tâm về xây dựng Đảng, công tác kiểm tra, giám sát, thực hiện các nghị quyết của Trung ương. Đồng thời tập trung chỉ đạo, chuẩn bị thật tốt để tổ chức thành công Đại hội lần thứ IX của Liên hiệp Hội Việt Nam...",
-        "link": "https://vneconomy.vn/dang-uy-vusta-so-ket-6-thang-dau-nam-va-trao-huy-hieu-dang-cho-14-dang-vien.htm",
-        "published": "2026-06-22 19:51:35"
+        "title": "Mỗi tòa soạn cần một khuôn khổ rõ ràng cho AI",
+        "summary": "Nhân dịp kỷ niệm 101 năm Ngày Báo chí cách mạng Việt Nam (21/6/1925 - 21/6/2026), bà Deborah Steele, nguyên Chủ tịch Ủy ban Tin tức của Liên minh Phát thanh Truyền hình Thế giới (WBU) và cựu lãnh đạo cấp cao phụ trách nội dung tin tức của ABC, đã chia sẻ với Tạp chí Kinh tế Việt Nam về cách trí tuệ nhân tạo (AI) đang làm thay đổi hoạt động báo chí và truyền thông. Bà cũng phân tích cách các tòa soạn và nhà báo có thể tận dụng AI để nâng cao hiệu quả sản xuất nội dung, đồng thời vẫn bảo đảm tính chính xác, minh bạch và trách nhiệm đối với công chúng...",
+        "link": "https://vneconomy.vn/moi-toa-soan-can-mot-khuon-kho-ro-rang-cho-ai.htm",
+        "published": "2026-06-22 14:53:45"
+      },
+      {
+        "title": "AI nên được “trao quyền” đến đâu trong báo chí?",
+        "summary": "Trí tuệ nhân tạo (AI) đang dần trở thành một phần không thể thiếu trong ngành báo chí, đặc biệt khi công nghệ này đang tái định hình hệ sinh thái truyền thông. Nhân dịp kỷ niệm 101 năm Ngày Báo chí Cách mạng Việt Nam, các chuyên gia từ nhiều lĩnh vực đã chia sẻ quan điểm về việc ứng dụng AI trong sản xuất tin tức...",
+        "link": "https://vneconomy.vn/ai-nen-duoc-trao-quyen-den-dau-trong-bao-chi.htm",
+        "published": "2026-06-22 14:28:07"
+      },
+      {
+        "title": "SK Hynix trở thành nhà sản xuất chip nhớ vốn hóa lớn nhất thế giới",
+        "summary": "Công ty bán dẫn SK Hynix vừa vượt qua Samsung Electronics để trở thành doanh nghiệp niêm yết có giá trị vốn hóa lớn nhất Hàn Quốc, đồng thời cũng vươn lên vị trí nhà sản xuất chip nhớ vốn hóa lớn nhất thế giới...",
+        "link": "https://vneconomy.vn/sk-hynix-tro-thanh-nha-san-xuat-chip-nho-von-hoa-lon-nhat-the-gioi.htm",
+        "published": "2026-06-22 14:19:17"
+      },
+      {
+        "title": "Startup robot châu Âu đối đầu các “ông lớn” Trung Quốc",
+        "summary": "Những robot hình người có khả năng thực hiện nhiều công việc, từ thu hoạch nho đến đón tiếp khách, đang trở thành tâm điểm của làn sóng đổi mới công nghệ tại châu Âu. Trong khi các doanh nghiệp Trung Quốc thống trị thị trường robot toàn cầu, các startup châu Âu đang tìm cách tạo lợi thế cạnh tranh bằng những phân khúc chuyên biệt và giá trị khác biệt…",
+        "link": "https://vneconomy.vn/startup-robot-chau-au-doi-dau-cac-ong-lon-trung-quoc.htm",
+        "published": "2026-06-22 10:34:13"
+      },
+      {
+        "title": "Xây dựng đề án tăng tổng chi cho hoạt động R&D",
+        "summary": "Điểm nghẽn lớn nhất để Việt Nam đạt mục tiêu tăng trưởng GDP bình quân 10%/năm trong 20 năm tới, theo GS. TS Nguyễn Thiện Nhân, chính là tình trạng thiếu hụt nguồn nhân lực chất lượng cao trong lĩnh vực khoa học công nghệ và đổi mới sáng tạo.",
+        "link": "https://vneconomy.vn/xay-dung-de-an-tang-tong-chi-cho-hoat-dong-rd.htm",
+        "published": "2026-06-22 09:20:21"
+      },
+      {
+        "title": "Trung Quốc đào tạo nhiều nhân tài AI nhất thế giới",
+        "summary": "Tuy nhiên, nước này cũng đang đối diện với bài toán giữ chân nhân tài...",
+        "link": "https://vneconomy.vn/trung-quoc-dao-tao-nhieu-nhan-tai-ai-nhat-the-gioi.htm",
+        "published": "2026-06-22 08:57:09"
+      },
+      {
+        "title": "Hàn Quốc cảnh báo lạm phát từ chính sách tiền thưởng của ngành bán dẫn",
+        "summary": "Ngân hàng Trung ương Hàn Quốc cảnh báo các khoản thưởng lên tới hàng triệu won cho nhân sự ngành công nghệ có thể gia tăng áp lực lạm phát nước này...",
+        "link": "https://vneconomy.vn/han-quoc-canh-bao-lam-phat-tu-chinh-sach-tien-thuong-cua-nganh-ban-dan.htm",
+        "published": "2026-06-22 08:53:19"
+      },
+      {
+        "title": "Tạp chí Kinh tế Việt Nam đạt 2 giải thưởng tại Hội báo toàn quốc 2026",
+        "summary": "Kết thúc Hội báo toàn quốc 2026, Tạp chí Kinh tế Việt Nam được vinh danh với 2 giải thưởng: Sản phẩm báo chí ấn tượng đặc sắc và Gian trưng bày ấn tượng đặc sắc…",
+        "link": "https://vneconomy.vn/tap-chi-kinh-te-viet-nam-dat-2-giai-thuong-tai-hoi-bao-toan-quoc-2026.htm",
+        "published": "2026-06-21 20:20:29"
       }
     ]
   }

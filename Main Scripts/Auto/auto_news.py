@@ -1,16 +1,17 @@
 """
 Auto News Collector - Chạy lúc 21:00 hàng ngày qua Task Scheduler.
 Logic:
-    1. Kiểm tra folder News_JSON xem đã có file News_dd_mm_yy.json của ngày hôm đó chưa.
-    2. Nếu chưa → tự động cào tất cả tin tức (tất cả nguồn, tất cả lĩnh vực) 
-       bằng fetch_news rồi lưu thành file JSON.
-    3. Ghi log vào news_log.txt để tiện theo dõi.
+    1. Scan folder News_JSON, tìm file gần nhất → so sánh với ngày hiện tại.
+    2. Nếu phát hiện ngày bị thiếu (do máy tắt) → backfill tin tức cho các ngày đó trước.
+    3. Kiểm tra file hôm nay đã có chưa → nếu chưa thì cào tin hôm nay.
+    4. Ghi log vào news_log.txt để tiện theo dõi.
 """
 
 import os
 import sys
 import json
 import datetime
+import re
 
 # Fix encoding cho Task Scheduler chạy ngầm
 if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
@@ -31,10 +32,14 @@ LOG_FILE = os.path.join(PROJECT_DIR, "Main Scripts", "Auto", "news_log.txt")
 ALL_CATEGORIES = ["Vĩ mô & Tiền tệ", "Thị trường & Đầu tư", "Công nghệ"]
 
 
+def get_filename_for_date(target_date):
+    """Tạo tên file theo format: News_dd_mm_yy.json cho một ngày bất kỳ."""
+    return f"News_{target_date.strftime('%d_%m_%y')}.json"
+
+
 def get_today_filename():
-    """Tạo tên file theo format: News_dd_mm_yy.json"""
-    now = datetime.datetime.now()
-    return f"News_{now.strftime('%d_%m_%y')}.json"
+    """Tạo tên file theo format: News_dd_mm_yy.json cho ngày hôm nay."""
+    return get_filename_for_date(datetime.date.today())
 
 
 def file_already_exists(filename):
@@ -42,17 +47,67 @@ def file_already_exists(filename):
     return os.path.exists(os.path.join(NEWS_JSON_DIR, filename))
 
 
-def collect_all_news():
+def find_missing_dates():
+    """
+    Scan folder News_JSON, tìm file có ngày gần nhất.
+    So sánh với ngày hôm nay → trả về danh sách ngày bị thiếu.
+    
+    Returns:
+        list[datetime.date]: Danh sách các ngày bị thiếu (đã sắp xếp tăng dần).
+                             Rỗng nếu không thiếu ngày nào.
+    """
+    os.makedirs(NEWS_JSON_DIR, exist_ok=True)
+    
+    # Parse tên file → lấy danh sách ngày đã có
+    pattern = re.compile(r"^News_(\d{2})_(\d{2})_(\d{2})\.json$")
+    existing_dates = []
+    
+    for filename in os.listdir(NEWS_JSON_DIR):
+        match = pattern.match(filename)
+        if match:
+            day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+            try:
+                file_date = datetime.date(2000 + year, month, day)
+                existing_dates.append(file_date)
+            except ValueError:
+                continue  # Bỏ qua file có tên không hợp lệ
+    
+    if not existing_dates:
+        return []  # Không có file nào → không biết bắt đầu từ đâu, bỏ qua
+    
+    # Scan TẤT CẢ ngày từ file sớm nhất → hôm nay để tìm gap
+    # (bao gồm cả gap ở giữa, không chỉ gap ở cuối)
+    existing_dates_set = set(existing_dates)
+    earliest_date = min(existing_dates)
+    today = datetime.date.today()
+    
+    missing = []
+    current = earliest_date + datetime.timedelta(days=1)
+    while current < today:
+        if current not in existing_dates_set:
+            filename = get_filename_for_date(current)
+            if not file_already_exists(filename):
+                missing.append(current)
+        current += datetime.timedelta(days=1)
+    
+    return missing
+
+
+def collect_all_news(target_date=None):
     """
     Cào toàn bộ tin tức từ tất cả nguồn báo, tất cả lĩnh vực.
     Giống như user chọn 'Tổng hợp' cho từng lĩnh vực rồi gộp lại.
+    
+    Args:
+        target_date: (Optional) datetime.date - Ngày cần lấy tin.
+                     Nếu None → dùng logic realtime (datetime.now()).
     """
     all_news = {}
     all_debug = []
     total_articles = 0
 
     for category in ALL_CATEGORIES:
-        news_items, debug_logs = fetch_news("Tổng hợp", category)
+        news_items, debug_logs = fetch_news("Tổng hợp", category, target_date=target_date)
         
         # Loại bỏ bài trùng lặp dựa trên link
         seen_links = set()
@@ -98,13 +153,58 @@ def write_log(message):
         f.write(message + "\n" + "-" * 50 + "\n")
 
 
+def backfill_missing_days(missing_dates):
+    """
+    Backfill tin tức cho các ngày bị thiếu.
+    
+    Args:
+        missing_dates: list[datetime.date] - Danh sách ngày cần backfill.
+    
+    Returns:
+        str: Log message tổng hợp.
+    """
+    log_msg = f"🔄 Phát hiện {len(missing_dates)} ngày bị thiếu: " \
+              f"{', '.join(d.strftime('%d/%m/%Y') for d in missing_dates)}\n"
+    
+    for target_date in missing_dates:
+        filename = get_filename_for_date(target_date)
+        date_str = target_date.strftime('%d/%m/%Y')
+        
+        try:
+            all_news, debug_logs, total_articles = collect_all_news(target_date=target_date)
+            
+            if total_articles == 0:
+                # Vẫn tạo file rỗng để lần sau không backfill lại
+                log_msg += f"   ⚠️ [{date_str}] Không có bài viết nào (RSS có thể đã hết hạn). " \
+                           f"Tạo file rỗng để đánh dấu.\n"
+                save_to_json(all_news, filename)
+            else:
+                filepath = save_to_json(all_news, filename)
+                log_msg += f"   ✅ [{date_str}] Backfill thành công {total_articles} bài → {filename}\n"
+                for category, items in all_news.items():
+                    if len(items) > 0:
+                        log_msg += f"      📂 {category}: {len(items)} bài\n"
+                        
+        except Exception as e:
+            log_msg += f"   ❌ [{date_str}] Lỗi khi backfill: {str(e)}\n"
+    
+    return log_msg
+
+
 def main():
     now = datetime.datetime.now()
     log_msg = f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] Auto News Collector khởi chạy.\n"
     
+    # ===== Bước 0: Kiểm tra và backfill các ngày bị thiếu =====
+    missing_dates = find_missing_dates()
+    
+    if missing_dates:
+        log_msg += backfill_missing_days(missing_dates)
+        log_msg += "\n"
+    
+    # ===== Bước 1: Xử lý tin tức ngày hôm nay (logic cũ) =====
     filename = get_today_filename()
     
-    # Bước 1: Kiểm tra file đã tồn tại chưa
     if file_already_exists(filename):
         log_msg += f"✅ File '{filename}' đã tồn tại. Bỏ qua.\n"
         write_log(log_msg)
@@ -114,7 +214,7 @@ def main():
     log_msg += f"📰 Chưa có file '{filename}'. Bắt đầu cào tin tức...\n"
     
     try:
-        all_news, debug_logs, total_articles = collect_all_news()
+        all_news, debug_logs, total_articles = collect_all_news(target_date=datetime.date.today())
         
         if total_articles == 0:
             log_msg += "⚠️ Không cào được bài viết nào. Có thể do RSS feed lỗi hoặc ngoài khung giờ.\n"

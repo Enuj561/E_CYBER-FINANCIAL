@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "collected_at": "2026-06-21 22:44:55",
-    "total_articles": 5,
+    "collected_at": "2026-06-25 20:41:36",
+    "total_articles": 36,
     "categories": [
       "Vĩ mô & Tiền tệ",
       "Thị trường & Đầu tư",
@@ -17,38 +17,225 @@
   "news": {
     "Vĩ mô & Tiền tệ": [
       {
-        "title": "Người dân Brazil bất ngờ nhận được cảnh báo về người ngoài hành tinh",
-        "summary": "Do hệ thống của Cơ quan Phòng vệ Dân sự Brazil bị xâm nhập, hàng nghìn người dân ở quốc gia Nam Mỹ này đã nhận được thông báo về cuộc tấn công của người ngoài hành tinh.",
-        "link": "https://vietnamnet.vn/nguoi-dan-brazil-bat-ngo-nhan-duoc-canh-bao-ve-nguoi-ngoai-hanh-tinh-2527944.html",
-        "published": "2026-06-21 21:28:30"
+        "title": "Đón đọc Tạp chí Kinh tế Việt Nam số 25-2026",
+        "summary": "Mời quý độc giả đón đọc Tạp chí Kinh tế Việt Nam số 25-2026 phát hành ngày 22/06/2025 với nhiều chuyên mục hấp dẫn...",
+        "link": "https://vneconomy.vn/don-doc-tap-chi-kinh-te-viet-nam-so-25-2026.htm",
+        "published": "2026-06-21 14:05:07"
       },
       {
-        "title": "Nga tung video không kích hàng loạt cơ sở quân sự và năng lượng của Ukraine",
-        "summary": "Quân đội Nga đã triển khai một đợt không kích quy mô lớn nhắm vào hàng loạt cơ sở quân sự và năng lượng của Ukraine tại tiền tuyến.",
-        "link": "https://vietnamnet.vn/nga-tung-video-khong-kich-hang-loat-co-so-quan-su-va-nang-luong-cua-ukraine-2527956.html",
-        "published": "2026-06-21 20:38:46"
+        "title": "Phát hành trái phiếu Chính phủ của Kho bạc Nhà nước mới đạt 33,7% kế hoạch năm",
+        "summary": "Dù mặt bằng lãi suất có xu hướng tăng và kỳ hạn phát hành được kéo dài, tiến độ huy động trái phiếu Chính phủ trong nửa đầu năm 2026 mới đạt khoảng 33,7% kế hoạch năm. Trong bối cảnh nhu cầu chi ngân sách và giải ngân đầu tư công gia tăng, áp lực huy động vốn được dự báo sẽ dồn mạnh vào những tháng cuối năm...",
+        "link": "https://vneconomy.vn/phat-hanh-trai-phieu-chinh-phu-cua-kho-bac-nha-nuoc-moi-dat-337-ke-hoach-nam.htm",
+        "published": "2026-06-20 18:53:02"
       },
       {
-        "title": "Nga không kỳ vọng vào thỏa thuận với Mỹ, tập trung vào &amp;apos;chiến thắng&amp;apos; ở Ukraine",
-        "summary": "Điện Kremlin khẳng định Nga không chờ đợi việc thực thi các thỏa thuận đã đạt được với Mỹ, mà chỉ tập trung vào việc đạt những mục tiêu đã đề ra trong chiến dịch quân sự đặc biệt ở Ukraine.",
-        "link": "https://vietnamnet.vn/nga-khong-ky-vong-vao-thoa-thuan-voi-my-tap-trung-vao-chien-thang-o-ukraine-2527951.html",
-        "published": "2026-06-21 19:32:24"
+        "title": "UAV Nga bắn phá pháo tự hành Paladin của Ukraine ở Donetsk",
+        "summary": "Quân đội Nga đã triển khai máy bay không người lái (UAV) tấn công, phá hủy một pháo tự hành M109 Paladin của Ukraine trên tiền tuyến.",
+        "link": "https://vietnamnet.vn/video-uav-nga-pha-tung-phao-tu-hanh-paladin-cua-ukraine-o-donetsk-2527880.html",
+        "published": "2026-06-21 16:01:53"
       },
       {
-        "title": "Iran tiết lộ mục tiêu chính trong cuộc đàm phán với Mỹ",
-        "summary": "Mục tiêu hàng đầu của Iran trong cuộc gặp với Mỹ là đánh giá mức độ tuân thủ của Washington đối với các cam kết được nêu trong biên bản ghi nhớ vừa ký kết.",
-        "link": "https://vietnamnet.vn/iran-tiet-lo-muc-tieu-chinh-trong-cuoc-dam-phan-voi-my-2527939.html",
-        "published": "2026-06-21 18:19:17"
+        "title": "Cựu Thủ tướng Ba Lan phản ứng &amp;apos;gắt&amp;apos; khi ông Zelensky trả lại huân chương",
+        "summary": "Việc Tổng thống Ukraine Volodymyr Zelensky trả lại Huân chương Đại bàng trắng cho Ba Lan đã làm gia tăng căng thẳng ngoại giao giữa hai quốc gia láng giềng.",
+        "link": "https://vietnamnet.vn/cuu-thu-tuong-ba-lan-phan-ung-gat-khi-ong-zelensky-tra-lai-huan-chuong-2527878.html",
+        "published": "2026-06-21 14:32:29"
+      },
+      {
+        "title": "Rộ tin Thủ tướng Anh Keir Starmer sẽ từ chức vào tuần tới",
+        "summary": "Nhiều hãng thông tấn Anh đã đồng loạt đưa tin về việc Thủ tướng Keir Starmer chuẩn bị từ chức sau khi đánh mất sự ủng hộ trong nội bộ Công đảng cầm quyền.",
+        "link": "https://vietnamnet.vn/ro-tin-thu-tuong-anh-keir-starmer-se-tu-chuc-vao-tuan-toi-2527848.html",
+        "published": "2026-06-21 12:38:27"
+      },
+      {
+        "title": "Mỹ nêu ưu tiên trong đàm phán với Iran, Nga nói Israel &amp;apos;có thể không hài lòng&amp;apos;",
+        "summary": "Những ưu tiên hàng đầu của Mỹ trong cuộc đàm phán với Iran tại Thụy Sĩ bao gồm thúc đẩy tiến triển về chương trình hạt nhân của Tehran và đạt được lệnh ngừng bắn ở Lebanon.",
+        "link": "https://vietnamnet.vn/my-neu-uu-tien-trong-dam-phan-voi-iran-nga-noi-israel-co-the-khong-hai-long-2527845.html",
+        "published": "2026-06-21 09:57:31"
+      },
+      {
+        "title": "Tổng thống Ukraine cảnh báo về đợt không kích quy mô lớn của Nga",
+        "summary": "Tổng thống Ukraine Volodymyr Zelensky yêu cầu người dân nước này đặc biệt chú ý tới các cảnh báo không kích trong bối cảnh Nga đang chuẩn bị cho một đợt tấn công quy mô lớn.",
+        "link": "https://vietnamnet.vn/tong-thong-ukraine-canh-bao-ve-dot-khong-kich-quy-mo-lon-cua-nga-2527844.html",
+        "published": "2026-06-21 08:57:24"
+      },
+      {
+        "title": "Phu nhân Thủ tướng Tây Ban Nha bị cáo buộc tham nhũng, không được xuất cảnh",
+        "summary": "Một thẩm phán ở Tây Ban Nha phán quyết vợ của Thủ tướng Pedro Sanchez phải ra hầu tòa về tội tham nhũng và cấm bà xuất cảnh.",
+        "link": "https://vietnamnet.vn/phu-nhan-thu-tuong-tay-ban-nha-bi-cao-buoc-tham-nhung-khong-duoc-xuat-canh-2527837.html",
+        "published": "2026-06-21 06:43:29"
+      },
+      {
+        "title": "Ông Trump dọa thu phí đối với tàu thuyền đi qua eo biển Hormuz",
+        "summary": "Tổng thống Mỹ Donald Trump tuyên bố sẽ không thu phí hàng hải tại eo biển Hormuz trong 60 ngày ngừng bắn nhưng đe dọa sẽ áp đặt các khoản phí riêng nếu không đạt được thỏa thuận cuối cùng với Iran.",
+        "link": "https://vietnamnet.vn/ong-trump-doa-thu-phi-doi-voi-tau-thuyen-di-qua-eo-bien-hormuz-2527835.html",
+        "published": "2026-06-21 06:01:59"
+      },
+      {
+        "title": "Khám phá &amp;apos;gã khổng lồ&amp;apos; vận tải C-130 Hercules của quân đội Mỹ",
+        "summary": "C-130 Hercules, chiếc máy bay vận tải quân sự có thể hạ cánh ở hầu hết mọi nơi và vận chuyển hầu hết mọi thứ, là một tài sản quý giá của Không quân Mỹ.",
+        "link": "https://vietnamnet.vn/kham-pha-ga-khong-lo-van-tai-c-130-hercules-cua-quan-doi-my-2527446.html",
+        "published": "2026-06-21 05:45:00"
+      },
+      {
+        "title": "Tin tức Thế giới 21/6: Ông Trump buộc Israel phải ngừng bắn",
+        "summary": "Tổng thống Mỹ Donald Trump khẳng định buộc Israel ngừng bắn với Hezbollah, Nga tấn công cầu hậu cần Ukraine là những tin tức thế giới đáng chú ý ngày 21/6.",
+        "link": "https://vietnamnet.vn/tin-tuc-the-gioi-21-6-ong-trump-buoc-israel-phai-ngung-ban-2527758.html",
+        "published": "2026-06-21 05:06:00"
+      },
+      {
+        "title": "Iran lại đóng cửa eo biển Hormuz, đổ lỗi cho Israel tấn công Lebanon",
+        "summary": "Bộ tư lệnh quân sự Iran tuyên bố sẽ đóng cửa eo biển Hormuz do Israel liên tục vi phạm lệnh ngừng bắn tại Lebanon và Mỹ không thực hiện điều khoản đầu tiên trong thỏa thuận sơ bộ nhằm chấm dứt xung đột.",
+        "link": "https://vietnamnet.vn/iran-lai-dong-cua-eo-bien-hormuz-do-loi-cho-israel-tan-cong-lebanon-2527797.html",
+        "published": "2026-06-20 21:40:25"
+      },
+      {
+        "title": "Dịch cúm bùng phát tại căn cứ quân sự Mỹ",
+        "summary": "Hơn 200 quân nhân và học viên không quân Mỹ tại Căn cứ Liên hợp San Antonio–Lackland ở bang Texas đã mắc cúm. Các ca bệnh xuất hiện chưa đầy hai tháng sau khi Lầu Năm Góc bỏ quy định bắt buộc tiêm vắc-xin cúm hàng năm.",
+        "link": "https://vietnamnet.vn/dich-cum-bung-phat-tai-can-cu-quan-su-my-2527788.html",
+        "published": "2026-06-20 20:59:15"
+      },
+      {
+        "title": "Ông Trump nói Nga nên trở lại G8",
+        "summary": "Tổng thống Mỹ Donald Trump cho rằng phương Tây không nên loại Nga khỏi G8 và việc giữ Moscow trong nhóm có thể đã ngăn chặn cuộc xung đột Ukraine leo thang vào năm 2022.",
+        "link": "https://vietnamnet.vn/ong-trump-noi-nga-nen-tro-lai-g8-2527777.html",
+        "published": "2026-06-20 20:12:51"
+      },
+      {
+        "title": "Cục Thuế nói về thuế khoán với hộ kinh doanh; tính toán quy định mới về xe công",
+        "summary": "Tính toán quy định mới về xe công; đến năm 2030 hoàn thành thí điểm phá sản quỹ tín dụng nhân dân yếu kém; Cục Thuế nói về đề xuất áp thuế khoán với hộ kinh doanh dưới 5 tỷ đồng;... là tin tức chú ý trong tuần.",
+        "link": "https://vietnamnet.vn/cuc-thue-noi-ve-thue-khoan-voi-ho-kinh-doanh-tinh-toan-quy-dinh-moi-ve-xe-cong-2527846.html",
+        "published": "2026-06-21 10:46:08"
+      },
+      {
+        "title": "Giải mã cuộc chiến tâm lý nhà đầu tư vàng: Khi &amp;apos;tay to’ đánh cược hàng tỷ USD",
+        "summary": "Thị trường vàng đang chứng kiến một cuộc chiến tâm lý khốc liệt giữa 2 phe đối lập: các nhà đầu cơ lướt sóng đang tháo chạy, trong khi các ngân hàng trung ương và nhà đầu tư dài hạn vẫn kiên định ‘ôm’ vàng.",
+        "link": "https://vietnamnet.vn/giai-ma-cuoc-chien-tam-ly-nha-dau-tu-vang-khi-tay-to-danh-cuoc-hang-ty-usd-2527439.html",
+        "published": "2026-06-21 10:27:12"
+      },
+      {
+        "title": "Giá vàng hôm nay 21/6/2026 đà giảm, vàng miếng SJC hụt hơi trước mốc 150 triệu đồng",
+        "summary": "Giá vàng hôm nay 21/6/2026 tiếp tục suy yếu khi Fed phát tín hiệu cứng rắn, nhà đầu tư giảm vị thế kim loại quý. Giá vàng miếng SJC chốt tuần ở mức 147,2 triệu đồng/lượng, chỉ tăng 200.000 đồng/lượng so với cuối tuần trước.",
+        "link": "https://vietnamnet.vn/gia-vang-hom-nay-21-6-2026-da-giam-vang-mieng-sjc-hut-hoi-truoc-moc-150-trieu-2527782.html",
+        "published": "2026-06-21 06:00:00"
+      },
+      {
+        "title": "Công an chỉ rõ hành vi của chủ tài khoản khiến sinh trắc học bị vô hiệu, mất tiền",
+        "summary": "Tội phạm công nghệ cao không nhất thiết phải vượt qua lớp xác thực sinh trắc học. Thay vào đó, chúng có thể thao túng tâm lý để chính khách hàng tự xác thực, tự nhập OTP và tự chuyển tiền.",
+        "link": "https://vietnamnet.vn/cong-an-chi-ro-hanh-vi-cua-chu-tai-khoan-khien-sinh-trac-hoc-bi-vo-hieu-mat-tien-2526069.html",
+        "published": "2026-06-21 05:20:00"
       }
     ],
     "Thị trường & Đầu tư": [
       {
-        "title": "VN-Index tăng 1,84%, hướng đến vùng 1845-1865 điểm",
-        "summary": "VnEconomy giới thiệu nhận định và khuyến nghị đầu tư của một số công ty chứng khoán về diễn biến thị trường tuần từ 22-26/6/2026.",
-        "link": "https://vneconomy.vn/vn-index-tang-184-huong-den-vung-1845-1865-diem.htm",
-        "published": "2026-06-21 19:59:50"
+        "title": "Đón đọc Tạp chí Kinh tế Việt Nam số 25-2026",
+        "summary": "Mời quý độc giả đón đọc Tạp chí Kinh tế Việt Nam số 25-2026 phát hành ngày 22/06/2025 với nhiều chuyên mục hấp dẫn...",
+        "link": "https://vneconomy.vn/don-doc-tap-chi-kinh-te-viet-nam-so-25-2026.htm",
+        "published": "2026-06-21 14:05:07"
+      },
+      {
+        "title": "TP. Hồ Chí Minh đầu tư dự án chỉnh trang khu Mả Lạng, chợ Gà - Gạo hơn 16.300 tỷ đồng",
+        "summary": "Dự án chỉnh trang đô thị quy mô lớn tại khu Mả Lạng và khu Chợ Gà - Gạo với tổng mức đầu tư hơn 16.300 tỷ đồng sẽ giúp cải thiện điều kiện sống cho hàng nghìn hộ dân tại các khu dân cư lâu đời ngay trung tâm TP. Hồ Chí Minh…",
+        "link": "https://vneconomy.vn/tp-ho-chi-minh-dau-tu-du-an-chinh-trang-khu-ma-lang-cho-ga-gao-hon-16300-ty-dong.htm",
+        "published": "2026-06-21 09:16:15"
+      },
+      {
+        "title": "Đưa thông tin “đúng” nhưng phải “đáng”",
+        "summary": "Ông Đào Quang Bính, Phó Chủ tịch Hội đồng biên tập, Tổng giám đốc, Tổng thư ký toà soạn Tạp chí Kinh tế Việt Nam - VnEconomy, nhấn mạnh rằng báo chí và doanh nghiệp phải sát cánh cùng nhau, báo chí đưa thông tin về doanh nghiệp “đúng” nhưng phải “đáng”…",
+        "link": "https://vneconomy.vn/dua-thong-tin-dung-nhung-phai-dang.htm",
+        "published": "2026-06-21 09:26:59"
+      },
+      {
+        "title": "Nhúng AI vào “lõi” vận hành tòa soạn: Định hình chuẩn mực mới cho quản trị nội dung số",
+        "summary": "“Khi làm chủ công nghệ, chúng ta có quyền tự quyết định vận mệnh phát triển sản phẩm của mình mà không phụ thuộc vào bên ngoài. Báo chí là huyết mạch thông tin của quốc gia. Nếu lõi công nghệ quản trị nội dung và dữ liệu của các cơ quan báo chí phụ thuộc vào các nền tảng nước ngoài, đó sẽ là rủi ro lớn đối với an ninh thông tin và chủ quyền số quốc gia”. Đó là khẳng định của ông Đỗ Chiến Thắng, Chủ tịch Hemera Media, trong cuộc trao đổi với Tạp chí Kinh tế Việt Nam/VnEconomy nhân dịp tạp chí tròn 35 năm phát triển.",
+        "link": "https://vneconomy.vn/nhung-ai-vao-loi-van-hanh-toa-soan-dinh-hinh-chuan-muc-moi-cho-quan-tri-noi-dung-so.htm",
+        "published": "2026-06-21 09:00:28"
+      },
+      {
+        "title": "Từ tòa soạn đến “phòng lab sống” cho AI Việt",
+        "summary": "Ra mắt đúng dịp kỷ niệm 35 năm thành lập Tạp chí Kinh tế Việt Nam/VnEconomy, Askonomy thế hệ mới (3.5) không chỉ là một sản phẩm công nghệ mà còn là kết quả của mô hình hợp tác giữa báo chí và doanh nghiệp AI, trong đó tòa soạn đóng vai trò như một “phòng lab sống”, còn đơn vị công nghệ đảm nhiệm việc phát triển và hoàn thiện sản phẩm.",
+        "link": "https://vneconomy.vn/tu-toa-soan-den-phong-lab-song-cho-ai-viet.htm",
+        "published": "2026-06-21 08:55:11"
+      },
+      {
+        "title": "Ba chuyển dịch chiến lược định hình tương lai kinh tế Bắc Ninh",
+        "summary": "Dù dẫn đầu cả nước về thu hút khối ngoại và xuất nhập khẩu, Bắc Ninh lại đang đối mặt với nghịch lý thu ngân sách do tỷ lệ doanh nghiệp nội địa có lãi chưa cao. Để hiện thực hóa mục tiêu tăng trưởng hai con số trong giai đoạn tới, “thủ phủ thu hút FDI” này đang đứng trước yêu cầu bắt buộc phải thực hiện 3 chuyển dịch chiến lược nhằm nâng chuẩn và gia tăng năng lực nội tại cho khối doanh nghiệp nội địa…",
+        "link": "https://vneconomy.vn/ba-chuyen-dich-chien-luoc-dinh-hinh-tuong-lai-kinh-te-bac-ninh.htm",
+        "published": "2026-06-20 18:45:36"
+      },
+      {
+        "title": "3 loại cây chịu nắng cực tốt, thích hợp cho ban công hướng Tây",
+        "summary": "Ban công hướng Tây thường hứng chịu ánh nắng chiều gay gắt, khiến nhiều loại cây khó sinh trưởng. Tuy nhiên, vẫn có những loại cây càng nắng càng lên màu đẹp và được nhiều người ưa chuộng.",
+        "link": "https://vietnamnet.vn/3-loai-cay-chiu-nang-cuc-tot-thich-hop-cho-ban-cong-huong-tay-2526370.html",
+        "published": "2026-06-21 07:50:40"
+      },
+      {
+        "title": "Sắp thu hồi 360ha đất ở Gia Lâm; nhà ngõ đổi đời nhờ Vành đai 2,5 tăng giá mạnh",
+        "summary": "Bất động sản tuần qua nổi bật với tin tức về thu hồi đất ở phường Bồ Đề, xã Gia Lâm (Hà Nội); Nhà trong ngõ bất ngờ thành mặt phố nhờ Vành đai 2,5, giá rao bán tới 500 triệu/m2; Hà Nội mở bán loạt căn hộ chung cư chưa đến 1 tỷ đồng.",
+        "link": "https://vietnamnet.vn/sap-thu-hoi-360ha-dat-o-gia-lam-nha-ngo-doi-doi-nho-vanh-dai-2-5-tang-gia-manh-2527779.html",
+        "published": "2026-06-21 05:30:00"
+      },
+      {
+        "title": "Xây nhà trên đất lúa nằm lọt giữa khu dân cư từ 2008, tính tiền thế nào?",
+        "summary": "Bộ Nông nghiệp và Môi trường vừa có phản hồi đối với kiến nghị của người dân dân liên quan đến việc chuyển mục đích sử dụng đất từ đất trồng lúa trong khu dân cư sang đất ở.",
+        "link": "https://vietnamnet.vn/xay-nha-tren-dat-lua-nam-lot-giua-khu-dan-cu-tu-2008-tinh-tien-the-nao-2527792.html",
+        "published": "2026-06-21 05:00:00"
+      },
+      {
+        "title": "Ocean City đón sóng đầu tư trước chu kỳ tái định giá của khu đông Hà Nội",
+        "summary": "Phía đông Hà Nội đang bước vào một chu kỳ kết nối mới. Với nhà đầu tư, đây là quá trình tái định vị giá trị của cả một vùng đô thị với tâm điểm là đại đô thị Ocean City.",
+        "link": "https://vietnamnet.vn/ocean-city-don-song-dau-tu-truoc-chu-ky-tai-dinh-gia-cua-khu-dong-ha-noi-2527760.html",
+        "published": "2026-06-20 18:00:00"
       }
     ],
-    "Công nghệ": []
+    "Công nghệ": [
+      {
+        "title": "“Người thực tập” chăm chỉ nhất tòa soạn",
+        "summary": "Một thực tập sinh đặc biệt đang xuất hiện trong các tòa soạn. Người đó không biết mệt mỏi, không bao giờ phàn nàn và luôn sẵn sàng học hỏi. Càng đồng hành cùng nhân vật này, người làm báo càng hiểu rõ hơn giá trị của chính mình...",
+        "link": "https://vneconomy.vn/nguoi-thuc-tap-cham-chi-nhat-toa-soan.htm",
+        "published": "2026-06-21 15:06:40"
+      },
+      {
+        "title": "Đón đọc Tạp chí Kinh tế Việt Nam số 25-2026",
+        "summary": "Mời quý độc giả đón đọc Tạp chí Kinh tế Việt Nam số 25-2026 phát hành ngày 22/06/2025 với nhiều chuyên mục hấp dẫn...",
+        "link": "https://vneconomy.vn/don-doc-tap-chi-kinh-te-viet-nam-so-25-2026.htm",
+        "published": "2026-06-21 14:05:07"
+      },
+      {
+        "title": "Việt Nam nằm trong Top 10 quốc gia có số lượng người sử dụng công cụ mới của Google",
+        "summary": "Sau ba năm ra mắt dưới dạng dự án thử nghiệm từ Google Labs, công cụ nghiên cứu ứng dụng trí tuệ nhân tạo (AI) NotebookLM của Google đang ghi nhận mức độ tăng trưởng mạnh mẽ tại Việt Nam…",
+        "link": "https://vneconomy.vn/viet-nam-nam-trong-top-10-quoc-gia-co-so-luong-nguoi-su-dung-cong-cu-moi-cua-google.htm",
+        "published": "2026-06-21 10:02:01"
+      },
+      {
+        "title": "Đưa thông tin “đúng” nhưng phải “đáng”",
+        "summary": "Ông Đào Quang Bính, Phó Chủ tịch Hội đồng biên tập, Tổng giám đốc, Tổng thư ký toà soạn Tạp chí Kinh tế Việt Nam - VnEconomy, nhấn mạnh rằng báo chí và doanh nghiệp phải sát cánh cùng nhau, báo chí đưa thông tin về doanh nghiệp “đúng” nhưng phải “đáng”…",
+        "link": "https://vneconomy.vn/dua-thong-tin-dung-nhung-phai-dang.htm",
+        "published": "2026-06-21 09:26:59"
+      },
+      {
+        "title": "Hiểu công chúng bằng dữ liệu, chinh phục công chúng bằng niềm tin",
+        "summary": "Trong kỷ nguyên tương tác số, công chúng không còn chỉ là người đọc, người xem hay người nghe theo nghĩa truyền thống. Họ vừa tiếp nhận, phản hồi, chia sẻ, tái tạo nội dung, vừa trực tiếp tham gia vào vòng đời của thông tin, tạo ra những thay đổi sâu sắc đối với hoạt động báo chí và truyền thông...",
+        "link": "https://vneconomy.vn/hieu-cong-chung-bang-du-lieu-chinh-phuc-cong-chung-bang-niem-tin.htm",
+        "published": "2026-06-21 09:03:16"
+      },
+      {
+        "title": "Nhúng AI vào “lõi” vận hành tòa soạn: Định hình chuẩn mực mới cho quản trị nội dung số",
+        "summary": "“Khi làm chủ công nghệ, chúng ta có quyền tự quyết định vận mệnh phát triển sản phẩm của mình mà không phụ thuộc vào bên ngoài. Báo chí là huyết mạch thông tin của quốc gia. Nếu lõi công nghệ quản trị nội dung và dữ liệu của các cơ quan báo chí phụ thuộc vào các nền tảng nước ngoài, đó sẽ là rủi ro lớn đối với an ninh thông tin và chủ quyền số quốc gia”. Đó là khẳng định của ông Đỗ Chiến Thắng, Chủ tịch Hemera Media, trong cuộc trao đổi với Tạp chí Kinh tế Việt Nam/VnEconomy nhân dịp tạp chí tròn 35 năm phát triển.",
+        "link": "https://vneconomy.vn/nhung-ai-vao-loi-van-hanh-toa-soan-dinh-hinh-chuan-muc-moi-cho-quan-tri-noi-dung-so.htm",
+        "published": "2026-06-21 09:00:28"
+      },
+      {
+        "title": "Người tiêu dùng tin tức “chuyển nhà”, báo chí nên làm gì?",
+        "summary": "Sự nở rộ của các ứng dụng trí tuệ nhân tạo (AI) dân sự đã tác động tới giới báo chí như cuộc va chạm của tiểu hành tinh Chicxulub với Trái Đất cách đây 66 triệu năm trước. Tuy những con khủng long đã biến mất, nhưng hàng nghìn loài mới đã tiến hóa để thích nghi. Nói một cách hình tượng, báo chí truyền thống giờ đây cũng đang đứng trước một ngưỡng cửa tiến hóa như vậy...",
+        "link": "https://vneconomy.vn/nguoi-tieu-dung-tin-tuc-chuyen-nha-bao-chi-nen-lam-gi.htm",
+        "published": "2026-06-21 08:58:27"
+      },
+      {
+        "title": "Từ tòa soạn đến “phòng lab sống” cho AI Việt",
+        "summary": "Ra mắt đúng dịp kỷ niệm 35 năm thành lập Tạp chí Kinh tế Việt Nam/VnEconomy, Askonomy thế hệ mới (3.5) không chỉ là một sản phẩm công nghệ mà còn là kết quả của mô hình hợp tác giữa báo chí và doanh nghiệp AI, trong đó tòa soạn đóng vai trò như một “phòng lab sống”, còn đơn vị công nghệ đảm nhiệm việc phát triển và hoàn thiện sản phẩm.",
+        "link": "https://vneconomy.vn/tu-toa-soan-den-phong-lab-song-cho-ai-viet.htm",
+        "published": "2026-06-21 08:55:11"
+      }
+    ]
   }
 }
