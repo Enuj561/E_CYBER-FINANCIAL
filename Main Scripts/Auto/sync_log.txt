@@ -23,3 +23,17 @@ M "Main Scripts/Auto/news_log.txt"
 Đang tiến hành sync lên GitHub...
 Sync thành công lên GitHub!
 ----------------------------------------
+[2026-06-25 23:00:02.031217] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+M "Main Scripts/Auto/auto_news.py"
+ M "Main Scripts/Auto/news_log.txt"
+ M "Main Scripts/Auto/sync_log.txt"
+ M "Main Scripts/News/news_scraper.py"
+ M News_JSON/News_21_06_26.json
+ M News_JSON/News_22_06_26.json
+ M News_JSON/News_24_06_26.json
+?? News_JSON/News_23_06_26.json
+?? News_JSON/News_25_06_26.json
+Đang tiến hành sync lên GitHub...
+Sync thành công lên GitHub!
+----------------------------------------
