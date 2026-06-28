@@ -37,3 +37,11 @@ M "Main Scripts/Auto/auto_news.py"
 Đang tiến hành sync lên GitHub...
 Sync thành công lên GitHub!
 ----------------------------------------
+[2026-06-26 23:00:01.923398] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+M "Main Scripts/Auto/news_log.txt"
+ M "Main Scripts/Auto/sync_log.txt"
+?? News_JSON/News_26_06_26.json
+Đang tiến hành sync lên GitHub...
+Sync thành công lên GitHub!
+----------------------------------------
