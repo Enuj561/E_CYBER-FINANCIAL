@@ -11,3 +11,7 @@ venv.bak/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Ignore data and logs
+Data_Main/
+Log_Debug/

@@ -94,3 +94,21 @@
    📂 Công nghệ: 8 bài
 
 --------------------------------------------------
+[2026-06-28 10:52:47] Auto News Collector khởi chạy.
+🔄 Phát hiện 1 ngày bị thiếu: 27/06/2026
+   ✅ [27/06/2026] Backfill thành công 59 bài → News_27_06_26.json
+      📂 Vĩ mô & Tiền tệ: 33 bài
+      📂 Thị trường & Đầu tư: 19 bài
+      📂 Công nghệ: 7 bài
+
+📰 Chưa có file 'News_28_06_26.json'. Bắt đầu cào tin tức...
+✅ Đã lưu 25 bài viết vào: C:\Users\HP\Documents\E_CYBER-FINANCIAL\News_JSON\News_28_06_26.json
+   📂 Vĩ mô & Tiền tệ: 14 bài
+   📂 Thị trường & Đầu tư: 9 bài
+   📂 Công nghệ: 2 bài
+
+--------------------------------------------------
+[2026-06-28 21:00:02] Auto News Collector khởi chạy.
+✅ File 'News_28_06_26.json' đã tồn tại. Bỏ qua.
+
+--------------------------------------------------
