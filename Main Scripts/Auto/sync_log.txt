@@ -51,3 +51,6 @@ M "Main Scripts/Auto/sync_log.txt"
 Đang tiến hành sync lên GitHub...
 Sync thành công lên GitHub!
 ----------------------------------------
+[2026-06-28 23:00:09.897201] Bắt đầu kiểm tra thay đổi dự án...
+Không có thay đổi nào mới. Bỏ qua sync.
+----------------------------------------
