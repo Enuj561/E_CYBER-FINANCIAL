@@ -43,65 +43,22 @@ class JsonWorkerThread(QThread):
 
     def run(self):
         try:
-            now = datetime.datetime.now()
-            filename = f"News_{now.strftime('%d_%m_%y')}.json"
-            filepath = os.path.join(NEWS_JSON_DIR, filename)
-
-            # Kiểm tra file đã tồn tại
-            if os.path.exists(filepath):
-                self.finished_signal.emit(
-                    f'<div style="color:#4EC9B0; font-family:Segoe UI; font-size:15px;">'
-                    f'✅ File <b>{filename}</b> đã tồn tại trong thư mục News_JSON.<br><br>'
-                    f'Không cần cào lại.</div>'
-                )
-                return
-
-            self.progress_signal.emit("📰 Đang cào tin tức từ tất cả nguồn báo...")
-
-            all_news = {}
-            total = 0
-            for cat in ALL_CATEGORIES:
-                self.progress_signal.emit(f"📂 Đang cào lĩnh vực: {cat}...")
-                items, _ = fetch_news("Tổng hợp", cat)
-                seen = set()
-                unique = []
-                for item in items:
-                    if item['link'] not in seen:
-                        seen.add(item['link'])
-                        unique.append(item)
-                all_news[cat] = unique
-                total += len(unique)
-
-            if total == 0:
-                self.finished_signal.emit(
-                    '<div style="color:#FFA500; font-family:Segoe UI; font-size:15px;">'
-                    '⚠️ Không cào được bài viết nào. RSS feed có thể lỗi hoặc ngoài khung giờ.</div>'
-                )
-                return
-
-            # Lưu file JSON
-            os.makedirs(NEWS_JSON_DIR, exist_ok=True)
-            output = {
-                "metadata": {
-                    "collected_at": now.strftime("%Y-%m-%d %H:%M:%S"),
-                    "total_articles": total,
-                    "categories": list(all_news.keys()),
-                    "sources": list(RSS_FEEDS.keys())
-                },
-                "news": all_news
-            }
-            with open(filepath, "w", encoding="utf-8") as f:
-                json.dump(output, f, ensure_ascii=False, indent=2)
-
-            # Tạo báo cáo
-            report = (
-                f'<div style="color:#4EC9B0; font-family:Segoe UI; font-size:15px;">'
-                f'✅ Đã lưu <b>{total}</b> bài viết vào <b>{filename}</b><br><br>'
-            )
-            for cat, items in all_news.items():
-                report += f'📂 {cat}: <b>{len(items)}</b> bài<br>'
-            report += '</div>'
-            self.finished_signal.emit(report)
+            from News.news_manager import NewsManager
+            
+            # Callback để emit tiến trình lên giao diện dưới dạng HTML
+            def progress_callback(msg):
+                # Làm đẹp log msg một chút cho UI
+                html_msg = f'<div style="color:#FFA500; font-family:Segoe UI; font-size:15px; font-style:italic;">{msg}</div>'
+                self.progress_signal.emit(html_msg)
+                
+            self.progress_signal.emit('<div style="color:#CCCCCC; font-family:Segoe UI; font-size:15px;">🔄 Đang khởi động hệ thống cào tin...</div>')
+            
+            # Chạy toàn bộ tiến trình (quét thiếu ngày, backfill, cào hôm nay)
+            full_log = NewsManager.run_full_pipeline(log_callback=progress_callback)
+            
+            # Format lại log thành HTML để hiển thị ở cửa sổ kết thúc
+            html_report = f'<div style="color:#4EC9B0; font-family:Segoe UI; font-size:15px; white-space: pre-wrap;">{full_log}</div>'
+            self.finished_signal.emit(html_report)
 
         except Exception as e:
             self.finished_signal.emit(
