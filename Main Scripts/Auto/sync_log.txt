@@ -54,3 +54,11 @@ Sync thành công lên GitHub!
 [2026-06-28 23:00:09.897201] Bắt đầu kiểm tra thay đổi dự án...
 Không có thay đổi nào mới. Bỏ qua sync.
 ----------------------------------------
+[2026-06-29 23:00:01.449742] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+M "Main Scripts/Auto/news_log.txt"
+ M "Main Scripts/Auto/sync_log.txt"
+?? News_JSON/News_29_06_26.json
+Đang tiến hành sync lên GitHub...
+Sync thành công lên GitHub!
+----------------------------------------
