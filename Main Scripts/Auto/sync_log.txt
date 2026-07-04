@@ -69,3 +69,21 @@ M "Main Scripts/Auto/sync_log.txt"
 Đang tiến hành sync lên GitHub...
 Sync thành công lên GitHub!
 ----------------------------------------
+[2026-07-01 23:00:02.053438] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+M "Main Scripts/Auto/auto_news.py"
+ M "Main Scripts/Auto/sync_log.txt"
+ M News_JSON/News_01_07_26.json
+ M System/Warden.py
+ D UI_Scripts/__init__.py
+ D UI_Scripts/center_workspace.py
+ D UI_Scripts/custom_title_bar.py
+ D UI_Scripts/left_panel.py
+ D UI_Scripts/main_window.py
+ D UI_Scripts/right_panel.py
+?? "Main Scripts/IDE_UI/"
+?? "Main Scripts/News/news_manager.py"
+?? News_JSON/News_30_06_26.json
+Đang tiến hành sync lên GitHub...
+Sync thành công lên GitHub!
+----------------------------------------
