@@ -120,3 +120,9 @@ M "Main Scripts/Auto/sync_log.txt"
 Đang tiến hành sync lên GitHub...
 Sync thành công lên GitHub!
 ----------------------------------------
+[2026-07-10 23:00:01.797988] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+M "Main Scripts/Auto/sync_log.txt"
+Đang tiến hành sync lên GitHub...
+Sync thành công lên GitHub!
+----------------------------------------
