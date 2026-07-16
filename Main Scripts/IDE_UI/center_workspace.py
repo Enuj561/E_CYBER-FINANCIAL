@@ -9,7 +9,7 @@ from News.news_scraper import fetch_news, RSS_FEEDS
 from News.gemini_ai import summarize_news
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NEWS_JSON_DIR = os.path.join(PROJECT_DIR, "News_JSON")
+NEWS_JSON_DIR = os.path.join(PROJECT_DIR, "Phase_5_Data")
 ALL_CATEGORIES = ["Vĩ mô & Tiền tệ", "Thị trường & Đầu tư", "Công nghệ"]
 
 class WorkerThread(QThread):

@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-file_path = r"C:\Users\HP\Documents\E_CYBER-FINANCIAL\Data_Main\From_FireAnt\VCB_historical_fireant.parquet"
+file_path = r"C:\Users\HP\Documents\E_CYBER-FINANCIAL\Phase_1_Data\From_FireAnt\VCB_historical_fireant.parquet"
 if not os.path.exists(file_path):
     print("File không tồn tại!")
     exit()

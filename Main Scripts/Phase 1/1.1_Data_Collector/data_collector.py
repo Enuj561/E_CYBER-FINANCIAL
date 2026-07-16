@@ -18,7 +18,7 @@ from vnstock.api.quote import Quote
 
 # Setup paths
 BASE_DIR = r"C:\Users\HP\Documents\E_CYBER-FINANCIAL"
-DATA_DIR = os.path.join(BASE_DIR, "Data_Main")
+DATA_DIR = os.path.join(BASE_DIR, "Phase_1_Data")
 VNSTOCK_DIR = os.path.join(DATA_DIR, "From_vnstock")
 FIREANT_DIR = os.path.join(DATA_DIR, "From_FireAnt")
 LOG_DIR = os.path.join(BASE_DIR, "Log_Debug", "Phase 1")

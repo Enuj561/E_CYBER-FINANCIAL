@@ -11,7 +11,7 @@ if PROJECT_DIR not in sys.path:
 
 from News.news_scraper import fetch_news, RSS_FEEDS
 
-NEWS_JSON_DIR = os.path.join(PROJECT_DIR, "News_JSON")
+NEWS_JSON_DIR = os.path.join(PROJECT_DIR, "Phase_5_Data")
 
 # Tất cả lĩnh vực cần cào
 ALL_CATEGORIES = ["Vĩ mô & Tiền tệ", "Thị trường & Đầu tư", "Công nghệ"]
@@ -29,13 +29,13 @@ class NewsManager:
 
     @staticmethod
     def file_already_exists(filename):
-        """Kiểm tra file đã tồn tại trong folder News_JSON chưa."""
+        """Kiểm tra file đã tồn tại trong folder Phase_5_Data chưa."""
         return os.path.exists(os.path.join(NEWS_JSON_DIR, filename))
 
     @staticmethod
     def find_missing_dates():
         """
-        Scan folder News_JSON, tìm file có ngày gần nhất.
+        Scan folder Phase_5_Data, tìm file có ngày gần nhất.
         So sánh với ngày hôm nay → trả về danh sách ngày bị thiếu.
         """
         os.makedirs(NEWS_JSON_DIR, exist_ok=True)
@@ -103,7 +103,7 @@ class NewsManager:
 
     @staticmethod
     def save_to_json(data, filename):
-        """Lưu data vào file JSON trong folder News_JSON."""
+        """Lưu data vào file JSON trong folder Phase_5_Data."""
         os.makedirs(NEWS_JSON_DIR, exist_ok=True)
         filepath = os.path.join(NEWS_JSON_DIR, filename)
         

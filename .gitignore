@@ -13,5 +13,9 @@ __pycache__/
 *$py.class
 
 # Ignore data and logs
-Data_Main/
+Phase_1_Data/
+Phase_2_Data/
+Phase_3_Data/
+Phase_4_Data/
+Phase_5_Data/
 Log_Debug/

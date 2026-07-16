@@ -1,6 +1,6 @@
 """
 data_raw_cross_check.py - Kiểm tra tính toàn vẹn dữ liệu raw từ FireAnt
-Quét file .parquet trong Data_Main/From_FireAnt, thực hiện 4 phép check chéo:
+Quét file .parquet trong Phase_1_Data/From_FireAnt, thực hiện 4 phép check chéo:
   1. Volume Balance:  dealVolume + putthroughVolume == totalVolume?
   2. Foreign Boundary: Ngoại mua/bán có vượt tổng KL sàn hoặc room?
   3. OHLC Integrity:   High >= Low, Close nằm trong [Low, High]?
@@ -29,7 +29,7 @@ sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 # PATHS
 # ═══════════════════════════════════════════════════════════════
 BASE_DIR = r"C:\Users\HP\Documents\E_CYBER-FINANCIAL"
-FIREANT_DIR = os.path.join(BASE_DIR, "Data_Main", "From_FireAnt")
+FIREANT_DIR = os.path.join(BASE_DIR, "Phase_1_Data", "From_FireAnt")
 LOG_DIR = os.path.join(BASE_DIR, "Log_Debug", "Phase 1")
 os.makedirs(LOG_DIR, exist_ok=True)
 
