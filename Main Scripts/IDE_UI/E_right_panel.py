@@ -1,10 +1,18 @@
+"""
+Module:  E_right_panel
+Logic:   System log panel UI for the IDE
+Detail:  Panel bên phải hiển thị log hệ thống. Ghi log ra cả UI lẫn file text.
+         Sửa lỗi: except pass → log lỗi ghi file vào console thay vì nuốt im lặng.
+"""
 import os
+import logging
 from datetime import datetime
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTextEdit
 
-# Đường dẫn folder Log_Debug
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOG_DEBUG_DIR = os.path.join(PROJECT_DIR, "Log_Debug")
+# Import centralized paths
+from E_Helper.E_config import LOG_DIR
+
+logger = logging.getLogger(__name__)
 
 
 class RightPanel(QWidget):
@@ -31,7 +39,7 @@ class RightPanel(QWidget):
         layout.addWidget(self.log_area)
         
         # Đảm bảo folder Log_Debug tồn tại
-        os.makedirs(LOG_DEBUG_DIR, exist_ok=True)
+        os.makedirs(LOG_DIR, exist_ok=True)
         
         # Ghi log khởi động
         self.log("System", "Đã khởi động E_CYBER-FINANCIAL.")
@@ -40,7 +48,7 @@ class RightPanel(QWidget):
     def _get_log_filepath(self):
         """Trả về đường dẫn file log theo ngày hiện tại: Log_dd_mm_yy.txt"""
         filename = f"Log_{datetime.now().strftime('%d_%m_%y')}.txt"
-        return os.path.join(LOG_DEBUG_DIR, filename)
+        return os.path.join(LOG_DIR, filename)
 
     def log(self, tag, message):
         """
@@ -79,5 +87,6 @@ class RightPanel(QWidget):
             filepath = self._get_log_filepath()
             with open(filepath, "a", encoding="utf-8") as f:
                 f.write(plain_line + "\n")
-        except Exception:
-            pass  # Không để lỗi ghi file làm crash app
+        except Exception as e:
+            # Log lỗi ghi file ra console thay vì nuốt im lặng (except: pass)
+            logger.warning(f"Không ghi được log file: {e}")

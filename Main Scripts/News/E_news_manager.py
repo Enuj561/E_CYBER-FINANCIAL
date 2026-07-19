@@ -1,17 +1,19 @@
+"""
+Module:  E_news_manager
+Logic:   Orchestrate the full news collection pipeline
+Detail:  Tổng chỉ huy pipeline tin tức: cào → lọc trùng → lưu JSON → backfill ngày thiếu.
+         Các file khác chỉ cần gọi run_full_pipeline() — không cần biết chi tiết bên trong.
+"""
 import os
-import sys
-import json
 import datetime
 import re
 
-# Thêm project root vào sys.path để import được news_scraper
-PROJECT_DIR = r"C:\Users\HP\Documents\E_CYBER-FINANCIAL"
-if PROJECT_DIR not in sys.path:
-    sys.path.insert(0, PROJECT_DIR)
-
-from News.news_scraper import fetch_news, RSS_FEEDS
-
-NEWS_JSON_DIR = os.path.join(PROJECT_DIR, "Phase_5_Data")
+# Import centralized paths
+from E_Helper.E_config import PROJECT_DIR, PHASE_5_DATA_DIR
+# Import ghi file an toàn
+from E_Helper.E_io_utils import safe_write_json
+# Import scraper
+from News.E_news_scraper import fetch_news, RSS_FEEDS
 
 # Tất cả lĩnh vực cần cào
 ALL_CATEGORIES = ["Vĩ mô & Tiền tệ", "Thị trường & Đầu tư", "Công nghệ"]
@@ -30,7 +32,7 @@ class NewsManager:
     @staticmethod
     def file_already_exists(filename):
         """Kiểm tra file đã tồn tại trong folder Phase_5_Data chưa."""
-        return os.path.exists(os.path.join(NEWS_JSON_DIR, filename))
+        return os.path.exists(os.path.join(PHASE_5_DATA_DIR, filename))
 
     @staticmethod
     def find_missing_dates():
@@ -38,13 +40,13 @@ class NewsManager:
         Scan folder Phase_5_Data, tìm file có ngày gần nhất.
         So sánh với ngày hôm nay → trả về danh sách ngày bị thiếu.
         """
-        os.makedirs(NEWS_JSON_DIR, exist_ok=True)
+        os.makedirs(PHASE_5_DATA_DIR, exist_ok=True)
         
         # Parse tên file → lấy danh sách ngày đã có
         pattern = re.compile(r"^News_(\d{2})_(\d{2})_(\d{2})\.json$")
         existing_dates = []
         
-        for filename in os.listdir(NEWS_JSON_DIR):
+        for filename in os.listdir(PHASE_5_DATA_DIR):
             match = pattern.match(filename)
             if match:
                 day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
@@ -103,9 +105,9 @@ class NewsManager:
 
     @staticmethod
     def save_to_json(data, filename):
-        """Lưu data vào file JSON trong folder Phase_5_Data."""
-        os.makedirs(NEWS_JSON_DIR, exist_ok=True)
-        filepath = os.path.join(NEWS_JSON_DIR, filename)
+        """Lưu data vào file JSON trong folder Phase_5_Data (ghi an toàn)."""
+        os.makedirs(PHASE_5_DATA_DIR, exist_ok=True)
+        filepath = os.path.join(PHASE_5_DATA_DIR, filename)
         
         # Thêm metadata vào file JSON
         output = {
@@ -118,8 +120,7 @@ class NewsManager:
             "news": data
         }
         
-        with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
+        safe_write_json(filepath, output)
         
         return filepath
 

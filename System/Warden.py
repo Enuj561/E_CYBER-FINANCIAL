@@ -13,7 +13,7 @@ if main_scripts_path not in sys.path:
     sys.path.insert(0, main_scripts_path)
 
 from PyQt6.QtWidgets import QApplication
-from IDE_UI.main_window import MainWindow
+from IDE_UI.E_main_window import MainWindow
 
 def main():
     app = QApplication(sys.argv)

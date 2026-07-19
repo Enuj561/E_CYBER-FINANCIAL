@@ -91,13 +91,26 @@ Kiểu test: **Data Quality Check**
 
 ## 9.7. Output Contract
 
+### OHLCV + Khối ngoại
+
 | Thuộc tính | Giá trị |
 |---|---|
 | **Format** | `.parquet` |
-| **Vị trí** | `Phase_1_Data/From_vnstock/`, `Phase_1_Data/From_FireAnt/` |
+| **Vị trí** | `Phase_1_Data/E_OHLCV/From_vnstock/`, `Phase_1_Data/E_OHLCV/From_FireAnt/` |
 | **Tên file** | `{SYMBOL}_historical_{source}.parquet` |
 | **Tính chất** | **Immutable** — không sửa sau khi cào xong |
 | **Ai đọc?** | Phase 2 (tính indicators), Phase 3 (load vào ML) |
+
+### BCTC (Báo cáo Tài chính)
+
+| Thuộc tính | Giá trị |
+|---|---|
+| **Format** | `.parquet` |
+| **Vị trí** | `Phase_1_Data/E_BCTC/{Report_Type}/` |
+| **Tên file** | `{SYMBOL}_{report_type}_{period}.parquet` |
+| **Số file/mã** | 9 (3 loại × 2 period + ratio + note) |
+| **Tính chất** | **Immutable** — không sửa sau khi cào xong |
+| **Ai đọc?** | Phase 2 (features), Phase 3 (ML input) |
 
 > [!IMPORTANT]
 > **Constraint từ Planning:** BẮT BUỘC dùng **giá điều chỉnh**. Không bỏ qua các mã đã chết (delisted).

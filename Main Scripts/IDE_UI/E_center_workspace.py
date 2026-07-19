@@ -1,3 +1,9 @@
+"""
+Module:  E_center_workspace
+Logic:   Main workspace UI panel for news aggregation and display
+Detail:  Giao diện trung tâm (workspace). Chỉ giao tiếp với NewsManager — KHÔNG gọi trực tiếp
+         vào scraper hay AI client. Tuân thủ EF-S-07: UI không import backend.
+"""
 import os
 import json
 import datetime
@@ -5,14 +11,15 @@ import datetime
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QStackedWidget, 
                              QComboBox, QPushButton, QTextEdit, QHBoxLayout)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from News.news_scraper import fetch_news, RSS_FEEDS
-from News.gemini_ai import summarize_news
 
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NEWS_JSON_DIR = os.path.join(PROJECT_DIR, "Phase_5_Data")
+# Import centralized paths
+from E_Helper.E_config import PHASE_5_DATA_DIR
+
+# Tất cả lĩnh vực
 ALL_CATEGORIES = ["Vĩ mô & Tiền tệ", "Thị trường & Đầu tư", "Công nghệ"]
 
 class WorkerThread(QThread):
+    """Thread cào tin theo nguồn + lĩnh vực cụ thể, gọi AI tóm tắt."""
     finished_signal = pyqtSignal(str)
     progress_signal = pyqtSignal(str)
     
@@ -23,15 +30,26 @@ class WorkerThread(QThread):
         
     def run(self):
         try:
+            # Import tại đây để tránh circular import
+            from News.E_news_scraper import fetch_news
+            from News.E_ai_client import summarize_news_json
+            from News.E_news_renderer import render_news_html
+
             # Bước 1: Cào tin
             news_list, debug_logs = fetch_news(self.source, self.category)
-            # Bước 2: Tóm tắt
+            # Bước 2: Gọi AI tóm tắt
             def progress_callback(msg):
                 self.progress_signal.emit(msg)
                 
             tf_text = "Bản tin tài chính (18:00 → 18:00)"
-            summary = summarize_news(news_list, tf_text, self.source == "Tổng hợp", debug_logs, progress_callback)
-            self.finished_signal.emit(summary)
+            
+            # Gọi AI Client để lấy dict
+            data_dict = summarize_news_json(news_list, self.source == "Tổng hợp", progress_callback)
+            
+            # Đưa dict cho Renderer vẽ ra HTML
+            summary_html = render_news_html(data_dict, tf_text, debug_logs)
+            
+            self.finished_signal.emit(summary_html)
         except Exception as e:
             self.finished_signal.emit(f"Lỗi hệ thống: {str(e)}")
 
@@ -43,7 +61,7 @@ class JsonWorkerThread(QThread):
 
     def run(self):
         try:
-            from News.news_manager import NewsManager
+            from News.E_news_manager import NewsManager
             
             # Callback để emit tiến trình lên giao diện dưới dạng HTML
             def progress_callback(msg):

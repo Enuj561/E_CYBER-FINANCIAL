@@ -43,8 +43,15 @@ E_CYBER-FINANCIAL/
 │   └── IDE_UI/                   # Giao diện Desktop (PyQt6)
 │
 ├── Phase_1_Data/                 # Data thô (Read-only sau khi cào)
-│   ├── From_vnstock/                 (Parquet — giá cổ phiếu)
-│   ├── From_FireAnt/                 (Parquet — khối ngoại)
+│   ├── E_OHLCV/                      (Giá + Khối lượng + Khối ngoại)
+│   │   ├── From_vnstock/                 (Parquet — giá cổ phiếu)
+│   │   └── From_FireAnt/                 (Parquet — khối ngoại)
+│   ├── E_BCTC/                       (Báo cáo Tài chính)
+│   │   ├── Balance_Sheet/                (Bảng cân đối kế toán)
+│   │   ├── Income_Statement/             (Kết quả kinh doanh)
+│   │   ├── Cash_Flow/                    (Lưu chuyển tiền tệ)
+│   │   ├── Ratio/                        (Chỉ số tài chính)
+│   │   └── Note/                         (Thuyết minh BCTC)
 │   └── Mock_Data/                    (Dữ liệu giả lập cho test)
 │
 ├── Phase_2_Data/                 # Data xử lý (Tính năng, Indicators)
@@ -97,31 +104,41 @@ E_CYBER-FINANCIAL/
 ### 3.1. Tên File phản ánh chức năng
 
 ```
-✅ news_scraper.py        → Module cào tin tức từ RSS
-✅ data_collector.py      → Module thu thập giá cổ phiếu
-✅ ai_client.py           → Module giao tiếp với Gemini API
-✅ indicator_calculator.py → Module tính RSI, MACD, Bollinger
+✅ E_news_scraper.py        → Module cào tin tức từ RSS
+✅ E_data_collector.py      → Module thu thập giá cổ phiếu
+✅ E_ai_client.py           → Module giao tiếp với Gemini API
+✅ E_indicator_calculator.py → Module tính RSI, MACD, Bollinger
 ❌ utils.py               → Quá chung chung, không rõ trách nhiệm
 ❌ helpers.py              → Tương tự, quá mơ hồ
 ❌ main.py (trong sub-folder) → Không rõ "main" của cái gì
 ❌ process.py              → Process cái gì? Dữ liệu nào?
 ```
 
-### 3.2. Quy ước đặt tên file theo vai trò
+### 3.2. Tiền tố `E_` — Nhận diện file thuộc dự án
+
+Mọi file `.py` trong dự án E_CYBER-FINANCIAL đều phải có tiền tố `E_` để nhận diện.
+
+**Công thức:** `E_` + tên mô tả + hậu tố vai trò + `.py`
+
+**Ngoại lệ — KHÔNG thêm `E_`:**
+- `__init__.py` (file đặc biệt của Python)
+- `Warden.py` (Entry Point duy nhất — xem §6.1)
+
+### 3.3. Quy ước đặt tên file theo vai trò (hậu tố)
 
 | Hậu tố/Pattern | Ý nghĩa | Ví dụ |
 |:---|:---|:---|
-| `_collector` | Thu thập/cào data từ nguồn ngoài | `data_collector.py` |
-| `_cleaner` | Làm sạch, chuẩn hóa data | `data_cleaner.py` |
-| `_scraper` | Cào web/RSS cụ thể | `news_scraper.py` |
-| `_manager` | Điều phối pipeline (Orchestrator) | `news_manager.py` |
-| `_client` | Giao tiếp với API bên ngoài | `ai_client.py` |
-| `_renderer` | Render output (HTML, chart, report) | `news_renderer.py` |
-| `_calculator` | Tính toán thuần (pure function) | `indicator_calculator.py` |
-| `_validator` | Kiểm tra chất lượng/correctness | `data_validator.py` |
-| `_config` | Cấu hình, constants | `config.py` |
-| `auto_` | Script chạy tự động (scheduled) | `auto_news.py` |
-| `test_` | Unit test / Integration test | `test_phase1.py` |
+| `_collector` | Thu thập/cào data từ nguồn ngoài | `E_data_collector.py` |
+| `_cleaner` | Làm sạch, chuẩn hóa data | `E_data_cleaner.py` |
+| `_scraper` | Cào web/RSS cụ thể | `E_news_scraper.py` |
+| `_manager` | Điều phối pipeline (Orchestrator) | `E_news_manager.py` |
+| `_client` | Giao tiếp với API bên ngoài | `E_ai_client.py` |
+| `_renderer` | Render output (HTML, chart, report) | `E_news_renderer.py` |
+| `_calculator` | Tính toán thuần (pure function) | `E_indicator_calculator.py` |
+| `_validator` | Kiểm tra chất lượng/correctness | `E_data_validator.py` |
+| `_config` | Cấu hình, constants | `E_config.py` |
+| `E_auto_` | Script chạy tự động (scheduled) | `E_auto_news.py` |
+| `E_test_` | Unit test / Integration test | `E_test_phase1.py` |
 
 > [!NOTE]
 > Mỗi phase có thêm **kiểu module đặc thù riêng** — xem chương tương ứng ([Phase 01](./Phase_01_Data_Prep.md) - [Phase 05](./Phase_05_News.md)).

@@ -163,7 +163,7 @@ Ngoài các hậu tố chung ở [§3.2 — EF-S-01](./EF-S-01_Data_Structure.md
 | Thuộc tính | Mô tả |
 |---|---|
 | **Trách nhiệm DUY NHẤT** | Đọc parquet từ `Phase_1_Data/` (Phase 1) và trả về raw DataFrame |
-| **Input** | Đường dẫn tới `Phase_1_Data/From_vnstock/`, `Phase_1_Data/From_FireAnt/` |
+| **Input** | Đường dẫn tới `Phase_1_Data/E_OHLCV/`, `Phase_1_Data/E_BCTC/` |
 | **Output** | `pd.DataFrame` — data thô, chưa xử lý |
 | **KHÔNG ĐƯỢC** | Tạo features, tính indicator, gọi API, modify data gốc |
 | **Khi nào thay đổi?** | Chỉ khi cấu trúc data thô từ Phase 1 thay đổi |

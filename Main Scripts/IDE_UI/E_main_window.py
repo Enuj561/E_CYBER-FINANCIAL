@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QMainWindow, QDockWidget
 from PyQt6.QtCore import Qt
-from IDE_UI.left_panel import LeftPanel
-from IDE_UI.center_workspace import CenterWorkspace
-from IDE_UI.right_panel import RightPanel
+from IDE_UI.E_left_panel import LeftPanel
+from IDE_UI.E_center_workspace import CenterWorkspace
+from IDE_UI.E_right_panel import RightPanel
 
 class MainWindow(QMainWindow):
     def __init__(self):

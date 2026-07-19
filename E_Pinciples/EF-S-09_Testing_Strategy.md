@@ -30,8 +30,15 @@ Mock Data nằm trong `Phase_X_Data/Mock_Data/` — mỗi Phase có folder mock 
 
 ```
 Phase_1_Data/
-├── From_vnstock/                 ← Data thật
-├── From_FireAnt/                 ← Data thật
+├── E_OHLCV/                      ← Data thật (Giá + Khối lượng)
+│   ├── From_vnstock/
+│   └── From_FireAnt/
+├── E_BCTC/                       ← Data thật (Báo cáo Tài chính)
+│   ├── Balance_Sheet/
+│   ├── Income_Statement/
+│   ├── Cash_Flow/
+│   ├── Ratio/
+│   └── Note/
 └── Mock_Data/                    ← Data giả lập cho test
     ├── VNM_mock_vnstock.parquet     (50 dòng OHLCV mẫu)
     ├── VNM_mock_fireant.parquet     (50 dòng khối ngoại mẫu)
