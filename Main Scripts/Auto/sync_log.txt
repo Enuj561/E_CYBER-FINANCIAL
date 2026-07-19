@@ -141,3 +141,55 @@ D E_Pinciples/srp_principles.md
 Đang tiến hành sync lên GitHub...
 Sync thành công lên GitHub!
 ----------------------------------------
+[2026-07-16 22:12:39.843416] Bắt đầu kiểm tra thay đổi dự án...
+Phát hiện có thay đổi:
+M .gitignore
+ M E_Pinciples/E_Design_Standard.md
+ M "Main Scripts/Auto/sync_log.txt"
+ M "Main Scripts/IDE_UI/center_workspace.py"
+ M "Main Scripts/News/news_manager.py"
+ M "Main Scripts/Phase 1/1.1_Data_Collector/compare_data.py"
+ M "Main Scripts/Phase 1/1.1_Data_Collector/data_collector.py"
+ M "Main Scripts/Phase 1/1.1_Data_Collector/data_raw_cross_check.py"
+ M "Main Scripts/Phase 1/1.1_Data_Collector/test_phase1.py"
+ M "Main Scripts/Phase 1/1.1_Data_Collector/vcb_whale.py"
+ D News_JSON/News_01_07_26.json
+ D News_JSON/News_02_07_26.json
+ D News_JSON/News_03_07_26.json
+ D News_JSON/News_04_07_26.json
+ D News_JSON/News_05_07_26.json
+ D News_JSON/News_06_07_26.json
+ D News_JSON/News_07_07_26.json
+ D News_JSON/News_08_07_26.json
+ D News_JSON/News_09_07_26.json
+ D News_JSON/News_10_07_26.json
+ D News_JSON/News_11_07_26.json
+ D News_JSON/News_21_06_26.json
+ D News_JSON/News_22_06_26.json
+ D News_JSON/News_23_06_26.json
+ D News_JSON/News_24_06_26.json
+ D News_JSON/News_25_06_26.json
+ D News_JSON/News_26_06_26.json
+ D News_JSON/News_27_06_26.json
+ D News_JSON/News_28_06_26.json
+ D News_JSON/News_29_06_26.json
+ D News_JSON/News_30_06_26.json
+?? E_Pinciples/EF-S-00_Dependency_Direction.md
+?? E_Pinciples/EF-S-01_Data_Structure.md
+?? E_Pinciples/EF-S-02_Error_Handling.md
+?? E_Pinciples/EF-S-03_Data_Pipeline.md
+?? E_Pinciples/EF-S-04_Logging_Debug.md
+?? E_Pinciples/EF-S-05_Shared_Code.md
+?? E_Pinciples/EF-S-06_Library_Catalog.md
+?? E_Pinciples/EF-S-07_UI_Backend.md
+?? E_Pinciples/EF-S-08_UI_Frontend.md
+?? E_Pinciples/EF-S-09_Testing_Strategy.md
+?? E_Pinciples/Phase_01_Data_Prep.md
+?? E_Pinciples/Phase_02_Algorithms.md
+?? E_Pinciples/Phase_03_ML_Training.md
+?? E_Pinciples/Phase_04_Backtesting.md
+?? E_Pinciples/Phase_05_News.md
+?? Helper/io_utils.py
+Đang tiến hành sync lên GitHub...
+Sync thành công lên GitHub!
+----------------------------------------
