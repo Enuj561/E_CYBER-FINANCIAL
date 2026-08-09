@@ -1,6 +1,17 @@
+"""
+Module:  E_news_scraper
+Logic:   Collect financial news from configured RSS feeds
+Detail:  Đọc và lọc RSS theo khung giờ; ghi sự kiện nguồn qua E_BlackBox nhưng không
+         điều phối pipeline hoặc hiển thị UI.
+"""
+
 from datetime import datetime, timedelta
 import feedparser
 from bs4 import BeautifulSoup
+from E_Helper.E_BlackBox import get_black_box
+
+
+black_box = get_black_box(__file__)
 
 RSS_FEEDS = {
     "Tạp chí kinh tế VN": {
@@ -78,6 +89,8 @@ def fetch_news(source, category, target_date=None):
     news_items = []
     debug_logs = []
     now = datetime.now()
+    run_log = black_box.bind()
+    run_log.info("Bắt đầu đọc RSS", source=source, category=category, target_date=target_date)
     
     # Logic khung giờ: 18:00 hôm trước → 18:00 hôm nay
     # Chu kỳ "ngày tài chính" neo tại 18:00
@@ -117,6 +130,7 @@ def fetch_news(source, category, target_date=None):
             feed = feedparser.parse(url)
             if not feed.entries:
                 debug_logs.append(f"❌ [{url}] Lỗi: Link hỏng hoặc feed trống.")
+                run_log.warning("RSS feed trống hoặc hỏng", url=url)
                 continue
                 
             fetched_count = 0
@@ -154,6 +168,7 @@ def fetch_news(source, category, target_date=None):
             
             if fetched_count > 0:
                 debug_logs.append(f"✅ [{url}] Lấy thành công {fetched_count} bài.")
+                run_log.info("Đọc RSS thành công", url=url, fetched=fetched_count, skipped=skipped_count)
             else:
                 if skipped_count > 0 and newest_skipped:
                     delta_hours = int((now - newest_skipped).total_seconds() / 3600)
@@ -162,6 +177,8 @@ def fetch_news(source, category, target_date=None):
                     debug_logs.append(f"⚠️ [{url}] Không có bài viết nào hợp lệ.")
                     
         except Exception as e:
+            run_log.exception("Lỗi parse RSS", url=url)
             debug_logs.append(f"❌ [{url}] Lỗi parse dữ liệu: {str(e)}")
-                
+
+    run_log.info("Hoàn thành đọc RSS", articles=len(news_items), feeds=len(urls_to_fetch))
     return news_items, debug_logs

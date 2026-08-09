@@ -9,7 +9,6 @@ import io
 import sys
 import time
 import random
-import logging
 import requests
 import pandas as pd
 from datetime import datetime
@@ -24,8 +23,9 @@ from vnstock.api.quote import Quote
 
 # Import centralized paths
 from E_Helper.E_config import (
-    PROJECT_DIR, PHASE_1_DATA_DIR, VNSTOCK_DIR, FIREANT_DIR, LOG_DIR, ENV_PATH, ensure_dirs
+    PROJECT_DIR, PHASE_1_DATA_DIR, VNSTOCK_DIR, FIREANT_DIR, ENV_PATH, ensure_dirs
 )
+from E_Helper.E_BlackBox import get_black_box
 # Import ghi file an toàn
 from E_Helper.E_io_utils import safe_write_parquet
 
@@ -64,19 +64,7 @@ BATCH_SIZE_MAX = 5
 # Đảm bảo thư mục tồn tại
 ensure_dirs()
 
-# Log riêng cho Phase 1
-PHASE1_LOG_DIR = os.path.join(LOG_DIR, "Phase 1")
-os.makedirs(PHASE1_LOG_DIR, exist_ok=True)
-
-log_file = os.path.join(PHASE1_LOG_DIR, "data_collector.log")
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
+black_box = get_black_box(__file__, console=True).bind()
 
 # Load token từ .env
 load_dotenv(dotenv_path=ENV_PATH)
@@ -88,7 +76,7 @@ FIREANT_TOKEN = os.environ.get("FIREANT_BEARER_TOKEN", "")
 
 def fetch_vnstock(symbol, start_date=DEFAULT_START_DATE):
     try:
-        logging.info(f"[{symbol}] Kéo giá từ vnstock...")
+        black_box.info("Kéo giá từ vnstock", symbol=symbol)
         q = Quote(symbol=symbol, source='VCI')
         df = q.history(start=start_date, end=None, interval='1D')
         
@@ -97,15 +85,15 @@ def fetch_vnstock(symbol, start_date=DEFAULT_START_DATE):
                 df['Date'] = pd.to_datetime(df['time']).dt.normalize()
             out_path = os.path.join(VNSTOCK_DIR, f"{symbol}_historical_vnstock.parquet")
             safe_write_parquet(out_path, df)
-            logging.info(f"[{symbol}] Đã lưu -> {out_path}")
+            black_box.info("Đã lưu dữ liệu vnstock", symbol=symbol, output=out_path, rows=len(df))
             return True
     except Exception as e:
-        logging.error(f"[{symbol}] Vnstock lỗi: {e}")
+        black_box.exception("Vnstock lỗi", symbol=symbol)
     return False
 
 def fetch_fireant(symbol, start_date=DEFAULT_START_DATE):
     try:
-        logging.info(f"[{symbol}] Kéo Khối ngoại từ FireAnt...")
+        black_box.info("Kéo dữ liệu khối ngoại từ FireAnt", symbol=symbol)
         url = (
             f"https://restv2.fireant.vn/symbols/{symbol}/historical-quotes"
             f"?startDate={start_date}&endDate={FIREANT_END_DATE}&limit={FIREANT_RECORD_LIMIT}"
@@ -127,12 +115,12 @@ def fetch_fireant(symbol, start_date=DEFAULT_START_DATE):
                 
                 out_path = os.path.join(FIREANT_DIR, f"{symbol}_historical_fireant.parquet")
                 safe_write_parquet(out_path, df)
-                logging.info(f"[{symbol}] Đã lưu -> {out_path}")
+                black_box.info("Đã lưu dữ liệu FireAnt", symbol=symbol, output=out_path, rows=len(df))
                 return True
         else:
-            logging.error(f"[{symbol}] FireAnt API lỗi {res.status_code}")
+            black_box.error("FireAnt API trả lỗi", symbol=symbol, status_code=res.status_code)
     except Exception as e:
-        logging.error(f"[{symbol}] FireAnt Exception: {e}")
+        black_box.exception("FireAnt exception", symbol=symbol)
     return False
 
 def collect_data(symbol):
@@ -141,7 +129,7 @@ def collect_data(symbol):
     
     # Resume Check
     if os.path.exists(path_vnstock) and os.path.exists(path_fireant):
-        logging.info(f"[{symbol}] Đã cào đủ 2 nguồn, bỏ qua (Resume mode).")
+        black_box.info("Đã đủ hai nguồn, bỏ qua theo Resume mode", symbol=symbol)
         return
         
     if not os.path.exists(path_vnstock):
@@ -151,7 +139,8 @@ def collect_data(symbol):
         fetch_fireant(symbol)
 
 def run_all(symbols):
-    logging.info(f"Bắt đầu thu thập cho {len(symbols)} mã...")
+    run_log = black_box
+    run_log.info("Bắt đầu batch thu thập", total=len(symbols))
     
     total_symbols = len(symbols)
     idx = 0
@@ -160,10 +149,10 @@ def run_all(symbols):
         batch_size = random.randint(BATCH_SIZE_MIN, BATCH_SIZE_MAX)
         batch_symbols = symbols[idx:idx+batch_size]
         
-        logging.info(f"--- Đợt cào mới: Quét {len(batch_symbols)} mã ({', '.join(batch_symbols)}) ---")
+        run_log.info("Bắt đầu đợt cào", batch_size=len(batch_symbols), symbols=batch_symbols)
         
         for sym in batch_symbols:
-            logging.info(f"Tiến độ: {idx+1}/{total_symbols} - Đang xử lý: {sym}")
+            run_log.info("Tiến độ thu thập", current=idx + 1, total=total_symbols, symbol=sym)
             collect_data(sym)
             idx += 1
             
@@ -171,18 +160,18 @@ def run_all(symbols):
             
         if idx < total_symbols:
             long_delay = random.uniform(INTER_BATCH_DELAY_MIN, INTER_BATCH_DELAY_MAX)
-            logging.info(f"[*] Hoàn thành đợt cào. Nghỉ ngơi giải lao {long_delay:.2f} giây để lừa Server...")
+            run_log.info("Hoàn thành đợt cào, chờ trước batch tiếp", delay_s=round(long_delay, 2))
             time.sleep(long_delay)
 
 if __name__ == "__main__":
     from vnstock import Listing
     
-    logging.info("=== Đang tải danh sách toàn bộ mã chứng khoán từ vnstock... ===")
+    black_box.info("Đang tải danh sách toàn bộ mã chứng khoán từ vnstock")
     ls = Listing()
     all_df = ls.all_symbols()
     all_symbols = all_df['symbol'].tolist()
-    logging.info(f"=== Tổng cộng {len(all_symbols)} mã. THÁO THẮNG - HẾT GA - HẾT SỐ! ===")
+    black_box.info("Đã tải danh sách mã", total=len(all_symbols))
     
     run_all(all_symbols)
     
-    logging.info("=== HOÀN THÀNH THU HOẠCH TOÀN BỘ THỊ TRƯỜNG! ===")
+    black_box.info("Hoàn thành thu thập toàn bộ thị trường")

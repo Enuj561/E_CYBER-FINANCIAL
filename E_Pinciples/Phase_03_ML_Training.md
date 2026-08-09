@@ -1,298 +1,276 @@
 # Chương 12 — Phase 3: ML Training
 
-> [!WARNING]
-> **PHASE LÕI CỦA DỰ ÁN.** Xem lại toàn bộ chương này khi chuẩn bị bắt đầu Phase 3.
+> **Trạng thái:** PLANNED — Phase lõi nhưng chưa được coi là đã chọn xong framework/model.
+>
+> **Agent phải đọc file này khi:** thiết kế target/features/split, thử PyCaret/XGBoost/LightGBM/CatBoost, train/tune/blend, lưu model/metrics hoặc đưa sentiment vào ML.
+>
+> **Roadmap gốc:** [19-MONTH_PLANNING.md](../19-MONTH_PLANNING.md) — thời lượng 6 tháng; so sánh ba dòng gradient boosting; bắt buộc walk-forward/time-series validation; theo dõi RAM/thời gian; xem xét blend; đổi investment context thì retrain.
+>
+> **Timeline suy ra:** Tháng 5–10, sau Phase 2.
 
-> **Mô hình: Arena / Tournament (4 tầng)**
-> **Thời lượng:** 6 tháng | **Tech stack:** PyCaret, XGBoost, LightGBM, CatBoost
+## 12.1. Mục tiêu Phase
 
----
+Phase 3 không chỉ tìm model có metric cao nhất. Nó phải tạo một experiment có thể tái hiện và không nhìn tương lai:
 
-## 11.1. Kiến trúc 4 tầng
+1. Định nghĩa prediction question, horizon và target.
+2. Khóa data/features theo thời điểm thực tế có thể biết.
+3. Chia train/validation/test theo thời gian.
+4. So baseline với model candidates công bằng.
+5. Tune/blend chỉ trên train/validation.
+6. Đánh giá một lần trên holdout chưa đụng tới.
+7. Lưu model **cùng preprocessing, feature schema, config và provenance**.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        TẦNG 0: CONFIG                              │
-│                   (Read-only, con người viết)                      │
-│                                                                     │
-│  training_config.yaml          experiment_registry.json             │
-│  ┌─────────────────────┐       ┌────────────────────────┐          │
-│  │ target: 'signal'    │       │ experiments:            │          │
-│  │ fold_strategy: ts   │       │   - id: exp_001         │          │
-│  │ fold: 5             │       │     date: 2027-01-15    │          │
-│  │ context: 'long'     │       │     config: long_v1     │          │
-│  │ models:             │       │     status: completed   │          │
-│  │   - xgboost         │       │     best_model: blend   │          │
-│  │   - lightgbm        │       │     metrics: {...}      │          │
-│  │   - catboost         │       └────────────────────────┘          │
-│  │ blend: true         │                                            │
-│  │ optimize: 'AUC'     │                                            │
-│  └─────────────────────┘                                            │
-├─────────────────────────────────────────────────────────────────────┤
-│                     TẦNG 1: DATA PREP (Input)                      │
-│                                                                     │
-│  data_loader.py         feature_builder.py      target_builder.py  │
-│  ┌───────────────┐      ┌──────────────────┐    ┌───────────────┐  │
-│  │ Đọc parquet   │  →   │ Tạo features từ  │ →  │ Tạo biến mục │  │
-│  │ từ Phase 1-2  │      │ TA indicators    │    │ tiêu (signal)│  │
-│  │ + News data   │      │ + Sentiment      │    │ buy/sell/hold│  │
-│  └───────────────┘      └──────────────────┘    └───────────────┘  │
-│                                                         ↓          │
-│                                                   DataFrame       │
-│                                                   (sẵn sàng)      │
-├─────────────────────────────────────────────────────────────────────┤
-│                     TẦNG 2: ARENA (Core PyCaret)                   │
-│                 ⚔️ "Sàn đấu" — module DUY NHẤT gọi PyCaret ⚔️     │
-│                                                                     │
-│  arena_runner.py                      resource_monitor.py          │
-│  ┌──────────────────────────────┐     ┌────────────────────────┐   │
-│  │ 1. exp.setup(df, config)     │     │ Giám sát RAM + CPU     │   │
-│  │ 2. exp.compare_models()      │  ←  │ Cảnh báo nếu vượt      │   │
-│  │ 3. exp.tune_model() × top N  │     │ ngưỡng cho phép        │   │
-│  │ 4. exp.blend_models()        │     └────────────────────────┘   │
-│  │ 5. exp.finalize_model()      │                                   │
-│  └──────────────────────────────┘                                   │
-│                    ↓                                                │
-│              Trained Model + Raw Metrics                           │
-├─────────────────────────────────────────────────────────────────────┤
-│                  TẦNG 3: OUTPUT (Evaluation + Export)               │
-│                                                                     │
-│  metrics_collector.py     report_generator.py    model_exporter.py │
-│  ┌───────────────────┐    ┌──────────────────┐   ┌──────────────┐  │
-│  │ Thu thập metrics  │ →  │ Tạo báo cáo so   │   │ Lưu model    │  │
-│  │ từ Arena results  │    │ sánh giữa các    │   │ .pkl/.joblib │  │
-│  │ AUC, F1, Recall  │    │ experiments      │   │ → Models/    │  │
-│  └───────────────────┘    └──────────────────┘   └──────────────┘  │
-│                                                         ↓          │
-│                                                  Phase 4 đọc      │
-│                                                  model từ đây     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+“Model mạnh nhất” là model tốt nhất theo mục tiêu đã chốt, không phải model thắng một metric duy nhất.
 
----
+## 12.2. Điều kiện bắt đầu
 
-## 11.2. Dependency Flow
+Trước khi Phase 3 code chính thức:
 
-```
-Config ─────────────────────────────────────┐
-   │                                         │
-   ↓                                         │
-Data Prep ──→ DataFrame (output)            │
-                  │                          │
-                  ↓                          ↓
-              Arena Runner ←── reads Config + DataFrame
-                  │
-                  ↓
-              Output Layer (Metrics → Report → Export)
-                  │
-                  ↓
-              Models/ folder ──→ Phase 4 Backtester đọc
-```
+- Phase 1 có data contract và point-in-time rule usable.
+- Phase 2 có feature-set version, leakage test và output ổn định.
+- Prediction horizon/context được người dùng duyệt: dài hạn, trung hạn hay lướt sóng.
+- Target definition được duyệt trước khi chọn model.
+- Chốt metric chính/phụ và chi phí sai lầm.
+- Chọn/pin toolchain theo [EF-S-06 §6.4–6.9](./EF-S-06_Library_Catalog.md).
 
----
+PyCaret, XGBoost, LightGBM và CatBoost hiện là roadmap candidates. Agent không được tự cài cả bộ trước bước audit/benchmark nhỏ.
 
-## 11.3. Cấu trúc thư mục
+## 12.3. Kế hoạch 6 tháng
 
-```
-Phase 3/
-├── 3.0_Config/                           # TẦNG 0 — CONFIG
-│   ├── training_config.yaml                  # Hyperparameters, fold, context
-│   └── experiment_registry.json              # Lịch sử tất cả experiments
-│
-├── 3.1_Data_Prep/                        # TẦNG 1 — DATA PREP
-│   ├── data_loader.py                        # Đọc parquet từ Phase 1
-│   ├── feature_builder.py                    # Tạo features (TA + Sentiment)
-│   └── target_builder.py                     # Tạo biến mục tiêu (buy/sell)
-│
-├── 3.2_Arena/                            # TẦNG 2 — ARENA (PyCaret core)
-│   ├── arena_runner.py                       # DUY NHẤT gọi PyCaret APIs
-│   └── resource_monitor.py                   # Giám sát RAM + thời gian
-│
-├── 3.3_Output/                           # TẦNG 3 — OUTPUT
-│   ├── metrics_collector.py                  # Thu thập AUC, F1, Recall...
-│   ├── report_generator.py                   # Báo cáo so sánh experiments
-│   └── model_exporter.py                     # Lưu/Load model (.pkl)
-│
-└── Models/                               # Folder chứa model artifacts
-    ├── exp_001_blend_long_v1.pkl
-    └── exp_002_xgboost_mid_v1.pkl
-```
-
----
-
-## 11.4. Kiểu module đặc thù và hành vi chi tiết
-
-Ngoài các hậu tố chung ở [§3.2 — EF-S-01](./EF-S-01_Data_Structure.md), Phase 3 bổ sung:
-
-| Hậu tố | Ý nghĩa | Ví dụ |
+| Tháng | Trọng tâm | Kết quả phải có |
 |---|---|---|
-| `_loader` | Đọc data từ phase trước | `data_loader.py` |
-| `_builder` | Xây dựng/tạo mới (features, target) | `feature_builder.py`, `target_builder.py` |
-| `arena_runner` | Module DUY NHẤT chạy PyCaret arena | `arena_runner.py` |
-| `_monitor` | Giám sát tài nguyên (RAM, CPU, thời gian) | `resource_monitor.py` |
-| `_collector` (metrics) | Thu thập và chuẩn hóa metrics | `metrics_collector.py` |
-| `_generator` | Tạo báo cáo so sánh | `report_generator.py` |
-| `_exporter` | Lưu/Load model artifacts | `model_exporter.py` |
+| 5 | Prediction question, target, point-in-time dataset | Dataset specification + leakage review |
+| 6 | Chronological split, baseline, experiment harness | Baseline report + reproducible run |
+| 7 | XGBoost/LightGBM/CatBoost candidates | So sánh công bằng trên cùng split |
+| 8 | Tuning, class imbalance, calibration | Tuning report không dùng holdout |
+| 9 | Xem xét blend và stability/resource test | Blend decision có bằng chứng |
+| 10 | Final holdout, export, handoff Phase 4 | Versioned model bundle + model card |
 
-### Hành vi chi tiết từng module
+Đây là phân bổ làm việc suy ra từ roadmap, không phải lý do bỏ qua gate nếu data/leakage chưa đạt.
 
-### TẦNG 0: CONFIG (Read-only)
+## 12.4. Kiến trúc mục tiêu
 
-**`training_config.yaml`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm** | Lưu trữ TẤT CẢ tham số cần thiết cho 1 experiment |
-| **Ai đọc?** | `arena_runner.py`, `data_loader.py`, `feature_builder.py` |
-| **Ai ghi?** | Chỉ CON NGƯỜI — không module nào được ghi vào đây |
-| **Khi nào thay đổi?** | Khi chuyển context (dài hạn → trung hạn), khi thử hyperparameters mới |
-
-**`experiment_registry.json`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm** | Ghi lại lịch sử TẤT CẢ experiments đã chạy (nhật ký sàn đấu) |
-| **Ai đọc?** | `report_generator.py` (để so sánh giữa các experiments) |
-| **Ai ghi?** | `arena_runner.py` (sau khi hoàn thành 1 experiment) |
-| **Khi nào thay đổi?** | Sau mỗi lần chạy Arena |
-
-> [!IMPORTANT]
-> `experiment_registry.json` là ngoại lệ duy nhất trong tầng Config được ghi bởi code. Nó là **nhật ký**, không phải config input.
-
-### TẦNG 1: DATA PREP (Input)
-
-**`data_loader.py`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Đọc parquet từ `Phase_1_Data/` (Phase 1) và trả về raw DataFrame |
-| **Input** | Đường dẫn tới `Phase_1_Data/E_OHLCV/`, `Phase_1_Data/E_BCTC/` |
-| **Output** | `pd.DataFrame` — data thô, chưa xử lý |
-| **KHÔNG ĐƯỢC** | Tạo features, tính indicator, gọi API, modify data gốc |
-| **Khi nào thay đổi?** | Chỉ khi cấu trúc data thô từ Phase 1 thay đổi |
-
-**`feature_builder.py`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Tạo tất cả features cần thiết cho ML từ raw DataFrame |
-| **Input** | Raw DataFrame từ `data_loader` + config (biết cần features nào) |
-| **Output** | DataFrame đã có đầy đủ features (TA indicators, sentiment scores...) |
-| **KHÔNG ĐƯỢC** | Train model, evaluate, gọi PyCaret, đọc file trực tiếp |
-| **Khi nào thay đổi?** | Khi thêm/bớt technical indicators (Phase 2), khi tích hợp News data (Phase 5) |
-
-**`target_builder.py`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Tạo biến mục tiêu (target variable) — tín hiệu mua/bán |
-| **Input** | Featured DataFrame + config (biết context: dài hạn hay trung hạn) |
-| **Output** | DataFrame có thêm cột `signal` (1 = buy, 0 = hold, -1 = sell) |
-| **KHÔNG ĐƯỢC** | Tạo features, train model, đọc file trực tiếp |
-| **Khi nào thay đổi?** | Khi thay đổi strategy/context (dài hạn ↔ trung hạn ↔ lướt sóng) |
-
-> [!TIP]
-> Tách riêng `target_builder.py` khỏi `feature_builder.py` là **cực kỳ quan trọng**. Planning nói rõ: *"Nếu thay đổi context từ dài hạn sang trung hạn, cần train lại model."* — Khi chuyển context, chỉ `target_builder` thay đổi, còn features giữ nguyên. Đây chính là SRP: **1 lý do thay đổi duy nhất**.
-
-### TẦNG 2: ARENA (Core PyCaret)
-
-**`arena_runner.py` ⚔️**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Là module **DUY NHẤT** trong toàn dự án được phép gọi PyCaret APIs |
-| **Input** | DataFrame (từ Tầng 1) + Config (từ Tầng 0) |
-| **Output** | Trained model object + raw metrics dict |
-| **KHÔNG ĐƯỢC** | Đọc file data trực tiếp, tạo features, render báo cáo, lưu model ra disk |
-| **Khi nào thay đổi?** | Chỉ khi PyCaret API thay đổi (upgrade version) hoặc thêm bước mới vào arena |
-
-> [!WARNING]
-> **Tại sao `arena_runner.py` phải là module DUY NHẤT gọi PyCaret?**
-> PyCaret quản lý state nội bộ (experiment session, preprocessor pipeline, CV splits...). Nếu nhiều file cùng gọi PyCaret, state sẽ conflict → kết quả không reproducible. Tập trung PyCaret vào 1 file = kiểm soát state = kết quả tin cậy.
-
-**`resource_monitor.py`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Giám sát RAM + CPU + thời gian trong quá trình training |
-| **Input** | Được `arena_runner` gọi trước/sau mỗi bước |
-| **Output** | Log cảnh báo nếu vượt ngưỡng + resource usage dict |
-| **KHÔNG ĐƯỢC** | Gọi PyCaret, đọc data, can thiệp vào training |
-| **Khi nào thay đổi?** | Khi thay đổi ngưỡng RAM/CPU cho phép |
-
-### TẦNG 3: OUTPUT (Evaluation + Export)
-
-**`metrics_collector.py`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Nhận raw metrics từ Arena, chuẩn hóa và lưu trữ có cấu trúc |
-| **Input** | Metrics dict từ `arena_runner` |
-| **Output** | Structured metrics (JSON/DataFrame) + ghi vào `experiment_registry.json` |
-| **KHÔNG ĐƯỢC** | Gọi PyCaret, train model, render báo cáo visual |
-
-**`report_generator.py`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Tạo báo cáo so sánh giữa các experiments |
-| **Input** | `experiment_registry.json` (lịch sử experiments) |
-| **Output** | Báo cáo markdown/HTML so sánh performance giữa các lần chạy |
-| **KHÔNG ĐƯỢC** | Train model, gọi PyCaret, modify metrics |
-| **Khi nào thay đổi?** | Khi muốn thêm loại chart/biểu đồ so sánh mới |
-
-**`model_exporter.py`**
-| Thuộc tính | Mô tả |
-|---|---|
-| **Trách nhiệm DUY NHẤT** | Lưu model ra disk (.pkl/.joblib) và load model từ disk |
-| **Input** | Trained model object từ Arena |
-| **Output** | File `.pkl` trong `Models/` folder |
-| **KHÔNG ĐƯỢC** | Train model, evaluate, gọi PyCaret |
-| **Ai đọc output?** | Phase 4 Backtester — load model để mô phỏng đầu tư |
-
----
-
-## 11.5. Error Handling
-
-**Chiến lược: Graceful + Checkpoint** (Xem thêm [EF-S-02](./EF-S-02_Error_Handling.md))
-
-Training lâu (hàng giờ), crash = mất hết. Code PHẢI:
-- Log progress sau mỗi bước chính (setup, compare, tune, blend)
-- Checkpoint experiment state vào `experiment_registry.json`
-- Catch exception ở tầng `arena_runner`, log đầy đủ rồi mới re-raise
-- KHÔNG nuốt lỗi im lặng
-
----
-
-## 11.6. Quy tắc Dependency Phase 3 — Tóm gọn
-
-```
-✅ ĐƯỢC PHÉP:
-   arena_runner  → data_loader, feature_builder, target_builder (Tầng 1)
-   arena_runner  → resource_monitor (giám sát)
-   arena_runner  → reads training_config.yaml (Tầng 0)
-   metrics_collector → reads arena results + writes experiment_registry
-   report_generator  → reads experiment_registry
-   model_exporter    → receives model from arena_runner
-   Phase 4           → model_exporter.load_model()
-
-❌ BỊ CẤM:
-   data_loader       ✗ KHÔNG ĐƯỢC gọi feature_builder hoặc arena_runner
-   feature_builder   ✗ KHÔNG ĐƯỢC gọi ngược data_loader
-   target_builder    ✗ KHÔNG ĐƯỢC gọi feature_builder
-   arena_runner      ✗ KHÔNG ĐƯỢC lưu model ra disk (delegate cho exporter)
-   arena_runner      ✗ KHÔNG ĐƯỢC render báo cáo (delegate cho report_generator)
-   resource_monitor  ✗ KHÔNG ĐƯỢC can thiệp training (chỉ quan sát + cảnh báo)
-   metrics_collector ✗ KHÔNG ĐƯỢC gọi PyCaret
-   report_generator  ✗ KHÔNG ĐƯỢC modify metrics
-   training_config   ✗ KHÔNG ĐƯỢC import bởi bất kỳ module nào (chỉ đọc file)
+```text
+Tầng 0 — Experiment Config (input, read-only)
+                   ↓
+Tầng 1 — Point-in-time Dataset Builder
+  Phase 1 + Phase 2 + optional Phase 5 contracts
+                   ↓
+Tầng 2 — Experiment/Arena Service
+  split → baseline → compare → tune → optional blend
+                   ↓
+Tầng 3 — Evaluation & Artifact Repository
+  metrics + plots + model bundle + registry
 ```
 
----
+Dependency direction:
 
-## 11.7. Output Contract
+- Dataset Builder đọc data contracts; không train model.
+- Arena nhận dataset/config qua tham số; không tự đi cào/ghi rải rác.
+- Artifact Repository lưu atomic/versioned output.
+- Report đọc metrics/artifacts; không train lại ngầm.
+- Phase 4 chỉ load bundle đã xuất; không gọi ngược Arena để train.
 
-| Thuộc tính | Giá trị |
-|---|---|
-| **Format** | `.pkl` / `.joblib` (model) + `.json` (metrics + registry) |
-| **Vị trí** | `Phase_3_Data/Models/` |
-| **Tên file** | `exp_{ID}_{model_type}_{context}_{version}.pkl` |
-| **Ai đọc?** | Phase 4 Backtester qua `model_exporter.load_model()` |
+Tham chiếu: [EF-S-00 §0.2–0.7](./EF-S-00_Dependency_Direction.md), [EF-S-03 §3.5–3.10](./EF-S-03_Data_Pipeline.md).
 
-> [!IMPORTANT]
-> **Constraints từ Planning:**
-> - BẮT BUỘC dùng **Time Series Split** (Walk-forward validation)
-> - Xem xét thời gian và **RAM tiêu thụ** khi training
-> - Xem xét dùng **`blend_models`** để tránh sai số
-> - Nếu thay đổi context (dài hạn → trung hạn), cần **train lại** model
+## 12.5. Cấu trúc mục tiêu tối thiểu
+
+```text
+Main Scripts/Phase 3/
+├── Config/
+│   └── training_config.yaml
+├── E_ml_dataset_builder.py
+├── E_target_builder.py
+├── E_experiment_manager.py
+├── E_resource_monitor.py
+├── E_metrics_evaluator.py
+├── E_model_repository.py
+└── E_report_renderer.py
+
+Phase_3_Data/
+├── Datasets/
+├── Models/
+├── Metrics/
+└── Registry/
+```
+
+Tên/folder cuối cùng được chốt khi triển khai. Không tạo toàn bộ skeleton rỗng trước khi trách nhiệm thật xuất hiện.
+
+Nếu dùng PyCaret, có thể có `E_pycaret_arena.py` làm adapter/facade tập trung. Mục đích là giữ config/run nhất quán và dễ thay công cụ, **không phải** vì import PyCaret ở file thứ hai tự động gây conflict.
+
+## 12.6. Prediction question và target
+
+Trước khi code `target_builder`, phải trả lời:
+
+- Dự đoán gì: return, direction, buy/hold/sell hay risk?
+- Tại thời điểm nào model phát tín hiệu?
+- Horizon bao lâu?
+- Giá dùng để tạo target là close/open/adjusted và thời điểm thực thi nào?
+- Threshold/class definition là gì?
+- Target có tính transaction cost hay không?
+- Context dài/trung/ngắn khác nhau thế nào?
+
+Target thường dùng future return để tạo nhãn trong dữ liệu lịch sử. Điều đó hợp lệ **chỉ ở cột target**; future information không được lọt vào feature.
+
+Đổi context/horizon/target definition tạo một experiment family mới và thường yêu cầu rebuild dataset + retrain. Không chỉ đổi tên model file.
+
+## 12.7. Point-in-time dataset và chống leakage
+
+Mỗi row tại thời điểm `t` chỉ được chứa thông tin có thể biết tại `t`:
+
+- Technical features chỉ dùng giá tới `t`.
+- BCTC dùng ngày công bố/available date, không dùng quarter-end nếu báo cáo chưa công bố.
+- News dùng published/received timestamp và aggregation window đã chốt.
+- Normalization/imputation/feature selection chỉ fit trên training fold.
+- Không tính scaler trên toàn dataset trước khi split.
+- Không dùng revised/corrected data tương lai nếu live system tại `t` không có nó, trừ khi đánh dấu rõ limitation.
+
+Dataset snapshot/fingerprint phải được lưu để experiment có thể tái hiện.
+
+## 12.8. Split bắt buộc theo thời gian
+
+Roadmap yêu cầu Time Series Split/Walk-forward validation.
+
+Thiết kế tối thiểu:
+
+```text
+Train window → Validation window
+      dịch thời gian → Train mở rộng/rolling → Validation tiếp theo
+                                                     ↓
+                                  Final untouched holdout
+```
+
+Quy tắc:
+
+- Không random shuffle time-series rows.
+- Symbol grouping/time overlap phải được xử lý để cùng sự kiện tương lai không lọt qua fold.
+- Có gap/embargo nếu feature/target window chồng lấn gây leakage.
+- Tuning/blending không được xem final holdout.
+- Năm 2022 nếu dành cho Phase 4 stress test phải được bảo vệ khỏi quá trình tune/chọn model theo mục đích đó.
+
+## 12.9. Baseline trước “sàn đấu”
+
+Trước model phức tạp phải có baseline:
+
+- dự đoán class phổ biến;
+- rule đơn giản phù hợp nghiệp vụ;
+- logistic/linear/tree baseline khi phù hợp.
+
+Model candidate chỉ có ý nghĩa nếu thắng baseline ổn định trên nhiều fold sau khi tính variance/resource, không chỉ thắng một lần.
+
+Ba model roadmap:
+
+- XGBoost;
+- LightGBM;
+- CatBoost.
+
+Không hardcode nhận xét “model A luôn chậm/nhanh/tốt hơn”. Kết quả phụ thuộc data, parameter, hardware và version; phải benchmark trong môi trường thật.
+
+## 12.10. Metrics và chọn model
+
+Metric phải khớp target/class imbalance và chi phí sai:
+
+- classification: precision, recall, F1, ROC-AUC/PR-AUC khi phù hợp;
+- probability: calibration/Brier score khi dùng confidence;
+- stability: mean + spread qua folds/regimes;
+- resource: training time, peak RAM, inference latency;
+- Phase 4: return, drawdown, turnover, cost-adjusted performance.
+
+Không chọn model chỉ theo accuracy nếu class imbalance. Không dùng backtest metric để tune lặp trên cùng stress period đến khi đẹp.
+
+## 12.11. Tune và blend
+
+Roadmap nói “xem xét blend”, không phải bắt buộc blend.
+
+Chỉ blend khi:
+
+- base models có lỗi/strength bổ sung nhau;
+- cải thiện lặp lại qua folds/regimes;
+- không tăng complexity/resource vượt lợi ích;
+- weight/stacking được fit trong validation đúng cách;
+- final holdout vẫn untouched.
+
+Nếu blend không cải thiện ổn định, chọn model đơn giản hơn và ghi quyết định.
+
+## 12.12. Reproducibility và resource
+
+Mỗi experiment phải ghi:
+
+- run/experiment ID;
+- config + target/feature/split version;
+- random seed;
+- Python/package versions;
+- input fingerprint/date range/symbol universe;
+- model parameters;
+- fold metrics + resource usage;
+- status complete/failed/partial;
+- code commit nếu Git state rõ.
+
+Resource monitor đo peak RAM, CPU/time và artifact size; không tự kill training trừ khi policy/ngưỡng đã được duyệt.
+
+## 12.13. Error, checkpoint và registry
+
+- Expected model failure trong compare/tune có thể ghi theo candidate và tiếp tục nếu Arena vẫn còn kết quả usable.
+- Dataset/schema/leakage violation là fatal; không skip rồi train tiếp.
+- Fatal exception log traceback một lần ở boundary và run status phải là failed.
+- Checkpoint lưu milestone/artifact đã hoàn thành; không tuyên bố có thể serialize toàn bộ state thư viện nếu chưa chứng minh restore hoạt động.
+- Registry là output journal, không trộn với config input.
+- Registry/checkpoint ghi atomic và không báo completed trước khi artifact/metrics đã lưu thành công.
+
+Tham chiếu: [EF-S-02 §2.1–2.8](./EF-S-02_Error_Handling.md), [EF-S-04 §4.7–4.11](./EF-S-04_Logging_Debug.md).
+
+## 12.14. Model bundle và output contract
+
+Không chỉ lưu một file `.pkl` trần.
+
+```text
+Phase_3_Data/Models/{experiment_id}/
+├── model artifact
+├── preprocessing pipeline
+├── config snapshot
+├── feature_schema.json
+├── target_definition.json
+├── split_definition.json
+├── metrics.json
+├── environment/dependencies
+└── model_card.md
+```
+
+Tên artifact chứa experiment ID/model/context/version. Exact extension phụ thuộc tool đã chọn.
+
+Security:
+
+- Pickle/joblib chỉ load artifact tin cậy do dự án tạo.
+- Không load model file từ nguồn lạ.
+- Phase 4 phải kiểm tra schema/version compatibility trước inference.
+
+## 12.15. Testing và experiment gate
+
+Test bắt buộc:
+
+- target alignment/horizon bằng sample tính tay;
+- leakage tests cho future price, BCTC release và news timestamp;
+- split chronological/no overlap;
+- preprocessing fit chỉ trên train;
+- deterministic seed/config ở mức tool cho phép;
+- small dataset pipeline end-to-end offline;
+- artifact save/load/predict equivalence;
+- incompatible feature schema bị từ chối;
+- failed run không được ghi completed;
+- resource smoke test.
+
+Live/full training là test có chủ đích; không chạy tự động mọi commit.
+
+## 12.16. Definition of Done cho Phase 3
+
+- [ ] Prediction question, horizon, context và target được duyệt.
+- [ ] Dataset point-in-time và leakage review đạt.
+- [ ] Walk-forward/time split + untouched holdout rõ.
+- [ ] Có baseline trước candidates.
+- [ ] Candidates được so trên cùng data/split/metric.
+- [ ] Blend chỉ dùng nếu có bằng chứng ổn định.
+- [ ] RAM/time/inference cost được báo.
+- [ ] Experiment có thể tái hiện từ config/data fingerprint/version.
+- [ ] Model bundle chứa preprocessing/schema/metrics, không chỉ `.pkl`.
+- [ ] Registry phân biệt complete/failed/partial đúng sự thật.
+- [ ] Phase 4 có contract load/predict rõ và không cần gọi lại training code.

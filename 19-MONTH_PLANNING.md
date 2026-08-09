@@ -1,8 +1,14 @@
 |   Phase | Task          | To Do                                          | Note                                                     | Deadline   | Check Date   |
 |--------:|:--------------|:-----------------------------------------------|:---------------------------------------------------------|:-----------|:-------------|
-|       1 | CHUẨN BỊ DATA | Dùng thư viện vnstock để cào data.             | * *Lưu ý:                                                | 1 month    | -            |
+|       1 | CHUẨN BỊ DATA | Dùng vnstock/VCI và FireAnt để cào data.       | * *Lưu ý:                                                | 1 month    | -            |
 |         |               |                                                | -Đối với giá cổ phiếu, BẮT BUỘC dùng giá điều chỉnh.     |            |              |
 |         |               |                                                | -Không bỏ qua các mã đã chết.                            |            |              |
+|         |               |                                                | -BCTC: VCI là nguồn chính trong nhánh vnstock.           |            |              |
+|         |               |                                                | -KBS chỉ kiểm tra phụ, không tự bù data thiếu.            |            |              |
+|         |               |                                                | -FireAnt là nguồn thứ hai để tăng độ phủ BCTC.            |            |              |
+|         |               |                                                | -FireAnt và VCI có thể dùng chung data nền; không xem     |            |              |
+|         |               |                                                |  là hai xác nhận độc lập.                                 |            |              |
+|         |               |                                                | -Raw của từng nguồn phải tách riêng, không ghi đè.        |            |              |
 |     nan | nan           | Làm sạch data bằng Scikit-Learn                | nan                                                      | nan        | -            |
 |       2 | THUẬT TOÁN    | Học về ý nghĩa và thuật toán tài chính.        | -Tham khảo sử dụng thư viện TA-lib, pandas-ta.           | 3 months   | -            |
 |     nan | nan           | Viết các thuật toán và kiểm tra độ chính xác.  | nan                                                      | nan        | -            |

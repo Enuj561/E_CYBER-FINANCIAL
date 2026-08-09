@@ -9,16 +9,37 @@ import datetime
 import re
 
 # Import centralized paths
-from E_Helper.E_config import PROJECT_DIR, PHASE_5_DATA_DIR
+from E_Helper.E_config import PHASE_5_DATA_DIR
 # Import ghi file an toàn
 from E_Helper.E_io_utils import safe_write_json
+from E_Helper.E_BlackBox import get_black_box
 # Import scraper
 from News.E_news_scraper import fetch_news, RSS_FEEDS
+from News.E_ai_client import summarize_news_json
+from News.E_news_renderer import render_news_html
 
 # Tất cả lĩnh vực cần cào
 ALL_CATEGORIES = ["Vĩ mô & Tiền tệ", "Thị trường & Đầu tư", "Công nghệ"]
+black_box = get_black_box(__file__)
 
 class NewsManager:
+    @staticmethod
+    def run_summary(source, category, progress_callback=None):
+        """Use case cho IDE: cào, tóm tắt và render qua một cổng Manager duy nhất."""
+        run_log = black_box.bind()
+        run_log.info("Bắt đầu News summary", source=source, category=category)
+        news_list, debug_logs = fetch_news(source, category)
+        data = summarize_news_json(
+            news_list,
+            is_aggregated=source == "Tổng hợp",
+            progress_callback=progress_callback,
+        )
+        if "error" in data:
+            raise RuntimeError(f"Gemini summary thất bại: {data['error']}")
+        html = render_news_html(data, "Bản tin tài chính (18:00 → 18:00)", debug_logs)
+        run_log.info("News summary hoàn thành", source=source, category=category, articles=len(news_list))
+        return html
+
     @staticmethod
     def get_filename_for_date(target_date):
         """Tạo tên file theo format: News_dd_mm_yy.json cho một ngày bất kỳ."""
@@ -83,6 +104,8 @@ class NewsManager:
         all_news = {}
         all_debug = []
         total_articles = 0
+        run_log = black_box.bind()
+        run_log.info("Bắt đầu thu thập News", target_date=target_date)
 
         for category in ALL_CATEGORIES:
             if log_callback:
@@ -100,7 +123,13 @@ class NewsManager:
             all_news[category] = unique_items
             all_debug.extend(debug_logs)
             total_articles += len(unique_items)
+            run_log.info(
+                "Hoàn thành một lĩnh vực News",
+                category=category,
+                articles=len(unique_items),
+            )
 
+        run_log.info("Hoàn thành thu thập News", total_articles=total_articles)
         return all_news, all_debug, total_articles
 
     @staticmethod
@@ -121,6 +150,7 @@ class NewsManager:
         }
         
         safe_write_json(filepath, output)
+        black_box.info("Đã lưu News JSON", output=filepath, total_articles=output["metadata"]["total_articles"])
         
         return filepath
 
@@ -160,6 +190,7 @@ class NewsManager:
                     full_log += msg
                             
             except Exception as e:
+                black_box.exception("Backfill News thất bại", target_date=target_date)
                 msg = f"   ❌ [{date_str}] Lỗi khi backfill: {str(e)}\n"
                 if log_callback:
                     log_callback(msg)
@@ -174,6 +205,8 @@ class NewsManager:
         Trả về kết quả (thông báo hoàn tất) dạng string.
         """
         now = datetime.datetime.now()
+        run_log = black_box.bind()
+        run_log.info("News pipeline bắt đầu")
         log_msg = f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] Auto News Collector khởi chạy.\n"
         if log_callback:
             log_callback("Bắt đầu kiểm tra dữ liệu...")
@@ -193,6 +226,7 @@ class NewsManager:
             if log_callback:
                 log_callback(msg)
             log_msg += msg
+            run_log.info("News hôm nay đã tồn tại", filename=filename)
             return log_msg
         
         # Bước 2: Chưa có → tiến hành cào tin
@@ -212,6 +246,7 @@ class NewsManager:
                 # Ghi debug log để debug
                 for d in debug_logs:
                     log_msg += f"   {d}\n"
+                run_log.warning("News pipeline không thu được bài", debug=debug_logs)
                 return log_msg
             
             # Bước 3: Lưu file JSON
@@ -224,11 +259,12 @@ class NewsManager:
             if log_callback:
                 log_callback(msg)
             log_msg += msg
+            run_log.info("News pipeline hoàn thành", total_articles=total_articles, output=filepath)
                 
         except Exception as e:
             msg = f"❌ Lỗi khi cào tin: {str(e)}\n"
             if log_callback:
                 log_callback(msg)
-            log_msg += msg
-        
+            raise RuntimeError("News pipeline thất bại") from e
+
         return log_msg

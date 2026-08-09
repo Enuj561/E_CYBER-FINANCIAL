@@ -1,160 +1,178 @@
-# Chương 3 — EF-S-03: Data Pipeline Management (Quản lý luồng dữ liệu)
+# Chương 3 — EF-S-03: Data Pipeline (Quản lý luồng và file dữ liệu)
 
-> **Nền tảng lý thuyết:**
-> - **Nguyên tắc:** Unit of Work Pattern — "tất cả hoặc không gì cả" (all-or-nothing)
-> - **Nguồn gốc:** Tương tự *Patterns of Enterprise Application Architecture* — Martin Fowler, 2002
-> - **Giải thích:** Mọi thao tác ghi/thay đổi dữ liệu phải được quản lý chặt chẽ. Dữ liệu không được ở trạng thái "ghi được một nửa" — hoặc ghi thành công toàn bộ, hoặc không ghi gì.
+> **Trạng thái:** ACTIVE.
+>
+> **Agent phải đọc file này khi:** đọc/ghi Parquet hoặc JSON, thiết kế output của một Phase, thêm checkpoint/resume, chạy batch, snapshot, async hoặc quyết định khi nào train lại model.
+>
+> **Mục tiêu:** Không tạo file ghi dở, biết file nào là bản mới nhất, có thể chạy lại mà không làm hỏng dữ liệu và truy ra dữ liệu đã tạo từ đâu.
 
-## 1. Ai được ghi file output?
+## 3.1. Bốn khái niệm chính
 
-| Module               | Được phép? | Ghi chú                                      |
-| -------------------- | ---------- | -------------------------------------------- |
-| **Collector**        | ✅ CÓ       | Ghi data thô vào `Phase_1_Data/`             |
-| **Feature Store**    | ✅ CÓ       | Ghi features vào `Phase_2_Data/Features/`    |
-| **Manager**          | ✅ CÓ       | Điều phối ghi file qua Collector/Exporter     |
-| **Calculator**       | ❌ KHÔNG    | Chỉ tính toán thuần túy, chỉ return          |
-| **IDE_UI**           | ❌ KHÔNG    | Chỉ hiển thị, không ghi data                 |
-| **Renderer**         | ✅ CÓ       | Ghi output HTML/report                       |
-| **Exporter**         | ✅ CÓ       | Ghi model .pkl ra disk (Phase 3)             |
-
-## 2. Atomic File Write — Ghi file an toàn
-
-Ghi trực tiếp vào file đích có rủi ro corrupt nếu crash giữa chừng.
-> [!IMPORTANT]
-> **BẮT BUỘC:** Sử dụng các hàm trong `Helper/io_utils.py` để ghi file an toàn.
-> - `safe_write_json(filepath, data)`: Cho file JSON
-> - `safe_write_parquet(filepath, df)`: Cho file Parquet
-
-## 3. Checkpoint Pattern
-
-Đặc biệt quan trọng cho Phase 1 (cào 1800 mã), Phase 2 (tính features) và Phase 3 (training hàng giờ):
-- Lưu tiến trình vào các file `checkpoint_*.json` tại thư mục của mỗi Phase.
-- Cấu trúc mẫu: `{"module": "...", "started_at": "...", "updated_at": "...", "completed": [], "failed": {}, "status": "in_progress"}`
-- Code PHẢI kiểm tra checkpoint lúc bắt đầu để resume. Phase 5 không cần vì đã có check file tồn tại theo ngày.
-
-## 4. Immutability Rule
-
-| Thư mục output | Tính chất | Ghi chú |
-|---|---|---|
-| `Phase_1_Data/` | **Immutable** | Không sửa, không ghi đè file cũ sau khi cào xong |
-| `Phase_2_Data/` | **Rebuild-able** | Có thể xóa và tính lại từ dữ liệu Phase 1 bất cứ lúc nào |
-| `Phase_3_Data/Models/`| **Versioned** | Mỗi model là 1 file riêng, không overwrite |
-| `Phase_4_Data/Results/`| **Append-only** | Tạo file mới cho mỗi lần chạy backtest |
-| `Phase_5_Data/` | **Append-only** | Thêm file mới mỗi ngày, không sửa file cũ |
-| `Log_Debug/` | **Append-only** | Không được xóa (audit trail), thêm file mỗi ngày |
-
-## 5. Output Contract tổng hợp
-
-| Phase | Format | Vị trí | Tên file | Tính chất | Ai đọc? |
-|---|---|---|---|---|---|
-| **Phase 1** | `.parquet` | `Phase_1_Data/From_*/` | `{SYMBOL}_historical_{source}.parquet` | Immutable | Phase 2, Phase 3 |
-| **Phase 2** | `.parquet` | `Phase_2_Data/Features/` | `{SYMBOL}_features.parquet` | Rebuild-able | Phase 3 |
-| **Phase 3** | `.pkl` + `.json` | `Phase_3_Data/Models/` | `exp_{ID}_{model}_{context}.pkl` | Versioned | Phase 4 |
-| **Phase 4** | `.json` + charts | `Phase_4_Data/Results/` | `backtest_{date}_{strategy}.json` | Append-only | Con người |
-| **Phase 5** | `.json` + HTML | `Phase_5_Data/` | `News_{dd}_{mm}_{yy}.json` | Append-only | Phase 3, IDE_UI |
-
-## 6. Re-training Triggers (Khi nào train lại model?)
-
-| Trigger | Hành động | Lý do |
-|---|---|---|
-| Có Báo Cáo Tài Chính mới (Quý/Năm) | **Train lại** model | Dữ liệu cơ bản thay đổi → patterns thay đổi |
-| Thêm/Sửa Technical Indicators | **Train lại** model | Feature set đầu vào thay đổi |
-| Model accuracy giảm rõ rệt | **Train lại** model | Concept drift |
-| Cập nhật OHLCV hàng ngày | **KHÔNG train lại** | Model dùng để predict/warning trực tiếp. Chỉ tính toán lại indicators (Phase 2) cho ngày mới. |
-
-## 7. Asynchronous Processing (Xử lý bất đồng bộ)
-
-> **Nền tảng lý thuyết:**
-> - **Nguyên tắc:** Asynchronous I/O — xử lý nhiều tác vụ I/O đồng thời mà không chờ tuần tự
-> - **Nguồn gốc:** PEP 3156 — Guido van Rossum, 2012. Python `asyncio` module.
-> - **Giải thích:** Khi gọi API hoặc đọc file, CPU chỉ chờ response mà không làm gì. Async cho phép CPU chuyển sang xử lý tác vụ khác trong lúc chờ, tăng tốc đáng kể cho các công việc I/O-bound.
-
-### 7.1. Phase nào dùng Async?
-
-| Phase | Dùng Async? | Loại tác vụ | Lý do |
-|---|---|---|---|
-| **Phase 1** (Cào data) | ✅ CÓ | I/O-bound | Gọi API vnstock, FireAnt — chờ network response |
-| **Phase 2** (Tính toán) | ❌ KHÔNG | CPU-bound | Tính toán thuần túy, asyncio không giúp gì |
-| **Phase 3** (ML Training) | ❌ KHÔNG | CPU-bound | PyCaret tự quản lý concurrency |
-| **Phase 4** (Backtesting) | ❌ KHÔNG | CPU-bound | Mô phỏng giao dịch = tính toán tuần tự |
-| **Phase 5** (Cào tin) | ✅ CÓ | I/O-bound | Gọi RSS feeds, Gemini API — chờ network |
-
-### 7.2. Quy tắc khi dùng Async
-
-1. **Semaphore bắt buộc** — Giới hạn số request đồng thời để tránh bị API ban:
-
-```python
-# ✅ ĐÚNG — Giới hạn tối đa 5 request đồng thời
-import asyncio
-import aiohttp
-
-SEM = asyncio.Semaphore(5)
-
-async def fetch_one(session, symbol):
-    async with SEM:
-        url = f"https://api.example.com/{symbol}"
-        async with session.get(url) as resp:
-            return await resp.json()
-```
-
-2. **Error Handling trong async** — Mỗi task phải tự bắt lỗi, không để 1 task chết cả batch:
-
-```python
-# ✅ ĐÚNG — Mỗi task tự bắt lỗi
-async def safe_fetch(session, symbol):
-    try:
-        return await fetch_one(session, symbol)
-    except Exception as e:
-        logging.error(f"[{symbol}] {e}")
-        return None
-```
-
-3. **Thay thế thư viện blocking** — KHÔNG dùng `requests` trong async, dùng `aiohttp`:
-
-| Blocking (KHÔNG dùng trong async) | Async (thay thế) |
+| Khái niệm | Hiểu đơn giản |
 |---|---|
-| `requests.get()` | `aiohttp.ClientSession.get()` |
-| `time.sleep()` | `asyncio.sleep()` |
-| `open().read()` | `aiofiles.open()` *(tùy chọn)* |
-
-## 8. Data Snapshot (Ảnh chụp dữ liệu)
-
-> **Nền tảng lý thuyết:**
-> - **Nguyên tắc:** Snapshot Pattern — lưu giữ trạng thái dữ liệu tại 1 thời điểm cụ thể
-> - **Nguồn gốc:** *Patterns of Enterprise Application Architecture* — Martin Fowler, 2002
-> - **Giải thích:** Thay vì chỉ biết "trạng thái hiện tại", hệ thống cần có khả năng "nhớ lại chuyện gì đã xảy ra" tại bất kỳ thời điểm nào trong quá khứ. Điều này giúp debug, audit, và so sánh kết quả qua thời gian.
-
-### 8.1. Phase nào cần Snapshot?
-
-| Phase | Cần Snapshot? | Lý do | Trigger |
-|---|---|---|---|
-| Phase 1 | ❌ KHÔNG | Data thô đã immutable | — |
-| Phase 2 | ✅ CẦN | Features thay đổi khi thêm/sửa indicator | Mỗi lần rebuild features |
-| Phase 3 | ✅ CẦN | Model input cần tái hiện để debug | Mỗi lần train model |
-| Phase 4 | ✅ CẦN | Backtest results cần so sánh qua thời gian | Mỗi lần chạy backtest |
-| Phase 5 | ❌ KHÔNG | News JSON đã append-only theo ngày | — |
-
-### 8.2. Cấu trúc thư mục Snapshot
-
-```
-Phase_2_Data/
-├── Features/                      ← Data hiện tại (working copy)
-│   ├── VNM_features.parquet
-│   └── FPT_features.parquet
-└── Snapshots/                     ← Ảnh chụp theo thời điểm
-    ├── 2026-07-12/
-    │   ├── VNM_features.parquet
-    │   └── FPT_features.parquet
-    └── 2026-08-15/
-        ├── VNM_features.parquet
-        └── FPT_features.parquet
-```
-
-### 8.3. Quy tắc Snapshot
-
-| Quy tắc | Chi tiết |
 |---|---|
-| **Format tên folder** | `Snapshots/{YYYY-MM-DD}/` |
-| **Retention policy** | **Vĩnh viễn** — KHÔNG được xóa snapshot |
-| **Tính chất** | **Immutable** — snapshot một khi đã tạo, KHÔNG được sửa |
-| **Backup** | Sync lên Google Drive qua script riêng |
+| Atomic replacement | Ghi xong file tạm rồi mới thay file đích; tránh file bị “nửa cũ nửa mới” |
+| Idempotent | Chạy lại cùng input không tạo kết quả sai hoặc nhân đôi ngoài ý muốn |
+| Checkpoint | Ghi nhớ đã làm tới đâu để chạy tiếp sau khi dừng |
+| Data contract | Quy định rõ tên cột, kiểu dữ liệu, đơn vị, timezone và version |
+
+Không gọi atomic file write là “Unit of Work”. Unit of Work thường nói về việc gom thay đổi của một transaction/database; không đúng với trường hợp file đơn giản của dự án này.
+
+## 3.2. Ai được đọc/ghi?
+
+| Module | Đọc data | Ghi data | Ghi chú |
+|---|---:|---:|---|
+| Collector / Client | Có | Chỉ khi nó được giao cả nhiệm vụ lưu raw data | Với pipeline lớn nên trả data cho Repository/Manager |
+| Repository / Exporter | Có | Có | Tầng I/O chính |
+| Manager | Có qua Repository | Điều phối, không tự rải `open()` khắp code | Quản lý flow và metadata |
+| Calculator / Validator | Không tự đọc file | Không | Nhận data qua tham số và trả kết quả |
+| Renderer | Chỉ nhận dữ liệu cần render | Chỉ output trình bày | Không sửa raw data |
+| UI | Không đọc/ghi data nghiệp vụ trực tiếp | Không | Gọi Manager |
+
+## 3.3. Ghi file an toàn
+
+JSON và Parquet phải dùng hàm trong `E_Helper/E_io_utils.py` hoặc một Repository dùng các hàm đó:
+
+- `safe_write_json(filepath, data)`
+- `safe_write_parquet(filepath, df)`
+
+Quy trình chuẩn:
+
+1. Tạo folder đích.
+2. Ghi file tạm trong cùng filesystem/folder.
+3. Đóng và kiểm tra việc ghi đã thành công.
+4. Dùng `os.replace()` thay file đích.
+5. Xóa temp file trong `finally` nếu có lỗi.
+
+Atomic replacement giúp chống file ghi dở, nhưng không phải backup và không đảm bảo chống mọi trường hợp mất điện/hỏng disk. Dữ liệu quan trọng vẫn cần snapshot/backup riêng.
+
+## 3.4. Không gọi toàn bộ Phase 1 là immutable
+
+Dự án hiện có file kiểu:
+
+```text
+Phase_1_Data/E_OHLCV/From_vnstock/VNM_historical_vnstock.parquet
+```
+
+Đây là **latest/working snapshot**: có thể được thay atomically khi cập nhật lịch sử mới. Nó không phải immutable.
+
+Nếu cần tái hiện quá khứ để audit, tạo bản versioned riêng:
+
+```text
+Phase_1_Data/Snapshots/2026-08-09/E_OHLCV/...
+```
+
+Quy tắc:
+
+- Working/latest file: được thay bằng bản hoàn chỉnh mới.
+- Snapshot/versioned file: đã tạo thì không sửa.
+- Không ghi đè snapshot trùng version/date; nếu chạy lại phải xác nhận nội dung giống nhau hoặc tạo run ID mới.
+
+## 3.5. Output contract theo Phase
+
+| Phase | Output chính | Vị trí mục tiêu | Tính chất |
+|---|---|---|---|
+| Phase 1 | Raw/normalized Parquet | `Phase_1_Data/E_OHLCV/...`, `Phase_1_Data/E_BCTC/...` | Latest file + snapshot khi cần audit |
+| Phase 2 | Feature Parquet | `Phase_2_Data/Features/` khi Phase 2 được tạo | Có thể rebuild từ Phase 1; phải version schema |
+| Phase 3 | Model + metadata | `Phase_3_Data/Models/` khi Phase 3 được tạo | Mỗi run có ID/version riêng, không chỉ lưu `.pkl` |
+| Phase 4 | Backtest result + config | `Phase_4_Data/Results/` khi Phase 4 được tạo | Mỗi run có ID, không overwrite |
+| Phase 5 | News JSON | `Phase_5_Data/` | File theo ngày; sửa/backfill phải lưu nguồn và thời điểm cập nhật |
+
+Mỗi output quan trọng nên có metadata tối thiểu:
+
+- `schema_version`;
+- `created_at` có timezone;
+- source/source version;
+- input range hoặc input fingerprint;
+- code version/commit nếu có;
+- trạng thái complete/partial và danh sách lỗi.
+
+## 3.6. Data contract bắt buộc
+
+Trước khi Phase sau đọc output Phase trước, Agent phải ghi rõ:
+
+- tên cột và ý nghĩa;
+- type (`datetime`, `float`, `string`...);
+- đơn vị giá/khối lượng;
+- timezone;
+- cột nào bắt buộc/được null;
+- cách xử lý trùng ngày/trùng symbol;
+- `schema_version` và cách migrate khi thay đổi.
+
+Không chỉ dựa vào “DataFrame hiện đang trông như thế nào”.
+
+## 3.7. Checkpoint và resume
+
+Chỉ bắt buộc checkpoint khi tác vụ:
+
+- chạy nhiều item hoặc mất nhiều phút/giờ;
+- có thể tiếp tục độc lập từ item đã hoàn thành;
+- có chi phí gọi API/train lớn.
+
+Checkpoint mẫu:
+
+```json
+{
+  "pipeline": "phase1_bctc",
+  "run_id": "2026-08-09T21-00-00+07-00",
+  "status": "in_progress",
+  "completed": ["VNM"],
+  "failed": {"HPG": "timeout"},
+  "updated_at": "2026-08-09T21:10:00+07:00"
+}
+```
+
+Checkpoint cũng phải ghi atomically. Khi resume, Agent phải xác minh config/schema của checkpoint còn tương thích; không tiếp tục mù quáng bằng config mới.
+
+## 3.8. Async và concurrency
+
+Async/concurrency là công cụ, không phải luật theo Phase.
+
+Dùng khi:
+
+- công việc chủ yếu chờ network/I/O;
+- thư viện hỗ trợ async hoặc blocking call được đưa sang thread an toàn;
+- API cho phép nhiều request đồng thời.
+
+Không dùng khi:
+
+- thuật toán CPU-bound mà không có multiprocessing/vectorization phù hợp;
+- API có rate limit thấp;
+- thư viện không thread-safe;
+- concurrency làm khó kiểm soát thứ tự hoặc tính đúng.
+
+Khi dùng phải có giới hạn concurrency, timeout, retry/backoff và kết quả lỗi theo từng task. Không để `asyncio.gather(..., return_exceptions=True)` rồi bỏ qua các exception chưa xử lý.
+
+## 3.9. Khi nào train lại model?
+
+Không có luật “OHLCV hàng ngày thì tuyệt đối không train lại”. Quyết định retrain dựa trên:
+
+- lịch retrain đã định (tuần/tháng/quý);
+- lượng dữ liệu mới đủ lớn;
+- schema/feature thay đổi;
+- performance trên dữ liệu mới giảm;
+- phát hiện drift;
+- yêu cầu nghiên cứu cụ thể.
+
+Mọi lần train phải giữ input snapshot hoặc fingerprint, config, random seed, metric validation và model version để tái hiện.
+
+## 3.10. Retention và backup
+
+- Không quy định “giữ mọi log/snapshot vĩnh viễn” một cách mặc định.
+- Working files được thay theo pipeline.
+- Model/backtest/snapshot quan trọng giữ theo run/version.
+- Agent phải đề xuất retention theo dung lượng và giá trị audit trước khi tự động xóa.
+- Backup Google Drive chỉ được ghi là tiêu chuẩn khi script backup thật sự tồn tại và đã được kiểm thử.
+
+## 3.11. Checklist cho Agent
+
+- [ ] Đã phân biệt working/latest file và immutable snapshot?
+- [ ] Dùng atomic write và cleanup temp khi lỗi?
+- [ ] Chạy lại có idempotent hoặc có run ID rõ ràng?
+- [ ] Output path khớp cấu trúc repo thật?
+- [ ] Có schema/version/timezone/đơn vị rõ?
+- [ ] Phase sau đọc qua data contract thay vì đoán cột?
+- [ ] Chỉ dùng checkpoint cho tác vụ thật sự cần resume?
+- [ ] Resume có kiểm tra config/schema tương thích?
+- [ ] Concurrency có giới hạn, timeout và gom lỗi?
+- [ ] Model/backtest có metadata để tái hiện?

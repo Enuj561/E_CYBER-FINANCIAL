@@ -1,0 +1,167 @@
+{
+  "contract_name": "BCTC common data contract",
+  "schema_version": "bctc_v1.1.0",
+  "created_at": "2026-08-09T00:00:00+07:00",
+  "updated_at": "2026-08-09T00:00:00+07:00",
+  "canonical_formats": {
+    "quarter": "YYYY-QN",
+    "year": "YYYY",
+    "timezone_required_for_datetimes": true,
+    "money_target_currency": "VND"
+  },
+  "storage_layout": {
+    "root": "Phase_1_Data/E_BCTC",
+    "source_folders": {
+      "fireant_api": "From_FireAnt",
+      "vci": "From_vnstock",
+      "kbs": "From_vnstock"
+    },
+    "source_first": true,
+    "raw_pattern": "{source_folder}/Raw/{run_id}/{symbol}/...",
+    "normalized_pattern": "{source_folder}/Normalized/{schema_version}/{report_folder}/{symbol}_{report_type}_{period_type}_{provider}.parquet",
+    "curated_pattern": "Curated/{schema_version}/...",
+    "report_folders": {
+      "balance_sheet": "Balance_Sheet",
+      "income_statement": "Income_Statement",
+      "cash_flow": "Cash_Flow",
+      "ratio": "Ratio"
+    },
+    "legacy_direct_report_folders_are_read_only_for_new_collectors": true
+  },
+  "enums": {
+    "source": ["fireant", "vnstock"],
+    "provider": ["fireant_api", "vci", "kbs"],
+    "company_type": ["general", "bank", "securities", "insurance", "unknown"],
+    "report_type": ["balance_sheet", "income_statement", "cash_flow", "ratio", "unknown"],
+    "cash_flow_method": ["direct", "indirect", "unknown", "not_applicable"],
+    "period_type": ["quarter", "year"],
+    "period_value_mode": ["point_in_time", "standalone", "cumulative", "unknown"],
+    "consolidation_status": ["consolidated", "separate", "unknown"],
+    "value_type": ["money", "ratio", "count", "text", "unknown"],
+    "currency": ["VND", "unknown", "not_applicable"],
+    "source_unit": ["VND", "thousand_VND", "million_VND", "unknown", "not_applicable"],
+    "mapping_status": ["confirmed", "provisional", "unmapped", "rejected"],
+    "record_status": ["valid", "source_null", "parse_error", "unmapped"],
+    "collection_status": [
+      "pending",
+      "running",
+      "complete",
+      "partial",
+      "no_data_confirmed",
+      "unsupported",
+      "failed_retryable",
+      "failed_fatal",
+      "cancelled"
+    ]
+  },
+  "tables": {
+    "bctc_records": {
+      "row_meaning": "One source financial item for one symbol and one reporting period",
+      "columns": {
+        "schema_version": {"type": "string", "nullable": false},
+        "run_id": {"type": "string", "nullable": false},
+        "source": {"type": "string", "nullable": false, "enum": "source"},
+        "provider": {"type": "string", "nullable": false, "enum": "provider"},
+        "symbol": {"type": "string", "nullable": false},
+        "company_type": {"type": "string", "nullable": false, "enum": "company_type"},
+        "report_type": {"type": "string", "nullable": false, "enum": "report_type"},
+        "cash_flow_method": {"type": "string", "nullable": false, "enum": "cash_flow_method"},
+        "period_type": {"type": "string", "nullable": false, "enum": "period_type"},
+        "fiscal_year": {"type": "int16", "nullable": false},
+        "fiscal_quarter": {"type": "int8", "nullable": true, "minimum": 1, "maximum": 4},
+        "period_key": {"type": "string", "nullable": false},
+        "source_period_column_number": {"type": "int32", "nullable": true, "minimum": 1},
+        "period_value_mode": {"type": "string", "nullable": false, "enum": "period_value_mode"},
+        "consolidation_status": {"type": "string", "nullable": false, "enum": "consolidation_status"},
+        "publication_date": {"type": "date", "nullable": true},
+        "availability_date": {"type": "date", "nullable": true},
+        "source_item_id": {"type": "string", "nullable": false},
+        "source_item_name": {"type": "string", "nullable": true},
+        "source_item_name_en": {"type": "string", "nullable": true},
+        "source_row_number": {"type": "int32", "nullable": false, "minimum": 1},
+        "source_item_key": {"type": "string", "nullable": false},
+        "canonical_item_id": {"type": "string", "nullable": true},
+        "mapping_version": {"type": "string", "nullable": true},
+        "mapping_status": {"type": "string", "nullable": false, "enum": "mapping_status"},
+        "value_raw": {"type": "string", "nullable": true},
+        "value_numeric": {"type": "float64", "nullable": true},
+        "value_text": {"type": "string", "nullable": true},
+        "value_type": {"type": "string", "nullable": false, "enum": "value_type"},
+        "currency": {"type": "string", "nullable": false, "enum": "currency"},
+        "source_unit": {"type": "string", "nullable": false, "enum": "source_unit"},
+        "unit_multiplier_to_vnd": {"type": "float64", "nullable": true},
+        "value_vnd": {"type": "float64", "nullable": true},
+        "record_status": {"type": "string", "nullable": false, "enum": "record_status"},
+        "quality_flags": {"type": "list[string]", "nullable": false},
+        "collected_at": {"type": "datetime_tz", "nullable": false},
+        "raw_file": {"type": "string", "nullable": false}
+      },
+      "uniqueness_candidate": [
+        "run_id",
+        "provider",
+        "symbol",
+        "report_type",
+        "period_key",
+        "source_period_column_number",
+        "source_item_key"
+      ]
+    },
+    "bctc_collection_status": {
+      "row_meaning": "Collection result even when no financial record exists",
+      "key": ["run_id", "provider", "symbol", "report_type", "period_type"],
+      "required_columns": [
+        "schema_version",
+        "run_id",
+        "source",
+        "provider",
+        "symbol",
+        "report_type",
+        "period_type",
+        "status",
+        "requested_count",
+        "received_count",
+        "started_at",
+        "finished_at",
+        "raw_file",
+        "error_type",
+        "error_message"
+      ],
+      "status_enum": "collection_status"
+    },
+    "bctc_item_mapping": {
+      "row_meaning": "One reviewed mapping from a provider item to a canonical item",
+      "required_columns": [
+        "mapping_version",
+        "canonical_item_id",
+        "provider",
+        "company_type",
+        "report_type",
+        "source_item_id",
+        "source_item_name",
+        "source_row_number",
+        "sign_multiplier",
+        "mapping_status",
+        "evidence",
+        "reviewed_at"
+      ],
+      "mapping_status_enum": "mapping_status"
+    }
+  },
+  "rules": {
+    "annual_quarter_must_be_null": true,
+    "quarter_requires_fiscal_quarter": true,
+    "money_value_vnd_formula": "value_numeric * unit_multiplier_to_vnd",
+    "unknown_unit_forbids_value_vnd": true,
+    "raw_sources_must_remain_separate": true,
+    "source_folder_and_source_metadata_are_both_required": true,
+    "duplicate_source_item_ids_must_not_be_dropped": true,
+    "publication_date_must_not_use_period_end_as_fallback": true,
+    "unknown_consolidation_must_not_be_guessed": true,
+    "final_value_is_not_defined": true
+  },
+  "migration": {
+    "from_bctc_v1.0.0": {
+      "source_period_column_number": "Use 1 only for old normalized data that lacks this column; v1.1 normalizer records the real occurrence."
+    }
+  }
+}

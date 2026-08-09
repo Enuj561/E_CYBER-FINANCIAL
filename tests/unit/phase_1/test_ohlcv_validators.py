@@ -1,15 +1,22 @@
 """
-Module:  E_test_phase1
+Module:  test_ohlcv_validators
 Logic:   Unit tests for Phase 1 data collection and integrity
 Detail:  Test tự động cho các chức năng Phase 1. Dùng pytest + mock data.
-         Chạy: pytest E_test_phase1.py -v
+         Chạy mặc định offline; không đọc hoặc ghi data production.
 """
-import pytest
+from pathlib import Path
+import sys
+import unittest
+
 import pandas as pd
-import numpy as np
 
 
-class TestVolumeBalance:
+ROOT = Path(__file__).resolve().parents[3]
+OHLCV_DIR = ROOT / "Main Scripts" / "Phase 1" / "1.1_Data_OHLCV"
+sys.path.insert(0, str(OHLCV_DIR))
+
+
+class TestVolumeBalance(unittest.TestCase):
     """Test check volume balance: totalVolume == dealVolume + putthroughVolume."""
 
     def test_pass_when_balanced(self):
@@ -22,7 +29,7 @@ class TestVolumeBalance:
             'putthroughVolume': [200, 500],
         })
         result = check_volume_balance(df, 'TEST')
-        assert result['status'] == 'PASS'
+        self.assertEqual(result['status'], 'PASS')
 
     def test_fixed_when_unbalanced(self):
         """Khi deal + putthrough != total → FIXED (auto-fix)."""
@@ -34,11 +41,11 @@ class TestVolumeBalance:
             'putthroughVolume': [200],
         })
         result = check_volume_balance(df, 'TEST')
-        assert result['status'] == 'FIXED'
-        assert df['totalVolume'].iloc[0] == 1000  # đã sửa
+        self.assertEqual(result['status'], 'FIXED')
+        self.assertEqual(df['totalVolume'].iloc[0], 1000)  # đã sửa
 
 
-class TestOHLCIntegrity:
+class TestOHLCIntegrity(unittest.TestCase):
     """Test check OHLC: High >= Low, Close trong range."""
 
     def test_pass_valid_ohlc(self):
@@ -52,7 +59,7 @@ class TestOHLCIntegrity:
             'priceClose': [98.0],
         })
         result = check_ohlc_integrity(df, 'TEST')
-        assert result['status'] == 'PASS'
+        self.assertEqual(result['status'], 'PASS')
 
     def test_fail_high_lt_low(self):
         """High < Low → FAIL."""
@@ -65,4 +72,8 @@ class TestOHLCIntegrity:
             'priceClose': [85.0],
         })
         result = check_ohlc_integrity(df, 'TEST')
-        assert result['status'] == 'FAIL'
+        self.assertEqual(result['status'], 'FAIL')
+
+
+if __name__ == "__main__":
+    unittest.main()

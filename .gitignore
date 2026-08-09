@@ -19,3 +19,26 @@ Phase_3_Data/
 Phase_4_Data/
 Phase_5_Data/
 Log_Debug/
+*.log
+*.log.*
+
+# Test, lint and coverage caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Local archive of discarded experiments and raw probes
+E_Archive/
+
+# Temporary editor / interrupted-write files
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini

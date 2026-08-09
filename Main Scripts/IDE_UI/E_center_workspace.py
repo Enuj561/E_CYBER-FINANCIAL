@@ -14,13 +14,17 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal
 
 # Import centralized paths
 from E_Helper.E_config import PHASE_5_DATA_DIR
+from E_Helper.E_BlackBox import get_black_box
+
+black_box = get_black_box(__file__)
 
 # Tất cả lĩnh vực
 ALL_CATEGORIES = ["Vĩ mô & Tiền tệ", "Thị trường & Đầu tư", "Công nghệ"]
 
 class WorkerThread(QThread):
     """Thread cào tin theo nguồn + lĩnh vực cụ thể, gọi AI tóm tắt."""
-    finished_signal = pyqtSignal(str)
+    succeeded_signal = pyqtSignal(str)
+    failed_signal = pyqtSignal(str)
     progress_signal = pyqtSignal(str)
     
     def __init__(self, source, category):
@@ -30,33 +34,26 @@ class WorkerThread(QThread):
         
     def run(self):
         try:
-            # Import tại đây để tránh circular import
-            from News.E_news_scraper import fetch_news
-            from News.E_ai_client import summarize_news_json
-            from News.E_news_renderer import render_news_html
+            from News.E_news_manager import NewsManager
 
-            # Bước 1: Cào tin
-            news_list, debug_logs = fetch_news(self.source, self.category)
-            # Bước 2: Gọi AI tóm tắt
             def progress_callback(msg):
                 self.progress_signal.emit(msg)
-                
-            tf_text = "Bản tin tài chính (18:00 → 18:00)"
-            
-            # Gọi AI Client để lấy dict
-            data_dict = summarize_news_json(news_list, self.source == "Tổng hợp", progress_callback)
-            
-            # Đưa dict cho Renderer vẽ ra HTML
-            summary_html = render_news_html(data_dict, tf_text, debug_logs)
-            
-            self.finished_signal.emit(summary_html)
+
+            summary_html = NewsManager.run_summary(
+                source=self.source,
+                category=self.category,
+                progress_callback=progress_callback,
+            )
+            self.succeeded_signal.emit(summary_html)
         except Exception as e:
-            self.finished_signal.emit(f"Lỗi hệ thống: {str(e)}")
+            black_box.exception("News summary worker thất bại")
+            self.failed_signal.emit(str(e))
 
 
 class JsonWorkerThread(QThread):
     """Thread chạy nền để cào tất cả tin tức và lưu JSON."""
-    finished_signal = pyqtSignal(str)
+    succeeded_signal = pyqtSignal(str)
+    failed_signal = pyqtSignal(str)
     progress_signal = pyqtSignal(str)
 
     def run(self):
@@ -76,18 +73,16 @@ class JsonWorkerThread(QThread):
             
             # Format lại log thành HTML để hiển thị ở cửa sổ kết thúc
             html_report = f'<div style="color:#4EC9B0; font-family:Segoe UI; font-size:15px; white-space: pre-wrap;">{full_log}</div>'
-            self.finished_signal.emit(html_report)
+            self.succeeded_signal.emit(html_report)
 
         except Exception as e:
-            self.finished_signal.emit(
-                f'<div style="color:#FF6B6B; font-family:Segoe UI; font-size:15px;">'
-                f'❌ Lỗi: {str(e)}</div>'
-            )
+            black_box.exception("News JSON worker thất bại")
+            self.failed_signal.emit(str(e))
 
 class CenterWorkspace(QWidget):
     def __init__(self):
         super().__init__()
-        self._logger = None
+        self._black_box = black_box
         self.setStyleSheet("background-color: #1E1E1E; color: #D4D4D4;")
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -98,14 +93,12 @@ class CenterWorkspace(QWidget):
         self.setup_welcome_page()
         self.setup_news_page()
 
-    def set_logger(self, right_panel):
-        """Kết nối với RightPanel để ghi log."""
-        self._logger = right_panel
-
     def _log(self, tag, message):
-        """Ghi log nếu logger đã được kết nối."""
-        if self._logger:
-            self._logger.log(tag, message)
+        """Ghi sự kiện của workspace; RightPanel tự nhận qua subscription."""
+        if tag == "Error":
+            self._black_box.error(message, tag=tag)
+        else:
+            self._black_box.info(message, tag=tag)
         
     def setup_welcome_page(self):
         page = QWidget()
@@ -209,7 +202,8 @@ class CenterWorkspace(QWidget):
         
         self.worker = WorkerThread(source, category)
         self.worker.progress_signal.connect(self.on_aggregation_progress)
-        self.worker.finished_signal.connect(self.on_aggregation_done)
+        self.worker.succeeded_signal.connect(self.on_aggregation_done)
+        self.worker.failed_signal.connect(self.on_aggregation_error)
         self.worker.start()
 
     def on_aggregation_progress(self, msg):
@@ -221,6 +215,12 @@ class CenterWorkspace(QWidget):
         self.btn_run.setText("⚡ Chạy Gemini Tổng Hợp")
         self.news_display.setHtml(summary)
         self._log("News", "Hoàn tất cào tin và tóm tắt bằng Gemini.")
+
+    def on_aggregation_error(self, error_message):
+        self.btn_run.setEnabled(True)
+        self.btn_run.setText("⚡ Chạy Gemini Tổng Hợp")
+        self.news_display.setText(f"Không thể tổng hợp News: {error_message}")
+        self._log("Error", f"News summary thất bại: {error_message}")
 
     # === JSON Export ===
     def run_json_export(self):
@@ -234,7 +234,8 @@ class CenterWorkspace(QWidget):
         )
         self.json_worker = JsonWorkerThread()
         self.json_worker.progress_signal.connect(self.on_aggregation_progress)
-        self.json_worker.finished_signal.connect(self.on_json_done)
+        self.json_worker.succeeded_signal.connect(self.on_json_done)
+        self.json_worker.failed_signal.connect(self.on_json_error)
         self.json_worker.start()
 
     def on_json_done(self, result):
@@ -242,3 +243,9 @@ class CenterWorkspace(QWidget):
         self.btn_json.setText("📁 Tổng hợp JSON")
         self.news_display.setHtml(result)
         self._log("News", "Hoàn tất tổng hợp JSON.")
+
+    def on_json_error(self, error_message):
+        self.btn_json.setEnabled(True)
+        self.btn_json.setText("📁 Tổng hợp JSON")
+        self.news_display.setText(f"Không thể tổng hợp JSON: {error_message}")
+        self._log("Error", f"News JSON pipeline thất bại: {error_message}")

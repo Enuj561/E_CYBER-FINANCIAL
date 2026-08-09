@@ -4,9 +4,7 @@ Logic:   Scheduled news collection via Windows Task Scheduler (21:00 daily)
 Detail:  Script chạy tự động hàng ngày, gọi NewsManager.run_full_pipeline().
          Có try/except toàn cục để không bao giờ crash im lặng.
 """
-import os
 import sys
-import datetime
 
 # Fix encoding cho Task Scheduler chạy ngầm
 if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
@@ -15,7 +13,8 @@ if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8')
 
 # Import centralized paths
-from E_Helper.E_config import PROJECT_DIR, MAIN_SCRIPTS_DIR
+from E_Helper.E_config import MAIN_SCRIPTS_DIR
+from E_Helper.E_BlackBox import get_black_box
 
 # Đảm bảo Main Scripts trong sys.path
 if MAIN_SCRIPTS_DIR not in sys.path:
@@ -23,27 +22,20 @@ if MAIN_SCRIPTS_DIR not in sys.path:
 
 from News.E_news_manager import NewsManager
 
-LOG_FILE = os.path.join(MAIN_SCRIPTS_DIR, "Auto", "news_log.txt")
-
-def write_log(message):
-    """Ghi log ra file."""
-    print(message)
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(message + "\n")
+black_box = get_black_box(__file__, console=True)
 
 def main():
+    run_log = black_box.bind()
     try:
-        full_log = NewsManager.run_full_pipeline(log_callback=print)
-        
-        # Ghi lại toàn bộ log vào file
-        with open(LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(full_log + "\n" + "-" * 50 + "\n")
-    except Exception as e:
-        # Bảo vệ toàn cục — ghi lỗi vào file log thay vì crash im lặng
-        error_msg = f"[{datetime.datetime.now()}] ❌ FATAL ERROR: {str(e)}\n"
-        print(error_msg)
-        with open(LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(error_msg + "-" * 50 + "\n")
+        run_log.info("Auto News bắt đầu")
+        full_log = NewsManager.run_full_pipeline(
+            log_callback=lambda message: run_log.info(str(message).strip())
+        )
+        run_log.info("Auto News hoàn thành", summary=full_log.strip())
+        return 0
+    except Exception:
+        run_log.exception("Auto News thất bại")
+        return 1
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

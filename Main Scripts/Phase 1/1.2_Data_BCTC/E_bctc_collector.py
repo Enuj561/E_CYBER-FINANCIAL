@@ -10,7 +10,6 @@ import sys
 import time
 import json
 import asyncio
-import logging
 import pandas as pd
 from datetime import datetime
 
@@ -23,6 +22,7 @@ from E_Helper.E_config import (
     BCTC_BALANCE_SHEET_DIR, BCTC_INCOME_STMT_DIR, BCTC_CASH_FLOW_DIR,
     BCTC_RATIO_DIR, LOG_DIR, ensure_dirs
 )
+from E_Helper.E_BlackBox import get_black_box
 # Import ghi file an toàn
 from E_Helper.E_io_utils import safe_write_parquet, safe_write_json
 
@@ -66,19 +66,9 @@ REPORT_TYPES = [
 # Đảm bảo thư mục tồn tại
 ensure_dirs()
 
-# Log riêng cho BCTC
-PHASE1_LOG_DIR = os.path.join(LOG_DIR, "Phase 1")
-os.makedirs(PHASE1_LOG_DIR, exist_ok=True)
-
-log_file = os.path.join(PHASE1_LOG_DIR, "bctc_collector.log")
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
+black_box = get_black_box(__file__, console=True).bind()
+LEGACY_CHECKPOINT_DIR = os.path.join(LOG_DIR, "Phase 1")
+os.makedirs(LEGACY_CHECKPOINT_DIR, exist_ok=True)
 
 # Semaphore toàn cục — giới hạn concurrency
 SEM = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
@@ -94,7 +84,7 @@ def build_output_path(symbol, suffix, out_dir):
 
 def get_checkpoint_path():
     """Trả về đường dẫn checkpoint file trong thư mục log."""
-    return os.path.join(PHASE1_LOG_DIR, CHECKPOINT_FILE)
+    return os.path.join(LEGACY_CHECKPOINT_DIR, CHECKPOINT_FILE)
 
 
 def load_checkpoint():
@@ -166,7 +156,7 @@ def fetch_report_sync(symbol, report_type, period=None):
                     df = _call_vnstock_api(eq, report_type, period, orient='time_series')
                 except Exception as orient_err:
                     # Fallback sang orient='report' nếu time_series lỗi (duplicate columns)
-                    logging.warning(
+                    black_box.warning(
                         f"[{symbol}] {report_type} orient='time_series' lỗi, "
                         f"fallback sang 'report': {orient_err}"
                     )
@@ -175,18 +165,18 @@ def fetch_report_sync(symbol, report_type, period=None):
             if df is not None and not df.empty:
                 return df
             else:
-                logging.warning(f"[{symbol}] {report_type} (period={period}): Không có dữ liệu.")
+                black_box.warning("Không có dữ liệu BCTC", symbol=symbol, report_type=report_type, period=period)
                 return None
 
         except Exception as e:
-            logging.warning(
+            black_box.warning(
                 f"[{symbol}] {report_type} (period={period}) — "
                 f"Lần thử {attempt}/{RETRY_MAX} lỗi: {e}"
             )
             if attempt < RETRY_MAX:
                 time.sleep(RETRY_DELAY_SECONDS)
 
-    logging.error(f"[{symbol}] {report_type} (period={period}): Thất bại sau {RETRY_MAX} lần thử.")
+    black_box.error("BCTC thất bại sau toàn bộ retry", symbol=symbol, report_type=report_type, period=period, retry_max=RETRY_MAX)
     return None
 
 
@@ -209,13 +199,13 @@ async def fetch_and_save_async(symbol, report_type, period, out_dir, suffix):
 
         if df is not None and not df.empty:
             safe_write_parquet(out_path, df)
-            logging.info(f"[{symbol}] ✅ {suffix} -> {out_path}")
+            black_box.info("Đã lưu BCTC", symbol=symbol, report=suffix, output=out_path, rows=len(df))
             return (suffix, True, None)
         else:
             return (suffix, False, "No data returned")
 
     except Exception as e:
-        logging.error(f"[{symbol}] ❌ {suffix} — Exception: {e}")
+        black_box.exception("Lỗi xử lý BCTC", symbol=symbol, report=suffix)
         return (suffix, False, str(e))
 
 
@@ -266,7 +256,8 @@ async def run_all_async(symbols):
     total = len(symbols)
     done_count = len(completed_set)
 
-    logging.info(f"=== BCTC Collector — Tổng: {total} mã | Đã xong: {done_count} | Còn lại: {len(remaining)} ===")
+    run_log = black_box
+    run_log.info("Bắt đầu batch BCTC", total=total, completed=done_count, remaining=len(remaining))
 
     # Lock để bảo vệ checkpoint khi nhiều symbol chạy đồng thời
     lock = asyncio.Lock()
@@ -277,10 +268,10 @@ async def run_all_async(symbols):
         async with SEM:
             progress["value"] += 1
             current = progress["value"]
-            logging.info(f"--- [{current}/{total}] Đang cào BCTC cho: {symbol} ---")
+            run_log.info("Đang cào BCTC", current=current, total=total, symbol=symbol)
 
             success, fail, reasons = await collect_bctc_async(symbol)
-            logging.info(f"[{symbol}] Kết quả: {success} thành công, {fail} thất bại.")
+            run_log.info("Kết quả BCTC theo mã", symbol=symbol, success=success, failed=fail)
 
             # Cập nhật checkpoint — dùng lock tránh race condition
             async with lock:
@@ -302,7 +293,7 @@ async def run_all_async(symbols):
     save_checkpoint(checkpoint)
 
     total_failed = len(checkpoint.get("failed", {}))
-    logging.info(f"=== HOÀN THÀNH — {total} mã | Thất bại: {total_failed} ===")
+    run_log.info("Hoàn thành batch BCTC", total=total, failed=total_failed)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -312,11 +303,10 @@ async def run_all_async(symbols):
 if __name__ == "__main__":
     from vnstock import Listing
 
-    logging.info("=== Đang tải danh sách toàn bộ mã chứng khoán từ vnstock... ===")
+    black_box.info("Đang tải danh sách toàn bộ mã chứng khoán từ vnstock")
     ls = Listing()
     all_df = ls.all_symbols()
     all_symbols = all_df['symbol'].tolist()
-    logging.info(f"=== Tổng cộng {len(all_symbols)} mã. Bắt đầu cào BCTC! ===")
+    black_box.info("Đã tải danh sách mã, bắt đầu cào BCTC", total=len(all_symbols))
 
     asyncio.run(run_all_async(all_symbols))
-

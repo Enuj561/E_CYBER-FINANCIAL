@@ -1,0 +1,12 @@
+# Runtime dependencies currently imported by E_CYBER-FINANCIAL.
+# Snapshot verified on 2026-08-09 with Python 3.13.5.
+beautifulsoup4==4.14.3
+feedparser==6.0.12
+google-genai==2.7.0
+numpy==2.2.6
+pandas==2.3.3
+pyarrow==24.0.0
+PyQt6==6.11.0
+python-dotenv==1.2.2
+requests==2.34.2
+vnstock==4.0.4

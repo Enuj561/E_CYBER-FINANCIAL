@@ -8,20 +8,29 @@ import time
 import json
 from google import genai
 from dotenv import load_dotenv
+from E_Helper.E_BlackBox import get_black_box
+
+
+black_box = get_black_box(__file__)
 
 def summarize_news_json(news_list, is_aggregated=False, progress_callback=None):
     """
     Gửi tin tức lên Gemini API và nhận về kết quả dict thuần túy.
     """
+    run_log = black_box.bind()
+    run_log.info("Bắt đầu Gemini summary", articles=len(news_list), aggregated=is_aggregated)
+
     # Load .env
     from E_Helper.E_config import ENV_PATH
     load_dotenv(dotenv_path=ENV_PATH)
     
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key or api_key == "điền_api_key_của_sếp_vào_đây":
+        run_log.error("Thiếu Gemini API key")
         return {"error": "Chưa có API Key Gemini", "details": "Vui lòng mở System/.env và cập nhật GEMINI_API_KEY."}
 
     if not news_list:
+        run_log.warning("Không có News để gửi Gemini")
         return {"error": "Không có dữ liệu", "details": "Không có bản tin nào trong khung giờ."}
 
     # Ghép nội dung
@@ -77,11 +86,14 @@ Dữ liệu tin tức:
                 if attempt < max_retries - 1:
                     if progress_callback:
                         progress_callback(f"⚠️ API Key đang hết hạn mức (Lỗi 429). Đang đợi {retry_delay}s thử lại...")
+                    run_log.warning("Gemini rate limit, sẽ retry", attempt=attempt + 1, delay_s=retry_delay)
                     time.sleep(retry_delay)
                     continue
                 else:
+                    run_log.error("Gemini hết quota sau toàn bộ retry")
                     return {"error": "Lỗi hạn mức API Key", "details": "API Key đã hoàn toàn cạn kiệt dung lượng miễn phí (Quota)."}
             else:
+                run_log.exception("Gemini API thất bại")
                 return {"error": "Lỗi API Gemini", "details": str(e)}
 
     text_resp = response.text.strip()
@@ -94,6 +106,8 @@ Dữ liệu tin tức:
         
     try:
         data = json.loads(text_resp.strip())
+        run_log.info("Gemini summary hoàn thành")
         return data
     except Exception as e:
+        run_log.exception("Không parse được JSON từ Gemini")
         return {"error": "Lỗi parse JSON từ Gemini", "details": str(e), "raw": text_resp}

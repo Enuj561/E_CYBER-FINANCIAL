@@ -1,0 +1,240 @@
+{
+  "inventory_version": 1,
+  "created_at": "2026-08-09T17:53:46.139160+07:00",
+  "snapshot_date": "2026-08-09",
+  "status": "step_00_complete",
+  "scope": "local baseline only; no BCTC API crawl",
+  "universe": {
+    "total_symbols": 1529,
+    "fireant_ohlcv_symbols": 1528,
+    "vnstock_ohlcv_symbols": 1526,
+    "symbols_in_both_ohlcv_sources": 1525,
+    "symbols_in_current_vnstock_listing": 1520,
+    "absent_from_current_listing_unverified": [
+      "CYC",
+      "DZM",
+      "FLC",
+      "RDP",
+      "SSF",
+      "SSN",
+      "STL",
+      "TAN",
+      "VE2"
+    ],
+    "current_listing_only_not_in_ohlcv_baseline": [
+      "DDG",
+      "DMX",
+      "MZG",
+      "TAH",
+      "ULG"
+    ],
+    "activity_delisted_note": "Listing API chỉ trả symbol/organ_name. Không đủ bằng chứng để gắn active hoặc delisted; các mã vắng mặt giữ trạng thái unverified. Mã chỉ có trong listing được ghi nhận nhưng chưa tự thêm vào baseline OHLCV 1529 mã.",
+    "csv_path": "E_Implementation/260809_universe_snapshot.csv",
+    "parquet_path": "Phase_1_Data/E_BCTC/state/universe_2026-08-09.parquet"
+  },
+  "legacy_bctc": {
+    "artifact_count": 3,
+    "artifacts": [
+      {
+        "path": "Phase_1_Data/E_BCTC/Cash_Flow/VNM_cash_flow_quarter.parquet",
+        "classification": "legacy_sample_not_production",
+        "bytes": 43328,
+        "rows": 2,
+        "columns": [
+          "period",
+          "ticker",
+          "allocation_of_goodwill",
+          "borrowing_costs",
+          "cash_and_cash_equivalents_at_beginning_of_the_period",
+          "cash_and_cash_equivalents_at_end_of_the_period",
+          "cash_paid_to_repurchased_or_redeem_the_entitys_shares_and_to_owners_for_capital_withdrawal",
+          "changes_in_available_for_sale_securities",
+          "collections_on_investment_in_other_entities",
+          "corporate_income_tax_paid",
+          "depreciation_of_fixed_assets_and_investment_properties",
+          "dividends_interest_and_profit_received",
+          "dividends_paid_profits_distributed_to_owners",
+          "exchange_difference_due_to_re_valuation_of_ending_balances",
+          "foreign_exchange_gain_loss_from_revaluation_of_monetary_items_denominated_in_foreign_currencies",
+          "gains_losses_from_investing_and_financing_activities",
+          "i_cash_flows_from_operating_activities",
+          "ii_cash_flows_from_investing_activities",
+          "iii_cash_flows_from_financing_activities",
+          "increase_decrease_in_deferred_expenses",
+          "increase_decrease_in_inventories",
+          "increase_decrease_in_payables_excluding_interest_payables_and_corporate_income_tax_payables",
+          "increase_decrease_in_receivables",
+          "increase_decrease_in_term_deposit",
+          "interest_expenses_paid",
+          "interest_income_and_dividends",
+          "loans_purchases_of_other_entities_debt_instruments",
+          "loss_profits_from_disposal_of_fixed_asset",
+          "n_2_adjustments_for",
+          "net_cash_flows_during_the_period",
+          "financing_cash_flow",
+          "investing_cash_flow",
+          "operating_cash_flow",
+          "operating_profit_before_changes_in_working_capital",
+          "other_adjustments",
+          "other_payments_for_financing_activities",
+          "other_payments_for_investing_activities",
+          "other_payments_for_operating_activities",
+          "other_receipts_from_financing_activities",
+          "other_receipts_from_investing_activities",
+          "other_receipts_from_operating_activities",
+          "payment_for_fixed_assets_constructions_and_other_long_term_assets",
+          "payments_for_investment_in_other_entities",
+          "principal_repayments",
+          "proceeds_from_borrowings",
+          "profit_before_tax",
+          "purchases_of_minority_shares_of_subsidiaries",
+          "receipts_from_disposal_of_fixed_assets_and_other_long_term_assets",
+          "receipts_from_equity_issue_and_owners_capital_contribution",
+          "receipts_from_loan_repayments_sale_of_other_entities_debt_instruments",
+          "repayment_of_financial_leases",
+          "reversal_of_provisions_provisions"
+        ],
+        "modified_at": "2026-07-22T22:20:27.172573+07:00",
+        "sha256": "70210d1864ae9abf1bfdc99f15004987fe003b81322a022e7d8b1217286138ac"
+      },
+      {
+        "path": "Phase_1_Data/E_BCTC/Cash_Flow/VNM_cash_flow_year.parquet",
+        "classification": "legacy_sample_not_production",
+        "bytes": 45262,
+        "rows": 4,
+        "columns": [
+          "period",
+          "ticker",
+          "i_cash_flows_from_operating_activities",
+          "profit_before_tax",
+          "n_2_adjustments_for",
+          "depreciation_of_fixed_assets_and_investment_properties",
+          "reversal_of_provisions_provisions",
+          "foreign_exchange_gain_loss_from_revaluation_of_monetary_items_denominated_in_foreign_currencies",
+          "gains_losses_from_investing_and_financing_activities",
+          "borrowing_costs",
+          "loss_profits_from_disposal_of_fixed_asset",
+          "interest_income_and_dividends",
+          "allocation_of_goodwill",
+          "other_adjustments",
+          "operating_profit_before_changes_in_working_capital",
+          "increase_decrease_in_receivables",
+          "increase_decrease_in_inventories",
+          "increase_decrease_in_payables_excluding_interest_payables_and_corporate_income_tax_payables",
+          "increase_decrease_in_deferred_expenses",
+          "changes_in_available_for_sale_securities",
+          "interest_expenses_paid",
+          "corporate_income_tax_paid",
+          "other_receipts_from_operating_activities",
+          "other_payments_for_operating_activities",
+          "operating_cash_flow",
+          "ii_cash_flows_from_investing_activities",
+          "payment_for_fixed_assets_constructions_and_other_long_term_assets",
+          "receipts_from_disposal_of_fixed_assets_and_other_long_term_assets",
+          "loans_purchases_of_other_entities_debt_instruments",
+          "receipts_from_loan_repayments_sale_of_other_entities_debt_instruments",
+          "payments_for_investment_in_other_entities",
+          "collections_on_investment_in_other_entities",
+          "dividends_interest_and_profit_received",
+          "increase_decrease_in_term_deposit",
+          "purchases_of_minority_shares_of_subsidiaries",
+          "other_receipts_from_investing_activities",
+          "other_payments_for_investing_activities",
+          "investing_cash_flow",
+          "iii_cash_flows_from_financing_activities",
+          "receipts_from_equity_issue_and_owners_capital_contribution",
+          "cash_paid_to_repurchased_or_redeem_the_entitys_shares_and_to_owners_for_capital_withdrawal",
+          "proceeds_from_borrowings",
+          "principal_repayments",
+          "repayment_of_financial_leases",
+          "dividends_paid_profits_distributed_to_owners",
+          "other_receipts_from_financing_activities",
+          "other_payments_for_financing_activities",
+          "financing_cash_flow",
+          "net_cash_flows_during_the_period",
+          "cash_and_cash_equivalents_at_beginning_of_the_period",
+          "exchange_difference_due_to_re_valuation_of_ending_balances",
+          "cash_and_cash_equivalents_at_end_of_the_period"
+        ],
+        "modified_at": "2026-07-22T22:20:29.088588+07:00",
+        "sha256": "2b2142e4a11e35a5ab459c69addd733553a561ad5839ace54c2a6cc885d59f58"
+      },
+      {
+        "path": "Phase_1_Data/E_BCTC/Ratio/VNM_ratio.parquet",
+        "classification": "legacy_sample_not_production",
+        "bytes": 9176,
+        "rows": 58,
+        "columns": [
+          "item",
+          "item_id",
+          "2026-Q1",
+          "2025-Q4",
+          "2025-Q4_1",
+          "2025-Q3"
+        ],
+        "modified_at": "2026-07-22T22:20:29.902967+07:00",
+        "sha256": "c48b5beba16d745ad0adb6af27a0631dea7b9064ce167ca9865368e8fa6dea28"
+      }
+    ],
+    "checkpoint": {
+      "path": "Log_Debug/Phase 1/checkpoint_bctc.json",
+      "classification": "legacy_checkpoint_preserved",
+      "bytes": 1782,
+      "sha256": "906ea4b80ca3f3c9c73a5956891a90070b031ffcd66a354bac14caeb8b809de6",
+      "status": "completed",
+      "completed_symbols": [
+        "VNM"
+      ],
+      "failed_symbols": [
+        "VNM"
+      ]
+    },
+    "checkpoint_findings": {
+      "symbol_marked_completed_despite_partial_failure": true
+    }
+  },
+  "environment": {
+    "python": "3.13.5",
+    "python_implementation": "CPython",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "packages": {
+      "beautifulsoup4": "4.14.3",
+      "feedparser": "6.0.12",
+      "google-genai": "2.7.0",
+      "numpy": "2.2.6",
+      "pandas": "2.3.3",
+      "pyarrow": "24.0.0",
+      "PyQt6": "6.11.0",
+      "python-dotenv": "1.2.2",
+      "requests": "2.34.2",
+      "scikit-learn": null,
+      "vnstock": "4.0.4"
+    }
+  },
+  "configuration": {
+    "non_secret_artifacts": [
+      {
+        "path": "E_Helper/E_config.py",
+        "exists": true,
+        "bytes": 3905,
+        "sha256": "cff0104a9489a193eaef9a3c2898a779bbe222dd6f1b12505ae1084930f5df4c"
+      },
+      {
+        "path": "Main Scripts/Phase 1/1.1_Data_Collector/config.json",
+        "exists": true,
+        "bytes": 4,
+        "sha256": "d914176fd50bd7f565700006a31aa97b79d3ad17cee20c8e5ff2061d5cb74817"
+      }
+    ],
+    "secret_environment": {
+      "path": "System/.env",
+      "exists": true,
+      "content_read_or_copied": false,
+      "expected_keys_from_code": [
+        "FIREANT_BEARER_TOKEN",
+        "GEMINI_API_KEY"
+      ]
+    }
+  },
+  "source_artifacts_preserved": true
+}

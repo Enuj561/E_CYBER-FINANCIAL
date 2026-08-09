@@ -12,7 +12,6 @@ Cách dùng:
 import os
 import sys
 import io
-import logging
 import glob
 import pandas as pd
 from datetime import datetime
@@ -22,7 +21,8 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 # Import centralized paths
-from E_Helper.E_config import FIREANT_DIR, LOG_DIR
+from E_Helper.E_config import FIREANT_DIR
+from E_Helper.E_BlackBox import get_black_box
 # Import ghi file an toàn
 from E_Helper.E_io_utils import safe_write_parquet
 # Import 4 checks
@@ -33,30 +33,7 @@ from E_Data_Checkers import (
     check_value_sanity,
 )
 
-# ═══════════════════════════════════════════════════════════════
-# LOGGING SETUP
-# ═══════════════════════════════════════════════════════════════
-PHASE1_LOG_DIR = os.path.join(LOG_DIR, "Phase 1")
-os.makedirs(PHASE1_LOG_DIR, exist_ok=True)
-log_file = os.path.join(PHASE1_LOG_DIR, "Data_Raw_Cross_Check.log")
-
-# Xóa log cũ mỗi lần chạy
-if os.path.exists(log_file):
-    os.remove(log_file)
-
-logger = logging.getLogger("DataRawCrossCheck")
-logger.setLevel(logging.DEBUG)
-logger.handlers.clear()
-
-formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
-
-fh = logging.FileHandler(log_file, encoding='utf-8')
-fh.setFormatter(formatter)
-logger.addHandler(fh)
-
-sh = logging.StreamHandler()
-sh.setFormatter(formatter)
-logger.addHandler(sh)
+logger = get_black_box(__file__, console=True).bind()
 
 
 # ═══════════════════════════════════════════════════════════════

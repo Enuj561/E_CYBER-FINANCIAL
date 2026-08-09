@@ -1,3 +1,9 @@
+"""
+Module:  Warden
+Logic:   Start the PyQt application
+Detail:  Entry point cấu hình import path, khởi động IDE và ghi lỗi biên qua E_BlackBox.
+"""
+
 import sys
 import os
 
@@ -13,16 +19,26 @@ if main_scripts_path not in sys.path:
     sys.path.insert(0, main_scripts_path)
 
 from PyQt6.QtWidgets import QApplication
+from E_Helper.E_BlackBox import get_black_box
 from IDE_UI.E_main_window import MainWindow
 
+
+black_box = get_black_box(__file__, console=True)
+
 def main():
-    app = QApplication(sys.argv)
-    app.setStyle("Fusion")
-    
-    window = MainWindow()
-    window.show()
-    
-    sys.exit(app.exec())
+    try:
+        black_box.info("Warden khởi động")
+        app = QApplication(sys.argv)
+        app.setStyle("Fusion")
+
+        window = MainWindow()
+        window.show()
+        exit_code = app.exec()
+        black_box.info("Warden kết thúc", exit_code=exit_code)
+        return exit_code
+    except Exception:
+        black_box.exception("IDE dừng vì lỗi không dự kiến")
+        return 1
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

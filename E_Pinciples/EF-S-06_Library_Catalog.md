@@ -1,93 +1,131 @@
-# Chương 6 — EF-S-06: Library Catalog (Kho thư viện có sẵn)
+# Chương 6 — EF-S-06: Library Catalog (Thư viện được phép dùng)
 
-> **Nền tảng lý thuyết:**
-> - **Nguyên tắc:** Don't Reinvent the Wheel (Không phát minh lại bánh xe)
-> - **Giải thích:** Trước khi viết bất kỳ thuật toán hay pipeline nào từ đầu, **BẮT BUỘC** phải kiểm tra xem dự án đã có sẵn thư viện nào giải quyết bài toán đó chưa. Tự code lại thuật toán đã có sẵn trong thư viện chuyên nghiệp = lãng phí thời gian + dễ có bug.
+> **Trạng thái:** ACTIVE — phải cập nhật cùng dependency manifest.
+>
+> **Agent phải đọc file này khi:** muốn `pip install`, thêm một import bên thứ ba, chọn thư viện cho indicator/ML/API/UI hoặc nâng version dependency.
+>
+> **Mục tiêu:** Biết thư viện nào đang dùng thật, thư viện nào chỉ đang cân nhắc và không tự ý đưa dependency lạ vào dự án.
 
-## 1. Bảng thư viện đang dùng
+## 6.1. Ba trạng thái thư viện
 
-| Thư viện | Giấy phép | Chuyên môn | Phase sử dụng |
+| Trạng thái | Ý nghĩa | Agent được làm gì? |
+|---|---|---|
+| **CURRENT** | Code hiện tại đang import/dùng | Được dùng đúng phạm vi; thêm use case mới vẫn phải kiểm tra compatibility |
+| **APPROVED** | Đã được chủ dự án chọn nhưng có thể chưa dùng | Được triển khai trong Phase/use case đã duyệt |
+| **CANDIDATE** | Mới là phương án để so sánh | Không được tự cài/chốt; phải đề xuất và xin duyệt |
+
+Không gọi một package là “đang dùng” chỉ vì nó từng được nhắc trong kế hoạch hoặc đang có sẵn trên máy.
+
+## 6.2. Thư viện CURRENT của code hiện tại
+
+Snapshot kiểm tra ngày **2026-08-09**. Version chính xác phải lấy từ dependency manifest/lock file sau khi được tạo, không lấy bảng này làm lock file.
+
+| Package/import | Dùng cho | Phạm vi hiện tại | Ghi chú |
 |---|---|---|---|
-| **vnstock** | MIT | Cào giá cổ phiếu VN (VCI, TCBS) | Phase 1 |
-| **requests** | Apache-2.0 | HTTP calls (FireAnt API) | Phase 1 |
-| **pandas** | BSD-3 | DataFrame xử lý dữ liệu | All Phases |
-| **Scikit-Learn** | BSD-3 | Data cleaning, preprocessing | Phase 1 |
-| **pandas-ta** | MIT | Technical indicators (chính, production) | Phase 2 |
-| **TA-Lib** | BSD-3 | Technical indicators (crosscheck tùy chọn) | Phase 2 |
-| **PyCaret** | MIT | AutoML arena (setup, compare, tune, blend) | Phase 3 **DUY NHẤT** |
-| **XGBoost** | Apache-2.0 | Gradient boosting model (qua PyCaret) | Phase 3 |
-| **LightGBM** | MIT | Gradient boosting model (qua PyCaret) | Phase 3 |
-| **CatBoost** | Apache-2.0 | Gradient boosting model (qua PyCaret) | Phase 3 |
-| **aiohttp** | Apache-2.0 | Async HTTP client | Phase 1, Phase 5 |
-| **pytest** | MIT | Testing framework | All Phases |
-| **unittest.mock** | (Built-in) | Mock/Stub/Fake objects cho test | All Phases |
-| **feedparser** | BSD-2 | Parse RSS feeds | Phase 5 |
-| **google-generativeai** | Apache-2.0 | Gemini AI API | Phase 5 |
-| **PyQt6** | GPL-v3 | Desktop UI framework | IDE_UI |
+| `pandas` | DataFrame, Parquet | Phase 1, News/helper | Thư viện dữ liệu chính |
+| `numpy` | Kiểm tra/tính số | Validator và test | Không tự viết lại phép vector hóa đã có |
+| `requests` | HTTP đồng bộ | FireAnt | Luôn có timeout và error handling |
+| `vnstock` | Dữ liệu chứng khoán VN | Phase 1 | Giấy phép tùy chỉnh cho cá nhân/nghiên cứu, phi thương mại; cần attribution và re-audit nếu dự án thương mại |
+| `feedparser` | Parse RSS/Atom | News | Không parse RSS bằng regex |
+| `beautifulsoup4` (`bs4`) | Làm sạch HTML từ RSS | News | Chỉ dùng cho HTML parsing/sanitizing phù hợp |
+| `google-genai` (`from google import genai`) | Gemini API | News AI client | Đây là SDK hiện hành; không dùng package cũ `google-generativeai` cho code mới |
+| `python-dotenv` | Đọc `.env` | API clients | Secret nằm trong `System/.env`, không commit/log |
+| `PyQt6` | Desktop UI | `IDE_UI/` | Có GPLv3 hoặc commercial license; phải xem lại license trước khi phân phối sản phẩm đóng nguồn |
+| `pyarrow` hoặc `fastparquet` | Parquet engine cho pandas | Data I/O | Chọn/pin engine rõ trong manifest để kết quả cài đặt tái hiện được |
 
-## 2. Khi nào dùng cái nào?
+Thư viện chuẩn Python như `logging`, `json`, `pathlib`, `unittest.mock` không cài bằng pip.
 
-| Bài toán | Dùng thư viện |
-|---|---|
-| Cào giá cổ phiếu VN | **vnstock** (⭐) — native API cho thị trường VN |
-| HTTP request tuỳ chỉnh (FireAnt) | **requests** (⭐) |
-| Tính RSI, MACD, Bollinger Bands | **pandas-ta** (⭐) chính, **TA-Lib** crosscheck tùy chọn. Giai đoạn thiết kế cơ sở: tự code → crosscheck → chuyển sang thư viện |
-| ML pipeline: setup → compare → tune → blend | **PyCaret** (⭐) — DUY NHẤT qua `arena_runner.py` |
-| Parse RSS feeds | **feedparser** (⭐) — đừng dùng requests + regex |
-| Phân tích text bằng AI | **google-generativeai** (Gemini) |
-| Data manipulation | **pandas** (⭐) — mọi thao tác DataFrame |
+## 6.3. Development dependency
 
-## 3. Quy tắc sử dụng
+| Package | Trạng thái | Dùng cho |
+|---|---|---|
+| `pytest` | **APPROVED nhưng chưa có trong môi trường audit** | Chạy unit/integration test |
 
-### 3.1. BẮT BUỘC kiểm tra trước khi tự code
+Agent phải thêm dependency dev vào manifest trước khi coi test suite là có thể chạy. Không ghi “test đã pass” nếu pytest chưa cài hoặc test chưa thực sự chạy.
 
-```python
-# ❌ SAI — Tự code thuật toán RSI từ đầu
-def my_rsi(prices, period=14):
-    # ... 30 dòng code tự viết, dễ bug ...
+## 6.4. Thư viện cho Phase tương lai
 
-# ✅ ĐÚNG — Dùng thư viện chuyên nghiệp
-import pandas_ta as ta
-df['RSI'] = ta.rsi(df['close'], length=14)
-```
+Các package dưới đây là **CANDIDATE**, chưa được xem là dependency của dự án:
 
-### 3.2. PyCaret chỉ được gọi từ 1 nơi duy nhất
+| Bài toán | Candidate | Điều phải quyết định trước khi dùng |
+|---|---|---|
+| Technical indicators | `pandas-ta`, `pandas-ta-classic`, `TA-Lib` | Độ chính xác, license, version Python, tốc độ và cách cài trên Windows |
+| ML cơ bản | `scikit-learn` | Split/time-series validation, leakage, reproducibility |
+| Gradient boosting | `xgboost`, `lightgbm`, `catboost` | Chỉ cài model thật sự cần; kiểm tra tương thích Python/CPU/GPU |
+| AutoML | `pycaret` | So sánh với pipeline scikit-learn trực tiếp; pin major version vì API có thể thay đổi lớn |
+| Async HTTP | `aiohttp` hoặc `httpx` async | Chỉ dùng khi API/rate limit và pipeline thật sự hưởng lợi từ async |
 
-PyCaret quản lý state nội bộ (experiment session, preprocessor pipeline, CV splits...). **CHỈ** `arena_runner.py` (Phase 3) được phép `import pycaret`. Nếu nhiều file cùng gọi PyCaret, state sẽ conflict.
+Agent không được biến danh sách candidate thành một lệnh cài hàng loạt.
 
-### 3.3. Ghi lại version trong requirements.txt
+## 6.5. Quy tắc chọn thư viện
 
-Mọi thư viện mới thêm **BẮT BUỘC** phải ghi version vào `requirements.txt`:
-```
-vnstock==2.0.0
-pandas==2.0.3
-pycaret==3.3.1
-```
+Trước khi tự code một tính năng phổ biến, Agent kiểm tra theo thứ tự:
 
-## 4. Security Audit — Kiểm tra bảo mật thư viện (BẮT BUỘC)
+1. Python standard library đã làm được chưa?
+2. Dự án đã có helper/module phù hợp chưa?
+3. Một package CURRENT đã làm được chưa?
+4. Nếu cần package mới, lợi ích có lớn hơn chi phí dependency không?
 
-> Dự án xử lý dữ liệu tài chính nhạy cảm (API keys, giá cổ phiếu, chiến lược giao dịch). **BẮT BUỘC** kiểm tra bảo mật trước khi dùng bất kỳ thư viện mới nào.
+“Đừng phát minh lại bánh xe” không có nghĩa luôn chọn thư viện. Một hàm 10 dòng ổn định có thể tốt hơn thêm package lớn; ngược lại, parser, cryptography, ML algorithm hoặc chuẩn file phức tạp nên ưu tiên thư viện đã được kiểm chứng.
 
-### Checklist trước khi `pip install`
+## 6.6. PyCaret và state
 
-- [ ] Thư viện có repo chính thức trên **GitHub/PyPI** không? Bao nhiêu stars?
-- [ ] README có ghi rõ thư viện **LÀM GÌ** không?
-- [ ] Kiểm tra: thư viện chỉ **DOWNLOAD** data (GET), KHÔNG tự động **UPLOAD/POST** data đi đâu
-- [ ] Kiểm tra: thư viện KHÔNG yêu cầu **API key/token** mà không giải thích rõ dùng để làm gì
-- [ ] Kiểm tra: KHÔNG có **telemetry/tracking ẩn** (gửi usage data về server của tác giả)
-- [ ] Kiểm tra: thư viện KHÔNG ghi file **ngoài project folder** (chỉ ghi trong thư mục được chỉ định)
-- [ ] Nếu thư viện ít stars (<1000): **đọc qua source code** trước khi dùng
+Không có luật kỹ thuật rằng “nhiều file import PyCaret chắc chắn conflict”. PyCaret có Experiment object/API để quản lý state.
 
-### Hành vi CẤM
+Tuy vậy, nếu dự án chọn PyCaret, nên có một entry/facade ML rõ như `E_arena_manager.py` để:
 
-```python
-# ❌ CẤM — pip install thư viện lạ không kiểm tra
-pip install some-random-finance-lib  # Ai viết? Làm gì? Gửi data đi đâu?
+- tập trung config và random seed;
+- tránh mỗi file tự setup experiment khác nhau;
+- lưu model/metric/metadata nhất quán;
+- dễ thay PyCaret bằng giải pháp khác.
 
-# ❌ CẤM — Dùng thư viện tự động gửi data ra ngoài
-import sketchy_lib
-sketchy_lib.upload_portfolio(my_data)  # Data tài chính bị leak!
+Đây là quyết định kiến trúc để đơn giản hóa, không phải vì import ở file thứ hai tự động làm hỏng state.
 
-# ✅ ĐÚNG — Chỉ dùng thư viện đã qua audit, có trong bảng §6.1
-from vnstock import Vnstock  # Repo chính thức, 1000+ stars, chỉ GET
-```
+## 6.7. Dependency manifest là nguồn sự thật
+
+Trước khi thêm/nâng package, Agent phải cập nhật một nguồn version chính thức:
+
+- giai đoạn hiện tại: `requirements.txt` + `requirements-dev.txt`; hoặc
+- khi chuẩn hóa package: `pyproject.toml` + lock file phù hợp.
+
+Không ghi version ví dụ cũ trong tài liệu rồi coi đó là version dự án. Manifest phải pin version đã test; lock file/hashes được khuyến nghị khi workflow cài đặt đã ổn định.
+
+Mỗi lần nâng major version phải đọc migration guide và chạy test liên quan.
+
+## 6.8. Security và license audit trước khi cài
+
+Checklist bắt buộc:
+
+- [ ] Đúng tên package chính thức trên PyPI/repo, tránh package giả gần giống tên?
+- [ ] Maintainer/repo/release history có hợp lý?
+- [ ] License có phù hợp dự án cá nhân và kế hoạch phân phối?
+- [ ] Version hỗ trợ Python đang dùng?
+- [ ] Package có network, telemetry, subprocess hoặc ghi file ngoài project không?
+- [ ] Nó yêu cầu API key để làm gì và secret được lưu ở đâu?
+- [ ] Dependency kéo theo có quá lớn hoặc có xung đột không?
+- [ ] Đã kiểm tra advisory/vulnerability bằng công cụ phù hợp khi có thể?
+- [ ] Đã chạy test/smoke test sau khi cài?
+- [ ] Đã cập nhật manifest và tài liệu CURRENT/APPROVED/CANDIDATE?
+
+Số GitHub stars chỉ là tín hiệu phụ, không phải bằng chứng an toàn.
+
+## 6.9. Những hành vi bị cấm
+
+- Tự ý `pip install` package chưa được duyệt trong lúc sửa một lỗi không liên quan.
+- Dùng `google-generativeai` cho code mới thay vì `google-genai`.
+- Ghi `vnstock` là MIT hoặc dùng cho thương mại mà chưa kiểm tra giấy phép hiện hành.
+- Thêm tất cả model ML “để dành”.
+- Dùng version `latest` không pin trong môi trường production/scheduled task.
+- Ghi package là CURRENT chỉ vì nó có trên máy nhưng code không sử dụng.
+- Tự viết thuật toán tài chính rồi khẳng định đúng mà không có dữ liệu chuẩn/cross-check/test.
+
+## 6.10. Checklist cho Agent
+
+- [ ] Package đang là CURRENT, APPROVED hay CANDIDATE?
+- [ ] Có thể giải quyết bằng standard library/module sẵn có không?
+- [ ] Chủ dự án đã duyệt dependency mới chưa?
+- [ ] Đã kiểm tra license, Python version và hành vi network/file/telemetry?
+- [ ] Import/package name là SDK hiện hành?
+- [ ] Đã cập nhật manifest/lock file?
+- [ ] Đã chạy test phù hợp sau khi cài/nâng version?
+- [ ] Đã cập nhật bảng này nếu trạng thái package thay đổi?

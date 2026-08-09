@@ -24,6 +24,10 @@ FIREANT_DIR = os.path.join(OHLCV_DIR, "From_FireAnt")
 
 # E_BCTC — Báo cáo Tài chính
 BCTC_DIR = os.path.join(PHASE_1_DATA_DIR, "E_BCTC")
+BCTC_FIREANT_DIR = os.path.join(BCTC_DIR, "From_FireAnt")
+BCTC_VNSTOCK_DIR = os.path.join(BCTC_DIR, "From_vnstock")
+BCTC_STATE_DIR = os.path.join(BCTC_DIR, "state")
+# Các path dưới đây là cấu trúc cũ; collector BCTC mới không ghi thêm vào đây.
 BCTC_BALANCE_SHEET_DIR = os.path.join(BCTC_DIR, "Balance_Sheet")
 BCTC_INCOME_STMT_DIR = os.path.join(BCTC_DIR, "Income_Statement")
 BCTC_CASH_FLOW_DIR = os.path.join(BCTC_DIR, "Cash_Flow")
@@ -36,9 +40,9 @@ BCTC_NOTE_DIR = os.path.join(BCTC_DIR, "Note")
 PHASE_5_DATA_DIR = os.path.join(PROJECT_DIR, "Phase_5_Data")
 
 # ═══════════════════════════════════════════════════════════════
-# HỆ THỐNG — Log, System, Main Scripts
+# HỆ THỐNG — Legacy state, System, Main Scripts
 # ═══════════════════════════════════════════════════════════════
-LOG_DIR = os.path.join(PROJECT_DIR, "Log_Debug")
+LOG_DIR = os.path.join(PROJECT_DIR, "Log_Debug")  # Chỉ giữ cho checkpoint cũ; log mới dùng E_BlackBox.
 SYSTEM_DIR = os.path.join(PROJECT_DIR, "System")
 MAIN_SCRIPTS_DIR = os.path.join(PROJECT_DIR, "Main Scripts")
 ENV_PATH = os.path.join(SYSTEM_DIR, ".env")
@@ -50,7 +54,8 @@ def ensure_dirs():
     """Tạo các thư mục data nếu chưa tồn tại."""
     for d in [PHASE_1_DATA_DIR,
               OHLCV_DIR, VNSTOCK_DIR, FIREANT_DIR,
-              BCTC_DIR, BCTC_BALANCE_SHEET_DIR, BCTC_INCOME_STMT_DIR,
+              BCTC_DIR, BCTC_FIREANT_DIR, BCTC_VNSTOCK_DIR, BCTC_STATE_DIR,
+              BCTC_BALANCE_SHEET_DIR, BCTC_INCOME_STMT_DIR,
               BCTC_CASH_FLOW_DIR, BCTC_RATIO_DIR, BCTC_NOTE_DIR,
               PHASE_5_DATA_DIR, LOG_DIR]:
         os.makedirs(d, exist_ok=True)
