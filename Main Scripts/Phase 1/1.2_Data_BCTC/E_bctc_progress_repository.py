@@ -12,6 +12,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from threading import RLock
 from typing import Any, Callable
 
 from E_Helper.E_BlackBox import BlackBox, get_black_box
@@ -22,10 +23,11 @@ from E_bctc_schema import SCHEMA_VERSION
 
 PIPELINE_NAME = "phase1_bctc"
 TERMINAL_SKIP_STATUSES = frozenset(
-    {"complete", "no_data_confirmed", "unsupported", "failed_fatal", "cancelled"}
+    {"complete", "partial", "no_data_confirmed", "unsupported", "failed_fatal", "cancelled"}
 )
-RETRY_STATUSES = frozenset({"pending", "partial", "failed_retryable"})
+RETRY_STATUSES = frozenset({"pending", "failed_retryable"})
 ALL_STATUSES = TERMINAL_SKIP_STATUSES | RETRY_STATUSES | {"running"}
+
 _SECRET_PATTERNS = (
     re.compile(r"(?i)(bearer\s+)[A-Za-z0-9._~+/=-]+"),
     re.compile(r"(?i)(authorization\s*[:=]\s*)[^\s,;]+"),
@@ -79,6 +81,7 @@ class BCTCProgressRepository:
     ) -> None:
         if not run_id.strip() or any(char in run_id for char in '<>:"/\\|?*'):
             raise ValueError("run_id không hợp lệ cho tên file")
+        self._lock = RLock()
         self.run_id = run_id.strip()
         self._plan = collection_plan
         self._plan_fingerprint = _fingerprint(collection_plan)
@@ -86,8 +89,10 @@ class BCTCProgressRepository:
         self._write_json = write_json
         self._clock = clock
         self._logger = logger or get_black_box(__file__).bind()
-        self._state = self._load_or_create()
-        self._recover_interrupted_items()
+        with self._lock:
+            self._state = self._load_or_create()
+            self._recover_interrupted_items()
+
 
     @property
     def path(self) -> Path:
@@ -127,29 +132,31 @@ class BCTCProgressRepository:
         return state
 
     def _save(self) -> None:
-        self._state["updated_at"] = self._clock()
-        self._write_json(self._path, self._state)
+        with self._lock:
+            self._state["updated_at"] = self._clock()
+            self._write_json(self._path, self._state)
 
     def _recover_interrupted_items(self) -> None:
-        recovered = 0
-        for item in self._state["items"].values():
-            if item.get("status") == "running":
-                item.update(
-                    {
-                        "status": "failed_retryable",
-                        "finished_at": self._clock(),
-                        "error_type": "InterruptedRun",
-                        "error_message": "Lần chạy trước dừng giữa chừng; item cần làm lại",
-                    }
+        with self._lock:
+            recovered = 0
+            for item in self._state["items"].values():
+                if item.get("status") == "running":
+                    item.update(
+                        {
+                            "status": "failed_retryable",
+                            "finished_at": self._clock(),
+                            "error_type": "InterruptedRun",
+                            "error_message": "Lần chạy trước dừng giữa chừng; item cần làm lại",
+                        }
+                    )
+                    recovered += 1
+            if recovered:
+                self._save()
+                self._logger.warning(
+                    "Đã khôi phục item BCTC bị ngắt",
+                    run_id=self.run_id,
+                    recovered_items=recovered,
                 )
-                recovered += 1
-        if recovered:
-            self._save()
-            self._logger.warning(
-                "Đã khôi phục item BCTC bị ngắt",
-                run_id=self.run_id,
-                recovered_items=recovered,
-            )
 
     def ensure_item(
         self,
@@ -170,63 +177,66 @@ class BCTCProgressRepository:
             report_type=report_type,
             period_type=period_type,
         )
-        existing = self._state["items"].get(key)
-        if existing:
-            if int(existing["requested_count"]) != int(requested_count):
-                raise BCTCProgressError("Số kỳ yêu cầu của item đã đổi trong cùng run")
-            return key
+        with self._lock:
+            existing = self._state["items"].get(key)
+            if existing:
+                if int(existing["requested_count"]) != int(requested_count):
+                    raise BCTCProgressError("Số kỳ yêu cầu của item đã đổi trong cùng run")
+                return key
 
-        now = self._clock()
-        self._state["items"][key] = {
-            "source": source,
-            "provider": provider,
-            "symbol": symbol.upper(),
-            "report_type": report_type,
-            "period_type": period_type,
-            "status": "pending",
-            "attempt_count": 0,
-            "requested_count": int(requested_count),
-            "received_count": 0,
-            "started_at": None,
-            "finished_at": None,
-            "updated_at": now,
-            "raw_file": None,
-            "error_type": None,
-            "error_message": None,
-        }
-        self._save()
-        return key
-
-    def should_process(self, key: str, *, include_cancelled: bool = False) -> bool:
-        item = self._state["items"].get(key)
-        if item is None:
-            raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
-        status = item.get("status")
-        if status not in ALL_STATUSES:
-            raise BCTCProgressError(f"Trạng thái item không hợp lệ: {status}")
-        if status == "cancelled":
-            return include_cancelled
-        return status not in TERMINAL_SKIP_STATUSES
-
-    def mark_running(self, key: str) -> None:
-        item = self._state["items"].get(key)
-        if item is None:
-            raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
-        if not self.should_process(key):
-            raise BCTCProgressError(f"Không được chạy lại item có trạng thái {item['status']}")
-        now = self._clock()
-        item.update(
-            {
-                "status": "running",
-                "attempt_count": int(item["attempt_count"]) + 1,
-                "started_at": now,
+            now = self._clock()
+            self._state["items"][key] = {
+                "source": source,
+                "provider": provider,
+                "symbol": symbol.upper(),
+                "report_type": report_type,
+                "period_type": period_type,
+                "status": "pending",
+                "attempt_count": 0,
+                "requested_count": int(requested_count),
+                "received_count": 0,
+                "started_at": None,
                 "finished_at": None,
                 "updated_at": now,
+                "raw_file": None,
                 "error_type": None,
                 "error_message": None,
             }
-        )
-        self._save()
+            self._save()
+            return key
+
+    def should_process(self, key: str, *, include_cancelled: bool = False) -> bool:
+        with self._lock:
+            item = self._state["items"].get(key)
+            if item is None:
+                raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
+            status = item.get("status")
+            if status not in ALL_STATUSES:
+                raise BCTCProgressError(f"Trạng thái item không hợp lệ: {status}")
+            if status == "cancelled":
+                return include_cancelled
+            return status not in TERMINAL_SKIP_STATUSES
+
+    def mark_running(self, key: str) -> None:
+        with self._lock:
+            item = self._state["items"].get(key)
+            if item is None:
+                raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
+            if not self.should_process(key):
+                raise BCTCProgressError(f"Không được chạy lại item có trạng thái {item['status']}")
+            now = self._clock()
+            item.update(
+                {
+                    "status": "running",
+                    "attempt_count": int(item["attempt_count"]) + 1,
+                    "started_at": now,
+                    "finished_at": None,
+                    "updated_at": now,
+                    "error_type": None,
+                    "error_message": None,
+                }
+            )
+            self._save()
 
     def mark_finished(
         self,
@@ -240,49 +250,53 @@ class BCTCProgressRepository:
     ) -> None:
         if status not in ALL_STATUSES - {"pending", "running"}:
             raise ValueError(f"Trạng thái kết thúc không hợp lệ: {status}")
-        item = self._state["items"].get(key)
-        if item is None:
-            raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
-        if item.get("status") != "running":
-            raise BCTCProgressError("Chỉ item đang running mới được đánh dấu kết thúc")
-        if received_count < 0:
-            raise ValueError("received_count không được âm")
-        if status == "complete" and (not raw_file or not Path(raw_file).is_file()):
-            raise BCTCProgressError("Không được đánh dấu complete khi chưa có file raw")
-        if status == "complete" and received_count < int(item["requested_count"]):
-            raise BCTCProgressError("Nhận thiếu kỳ thì phải ghi partial, không được ghi complete")
-        if status == "partial" and (
-            received_count < 1 or not raw_file or not Path(raw_file).is_file()
-        ):
-            raise BCTCProgressError("partial phải có data và file raw đọc được")
-        if status in {"no_data_confirmed", "unsupported"} and (
-            raw_file or received_count != 0
-        ):
-            raise BCTCProgressError(f"{status} không được gắn data/file raw giả")
-        if status.startswith("failed_") and not error_type:
-            raise BCTCProgressError("Trạng thái lỗi phải có error_type")
+        with self._lock:
+            item = self._state["items"].get(key)
+            if item is None:
+                raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
+            if item.get("status") != "running":
+                raise BCTCProgressError("Chỉ item đang running mới được đánh dấu kết thúc")
+            if received_count < 0:
+                raise ValueError("received_count không được âm")
+            if status == "complete" and (not raw_file or not Path(raw_file).is_file()):
+                raise BCTCProgressError("Không được đánh dấu complete khi chưa có file raw")
+            if status == "complete" and received_count < int(item["requested_count"]):
+                raise BCTCProgressError("Nhận thiếu kỳ thì phải ghi partial, không được ghi complete")
+            if status == "partial" and (
+                received_count < 1 or not raw_file or not Path(raw_file).is_file()
+            ):
+                raise BCTCProgressError("partial phải có data và file raw đọc được")
+            if status in {"no_data_confirmed", "unsupported"} and (
+                raw_file or received_count != 0
+            ):
+                raise BCTCProgressError(f"{status} không được gắn data/file raw giả")
+            if status.startswith("failed_") and not error_type:
+                raise BCTCProgressError("Trạng thái lỗi phải có error_type")
 
-        now = self._clock()
-        item.update(
-            {
-                "status": status,
-                "received_count": int(received_count),
-                "finished_at": now,
-                "updated_at": now,
-                "raw_file": raw_file,
-                "error_type": error_type,
-                "error_message": _safe_error_message(error_message),
-            }
-        )
-        self._save()
+            now = self._clock()
+            item.update(
+                {
+                    "status": status,
+                    "received_count": int(received_count),
+                    "finished_at": now,
+                    "updated_at": now,
+                    "raw_file": raw_file,
+                    "error_type": error_type,
+                    "error_message": _safe_error_message(error_message),
+                }
+            )
+            self._save()
 
     def item(self, key: str) -> dict[str, Any]:
-        if key not in self._state["items"]:
-            raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
-        return dict(self._state["items"][key])
+        with self._lock:
+            if key not in self._state["items"]:
+                raise KeyError(f"Item chưa có trong sổ tiến độ: {key}")
+            return dict(self._state["items"][key])
 
     def summary(self) -> dict[str, int]:
-        counts = {status: 0 for status in ALL_STATUSES}
-        for item in self._state["items"].values():
-            counts[item["status"]] += 1
-        return {status: count for status, count in counts.items() if count}
+        with self._lock:
+            counts = {status: 0 for status in ALL_STATUSES}
+            for item in self._state["items"].values():
+                counts[item["status"]] += 1
+            return {status: count for status, count in counts.items() if count}
+

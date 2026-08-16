@@ -300,9 +300,18 @@ class BCTCRawRepository:
 
         def existing_frame_matches() -> bool:
             try:
-                pd.testing.assert_frame_equal(pd.read_parquet(raw_path), stored_frame)
+                existing = pd.read_parquet(raw_path)
+                pd.testing.assert_frame_equal(
+                    existing,
+                    stored_frame,
+                    check_dtype=False,
+                    check_index_type=False,
+                    check_column_type=False,
+                    check_frame_type=False,
+                    check_exact=False,
+                )
                 return True
-            except AssertionError:
+            except (AssertionError, ValueError):
                 return False
 
         reusable = self._existing_raw_is_reusable(

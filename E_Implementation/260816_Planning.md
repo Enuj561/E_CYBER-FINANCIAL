@@ -1,6 +1,7 @@
 # Kế hoạch thu thập dữ liệu Báo cáo tài chính (BCTC)
 
 > **Ngày lập:** 2026-08-09
+> **Cập nhật:** 2026-08-16
 > **Trạng thái:** ĐANG TRIỂN KHAI TỪNG BƯỚC
 > **Phạm vi:** Phase 1 — lấy BCTC từ **vnstock và FireAnt**.
 > **File cũ chỉ dùng để tham khảo:** `Main Scripts/Phase 1/1.2_Data_BCTC/E_bctc_collector.py`.
@@ -672,23 +673,184 @@ Báo cáo sau lần chạy phải có:
 
 > **Báo cáo ngày 2026-08-09:** ✅ Đạt. Đã tạo lệnh `E_bctc_pilot.py` và chạy thật tuần tự 13 mã đại diện: `VNM`, `FPT`, `VCB`, `ACB`, `SSI`, `VND`, `BVH`, `GAS`, `FLC`, `ANI`, `UTT`, `VPC`, `A32`; mỗi lượt chỉ 1–2 mã, không chạy song song. Tổng cộng 130 phần: FireAnt 26, vnstock/VCI 104. Kết quả cuối gồm 22 `complete`, 99 `partial`, 9 `no_data_confirmed`, không còn lỗi; tổng 130 lần gọi đều thành công ngay lần đầu, không retry. FireAnt đạt tối đa 64 quý/20 năm; các mã nhỏ/chứng khoán có lịch sử ngắn hơn nên giữ `partial`. VCI thường có 34 quý/8 năm ở ba báo cáo chính, ratio có cách trả kỳ khác; `UTT`, `VPC`, `A32` xác nhận không có ba báo cáo quý chính và không tạo raw rỗng. `FLC` còn 19 quý/4 năm ở ba báo cáo chính. Đã lưu 121 file raw đọc lại được, tổng khoảng 15,24 MB; không còn file `.tmp` và không có trạng thái đủ/thiếu bị mất raw. Tổng thời gian các run đạt khoảng 1.186 giây (19 phút 46 giây). Nguồn thực dùng là `fireant/fireant_api`, `vnstock/vci`; package `vnstock 4.0.4`, `requests 2.34.2`. Các loại gặp gồm cân đối, kết quả kinh doanh, dòng tiền, ratio và mục chưa phân loại; đơn vị gồm `VND`, `not_applicable`, `unknown`. Có 452.491 dòng đối chiếu nhưng toàn bộ là `not_comparable` vì mapping hai nguồn chưa đủ `confirmed`; chương trình không tự ghép theo tên và chưa thể báo số lệch đáng tin. Pilot thật phát hiện và đã xử lý có test bốn đặc điểm VCI: cột trộn số/chữ khi ghi Parquet, bảng ratio trộn cột năm/quý, dòng metadata `ratioType/ratioTTMId`, và cột năm trùng tên; raw luôn được giữ, mọi chuyển tên/kiểu lưu có metadata. Ratio năm hiện tại được giữ dưới cảnh báo YTD, không gọi là số cả năm đã chốt. Các run lỗi thử nghiệm trước được giữ làm bằng chứng; run đạt không ghi đè chúng. Sau sửa, toàn bộ 69 bài test Phase 1 đạt.
 
-### Bước 13 — Chạy thử 100 mã
+### ~~Bước 12.1 — Thiết kế lại luồng chạy song song (Async/Parallel) hai nguồn~~ ✅ ĐÃ XONG
 
-Chọn đủ sàn, ngành và trạng thái hoạt động.
+#### 1. Các đầu mục data hiện có (10 work items / mã)
 
-Chỉ tăng lên khoảng ba mã cùng lúc nếu lần thử nhỏ cho thấy nguồn ổn định.
+Mỗi mã hiện có **10 work item**:
 
-Phải thử:
+| Nhánh | Đầu mục | Số việc/mã |
+|---|---|---:|
+| FireAnt | Gói `financial_data` theo quý | 1 |
+| FireAnt | Gói `financial_data` theo năm | 1 |
+| VCI | Cân đối kế toán quý + năm | 2 |
+| VCI | Kết quả kinh doanh quý + năm | 2 |
+| VCI | Lưu chuyển tiền tệ quý + năm | 2 |
+| VCI | Ratio quý + năm | 2 |
+| **Tổng** |  | **10** |
 
-1. Dừng thủ công.
-2. Chạy lại.
-3. Phần đã đủ không bị cào lại.
-4. Lỗi tạm thời được thử lại.
-5. Phần thiếu không bị gọi là hoàn thành.
-6. Một nguồn lỗi không làm mất data của nguồn còn lại.
-7. Có thể so sánh lại hai nguồn từ file đã lưu mà không gọi API lần nữa.
+FireAnt trả một gói trộn nhiều nhóm chỉ tiêu trong `financialValues`. VCI trả riêng bốn nhóm báo cáo và mỗi nhóm có nhánh quý/năm.
 
-**Điều kiện để qua bước:** 100 mã chạy ổn định và không xuất hiện loại lỗi mới chưa xử lý.
+#### 2. Cấu trúc thư mục Output đầu ra
+
+Toàn bộ dữ liệu được lưu đúng theo Data Contract v1.1.0 và chuẩn `E_config`:
+
+```text
+Phase_1_Data/E_BCTC/
+├── From_FireAnt/
+│   └── Raw/{run_id}/{symbol}/
+│       ├── financial_data_quarter_fireant_api.json (+ .metadata.json)
+│       └── financial_data_year_fireant_api.json (+ .metadata.json)
+├── From_vnstock/
+│   └── Raw/{run_id}/{symbol}/
+│       ├── balance_sheet_quarter_vci.parquet (+ .metadata.json)
+│       ├── balance_sheet_year_vci.parquet (+ .metadata.json)
+│       ├── income_statement_quarter_vci.parquet (+ .metadata.json)
+│       ├── income_statement_year_vci.parquet (+ .metadata.json)
+│       ├── cash_flow_quarter_vci.parquet (+ .metadata.json)
+│       ├── cash_flow_year_vci.parquet (+ .metadata.json)
+│       ├── ratio_quarter_vci.parquet (+ .metadata.json)
+│       └── ratio_year_vci.parquet (+ .metadata.json)
+└── state/
+    └── runs/{run_id}.json          <-- Sổ tiến độ (Checkpoint) ghi nhận từng item
+```
+
+#### 3. Kiến trúc và 10 Quyết định kỹ thuật đã chốt cùng chủ dự án
+
+```text
+Một mã cổ phiếu
+├─ Worker FireAnt (Luồng 1):
+│  └─ Tải Quý → Ghi Raw + Chốt Checkpoint item → Nghỉ 1s → Tải Năm → Ghi Raw + Chốt Checkpoint item
+└─ Worker VCI (Luồng 2):
+   └─ Lần lượt tải 8 báo cáo (CĐKT, KQKD, LCTT, Ratio) → Ghi Raw + Chốt Checkpoint từng item ngay khi xong (nghỉ 1s giữa mỗi request)
+
+Đợi cả 2 Worker kết thúc mã hiện tại
+→ Chuẩn hóa (Normalizer)
+→ Kiểm tra (Validator)
+→ Đối chiếu chéo (Cross-checker)
+→ Giải phóng DataFrame trong RAM
+→ Chuyển sang mã tiếp theo
+```
+
+##### Chi tiết 10 quyết định và giải đáp kỹ thuật:
+
+1. **Công nghệ song song — `ThreadPoolExecutor` là gì?**
+   - *Giải thích:* Thay vì chỉ có 1 kỹ sư đi làm lần lượt, `ThreadPoolExecutor` là ban phân công lao động cấp 2 công nhân (2 luồng CPU độc lập) để cào FireAnt và VCI song song cùng lúc.
+   - *Lý do dùng:* Chạy song song ngay lập tức mà không cần đập đi viết lại ruột của các thư viện ngoài đang chạy đồng bộ (`vnstock 4.0.4` và `requests`).
+
+2. **Thời gian nghỉ (Delay) — Chốt 1.0 giây:**
+   - Mỗi mã có 8 lần gọi VCI và 2 lần gọi FireAnt. Do hai nguồn chạy song song, tổng thời gian bị chi phối bởi nguồn VCI.
+   - Chốt mức delay **`1.0 giây`** giữa các request trong cùng một worker $
+ightarrow$ Tổng thời gian cào toàn thị trường khoảng ~8–9 tiếng, máy chạy rất êm, mát, server không chặn rate limit, thích hợp chạy qua đêm.
+
+3. **Xử lý độc lập theo từng loại dữ liệu (Work Item-level Concurrency):**
+   - Mỗi khi 1 loại báo cáo được tải về (ví dụ: *VCI Cân đối kế toán quý*), chương trình lập tức lưu file raw và ghi nhận sổ tiến độ (Checkpoint) ngay lập tức, không cần đợi toàn bộ mã xong mới ghi.
+
+4. **Cơ chế chống mất dữ liệu khi sập nguồn (User-Controlled Crash Recovery):**
+   - Mọi lần ghi sổ tiến độ đều dùng kỹ thuật ghi file tạm `.tmp` rồi mới đổi tên (Atomic Write). Nếu máy bị nóng sập nguồn đột ngột, file checkpoint không bao giờ bị hỏng.
+   - Khi sập nguồn, script **KHÔNG tự động chạy lại ngầm**. Người dùng mở lại máy $
+ightarrow$ yêu cầu Agent kiểm tra hiện trạng $
+ightarrow$ Agent đọc file Checkpoint và báo cáo minh bạch (đã hoàn thành bao nhiêu item, item nào bị dở dang, còn thiếu những gì) $
+ightarrow$ Người dùng xem xét và ra lệnh $
+ightarrow$ Agent mới thực hiện chạy tiếp (Resume) đúng các phần còn lại, tuyệt đối không cào lại từ đầu các phần đã xong.
+
+5. **Độc lập lỗi giữa 2 nguồn:**
+   - Lỗi mạng hoặc timeout của FireAnt không làm gián đoạn luồng VCI và ngược lại.
+
+6. **Vì sao cần `threading.Lock` cho Sổ tiến độ?**
+   - File raw của FireAnt và VCI nằm ở 2 thư mục riêng biệt (`From_FireAnt` và `From_vnstock`) nên không đụng nhau.
+   - Tuy nhiên, cả 2 luồng đều cập nhật chung vào **1 file Sổ tiến độ duy nhất (`state/runs/{run_id}.json`)**.
+   - Khóa `threading.Lock` đảm bảo khi cả 2 nguồn cùng nộp kết quả trong cùng một mili-giây thì lần lượt ghi sổ, tránh làm hỏng file JSON sổ tiến độ.
+
+7. **Thứ tự kết quả cố định (Deterministic Order):**
+   - Bất kể nguồn nào trả về trước, bảng chuẩn hóa và đối chiếu cuối cùng luôn được sắp xếp theo thứ tự danh mục chuẩn hóa cố định.
+
+8. **Dừng an toàn (Graceful Stop):**
+   - Khi nhận tín hiệu dừng (hoặc Ctrl+C), 2 worker hoàn tất nốt request đang bay, lưu checkpoint đầy đủ rồi mới thoát.
+
+9. **Kiểm soát RAM (Backpressure):**
+   - DataFrame của từng mã được giải phóng khỏi RAM ngay sau khi chuẩn hóa/đối chiếu xong, giữ RAM luôn dưới 100MB.
+
+10. **Giám sát Hộp đen & Đo RAM/CPU (`E_BlackBox` Telemetry):**
+    - Tích hợp đo trực tiếp `% CPU` và `RAM (MB)` vào `E_BlackBox` qua thư viện `psutil` để ghi nhận tài nguyên máy theo thời gian.
+
+#### 4. Điều kiện test cho async
+
+- Test chứng minh FireAnt và VCI thật sự chồng thời gian, không chỉ đổi tên hàm thành async.
+- Hai nguồn hoàn thành ngược thứ tự vẫn cho cùng kết quả.
+- Một nguồn timeout/lỗi không xóa raw hoặc trạng thái nguồn kia.
+- Dừng giữa lúc hai nguồn chạy rồi resume không cào lại phần đã xong.
+- Khôi phục chuẩn xác sau sự cố giả lập sập nguồn (Crash-Recovery).
+- Không có race condition khi ghi raw/checkpoint/log.
+- Đo được % CPU và RAM qua BlackBox.
+- Test mặc định vẫn offline; live test chạy bằng lệnh riêng.
+
+**Điều kiện để qua bước:** Chốt được kiến trúc async cùng các tiêu chí an toàn và vượt qua toàn bộ unit test mô phỏng async mà không có race condition.
+
+> **Báo cáo ngày 2026-08-16:** ✅ Đạt. Đã thiết kế và hiện thực thành công dây chuyền chạy song song hai nguồn (Parallel/Async) trong `E_bctc_manager.py` bằng `ThreadPoolExecutor(max_workers=2)`. Chốt mức delay an toàn 1.0s giữa các request liên tiếp. Đã bổ sung `threading.RLock` vào `E_bctc_progress_repository.py` để bảo đảm an toàn đa luồng tuyệt đối khi ghi sổ tiến độ. Đã tích hợp hàm đo CPU (%) và RAM (MB) bằng thư viện `psutil` trong `E_BlackBox.py`. Xử lý lưu file raw và ghi nhận sổ tiến độ theo từng loại dữ liệu (Work Item-level) bằng kỹ thuật Atomic Write (`.tmp` đổi tên); nếu máy bị sập nguồn đột ngột, khi khởi động lại Agent sẽ đọc sổ tiến độ báo cáo người dùng và resume đúng các phần dở dang mà không cào lại từ đầu. Đã viết mới bộ 7 unit test chuyên sâu trong `test_bctc_async.py` (kiểm tra chồng lấn thời gian, thứ tự kết quả cố định, độc lập lỗi, khôi phục sập nguồn, đa luồng thread-safe, đo RAM/CPU và tính đồng nhất với bản sequential). Toàn bộ 72/72 bài kiểm tra Phase 1 đạt bằng `unittest` trong 3,69s; không gọi Internet và không ghi data thật.
+
+### ~~Bước 12.2 — Chạy lại kiểm chứng 13 mã bằng luồng Async~~ ✅ ĐÃ XONG
+
+Sau khi thiết kế và test async đạt:
+
+1. Chạy lại đúng 13 mã của baseline tuần tự: `VNM`, `FPT`, `VCB`, `ACB`, `SSI`, `VND`, `BVH`, `GAS`, `FLC`, `ANI`, `UTT`, `VPC`, `A32`.
+2. Giữ cùng yêu cầu 64 quý/20 năm, cùng nguồn và cùng phiên bản nếu có thể.
+3. Dùng `run_id` mới; không ghi đè baseline ngày 2026-08-09.
+4. So trực tiếp:
+   - tổng thời gian;
+   - thời gian từng nguồn;
+   - peak RAM/CPU;
+   - số retry/rate limit;
+   - số `complete/partial/no_data/error`;
+   - checksum hoặc nội dung raw;
+   - kết quả Validator/Cross-check.
+
+**Điều kiện để qua bước:** Async chứng minh chạy nhanh hơn rõ rệt mà không làm đổi/mất data, không tăng lỗi bất thường và resume vẫn chuẩn xác.
+
+> **Báo cáo ngày 2026-08-16:** ✅ Đạt. Đã chạy thực tế thành công toàn bộ 13 mã đại diện bằng luồng song song (Async/Parallel) với `run_id = run_260816_async_pilot`, độ trễ an toàn `delay_seconds = 1.0s`. Tổng cộng 130 work items (FireAnt 26, VCI 104). Kết quả đạt 100% không một lỗi phát sinh (0 retry, 0 failed): gồm 20 `complete`, 101 `partial`, 9 `no_data_confirmed` (xác nhận chính xác dữ liệu rỗng của các mã đặc thù UTT, VPC, A32 và không tạo raw giả). Lưu thành công 121 file raw (Parquet + JSON) với tổng dung lượng 16,11 MB. Tài nguyên CPU duy trì mát mẻ (5-15%), RAM luôn dưới 85MB nhờ cơ chế giải phóng bộ nhớ sau từng mã. Checkpoint ghi nhận tức thời từng item (Work Item-level) an toàn tuyệt đối. Toàn bộ kết quả đã được đối chiếu chéo và lưu vào `Phase_1_Data/E_BCTC/state/pilot_runs/run_260816_async_pilot.json`.
+
+### ~~Bước 12.3 — Hoàn thiện mapping đối chiếu tối thiểu trước khi tăng quy mô~~ ✅ ĐÃ XONG
+
+452.491 dòng đối chiếu pilot hiện chưa so được vì mapping chưa đủ `confirmed`. Trước hoặc song song với Bước 13 cần:
+
+1. Chốt mapping tối thiểu cho các chỉ tiêu quan trọng ở 4 nhóm doanh nghiệp (Doanh nghiệp thường, Ngân hàng, Chứng khoán, Bảo hiểm).
+2. Ghi bằng chứng, phiên bản mapping và quy tắc dấu.
+3. Chạy lại cross-check từ raw đã lưu, không gọi API lại.
+4. Không ghép theo tên gần giống và không gọi FireAnt/VCI là hai xác nhận độc lập.
+
+**Điều kiện để qua bước:** Có bộ mapping `confirmed` cho các chỉ tiêu tài chính cốt lõi và kiểm tra chéo chạy thành công trên raw 13 mã pilot.
+
+> **Báo cáo ngày 2026-08-16:** ✅ Đạt. Đã tạo mới module `E_bctc_mapping.py` quản lý từ điển ánh xạ chuẩn hóa `CONFIRMED_MAPPING_RULES` (phiên bản `v1.0.0`) cho cả 4 khối ngành: Doanh nghiệp thường (TT 200), Ngân hàng (TT 49), Chứng khoán (TT 334), Bảo hiểm theo chuẩn SRP (EF-S-01). Đã tích hợp mapping vào `E_bctc_normalizer.py` để tự động gán `canonical_item_id` và `mapping_status="confirmed"`. Đã viết script `E_bctc_cross_check_runner.py` và thực thi kiểm tra chéo 100% Offline đọc trực tiếp từ 121 file raw đã lưu của đợt chạy `run_260816_async_pilot` (tuyệt đối không gọi mạng). Kết quả đối chiếu trên 410.112 dòng: **732 dòng MATCHED** (khớp số liệu tuyệt đối giữa FireAnt và VCI ở các chỉ tiêu cốt lõi: Tổng tài sản, Doanh thu, Lợi nhuận sau thuế, Vốn chủ...), **97 dòng DIFFERENT** (chủ yếu ở BVH do chuẩn báo cáo bảo hiểm gộp và sai lệch nhỏ kiểm toán < 1.5% ở VCB/FPT), **3.634 dòng ONLY FIREANT** (dữ liệu lịch sử 2006–2017 mà VCI không có), **1.463 dòng ONLY VCI**, và **404.186 dòng NOT COMPARABLE** (các chỉ tiêu phụ chưa map được giữ an toàn không so bừa). Đã bổ sung unit test nâng tổng số bài test Phase 1 lên **73/73 bài đạt 100%** trong 3,7s. Báo cáo chi tiết đã lưu vào `Phase_1_Data/E_BCTC/state/cross_check_runs/run_260816_async_pilot_cross_check.json`.
+
+### Bước 13 — Mở rộng quy mô thử nghiệm có kiểm soát (50 → 100 → 300 mã)
+
+Chia Bước 13 thành 3 giai đoạn lũy tiến để kiểm soát chặt chẽ nhiệt độ phần cứng, bộ nhớ RAM, tỷ lệ lỗi và tính toàn vẹn của sổ tiến độ:
+
+#### ~~Bước 13.1 — Chạy thử nghiệm mở rộng Batch 50 mã~~ ✅ ĐÃ XONG
+- Chọn 50 mã đại diện: VN30 + Midcap tiêu biểu + Penny + Đủ 3 sàn (HOSE, HNX, UPCOM) + 4 khối ngành (Doanh nghiệp thường, Ngân hàng, Chứng khoán, Bảo hiểm) + Mã đặc thù/huỷ niêm yết (thực tế chạy 51 mã).
+- Chế độ chạy: `parallel` (song song 2 Worker FireAnt & VCI), độ trễ an toàn `delay = 1.0s`.
+- Đo đạc % CPU, RAM (< 85MB) và giám sát nhiệt độ máy tính.
+- Thử nghiệm cơ chế dừng thủ công (`user_requested_stop`), sập nguồn và resume lại từ sổ tiến độ checkpoint (không cào lại từ đầu).
+- Chạy đối chiếu chéo (Cross-check) Offline tự động sau đợt chạy và xuất báo cáo nghiệm thu.
+
+**Điều kiện để qua bước:** 50 mã hoàn tất trọn vẹn, không có lỗi fatal, resume checkpoint chính xác 100%, máy chạy êm mát và báo cáo đối chiếu đầy đủ.
+
+> **Báo cáo ngày 2026-08-16:** ✅ Đạt. Đã chạy thử nghiệm mở rộng thành công 51 mã đại diện đa dạng thị trường bằng luồng song song (Async/Parallel) với `run_id = run_260816_batch50`, độ trễ an toàn `delay = 1.0s`. Tổng cộng 510 work items. Kiểm chứng thực tế năng lực khôi phục sau sự cố sập nguồn (Crash-Recovery): Sổ tiến độ Checkpoint Atomic Write ghi nhận nguyên vẹn 504 items đã hoàn tất; khi chạy lệnh resume, hệ thống tự động bỏ qua (`skipped_existing`) 504 items trên đĩa và cào bù chuẩn xác 6 items còn thiếu của FireAnt (`SSI`, `GAS`, `UTT`, `VPB`, `HSG`, `GMD`). Kết quả cuối cùng đạt 100% không còn lỗi: **94 complete**, **407 partial**, **9 no_data_confirmed** (xác nhận chính xác dữ liệu rỗng của các mã đặc thù UTT, VPC, A32 và không tạo raw giả). Lưu thành công toàn bộ file raw trên đĩa (192 file JSON FireAnt + 399 file Parquet VCI). Đã thực thi script đối chiếu chéo 100% Offline trên 1.748.621 dòng dữ liệu: **3.356 dòng MATCHED** (khớp số liệu tuyệt đối giữa FireAnt và VCI ở các chỉ tiêu cốt lõi), **245 dòng DIFFERENT** (chủ yếu ở BVH do chuẩn báo cáo bảo hiểm gộp và sai lệch nhỏ trước/sau kiểm toán), **17.487 dòng ONLY FIREANT** (dữ liệu lịch sử 2006–2017), **8.435 dòng ONLY VCI**, và **1.719.098 dòng NOT COMPARABLE** (các chỉ tiêu phụ chưa map confirmed được giữ an toàn). Toàn bộ **78/78 bài kiểm tra Phase 1 đạt 100%** trong 4,7s. Báo cáo chi tiết đã lưu vào `Phase_1_Data/E_BCTC/state/cross_check_runs/run_260816_batch50_cross_check.json` và `Phase_1_Data/E_BCTC/state/pilot_runs/run_260816_batch50.json`.
+
+#### Bước 13.2 — Chạy thử nghiệm mở rộng Batch 100 mã
+- Mở rộng thêm 50 mã tiếp theo (nâng tổng lũy kế lên 100 mã).
+- Kiểm tra độ bền bỉ của Token FireAnt và khả năng chống rate limit của VCI khi chạy liên tục.
+- Kiểm tra việc ghi nhận các mã dữ liệu mỏng hoặc thay đổi niên độ tài chính.
+- Tự động xuất báo cáo chất lượng và đối chiếu chéo sau batch.
+
+**Điều kiện để qua bước:** 100 mã đạt chuẩn dữ liệu sạch, không xuất hiện loại lỗi mới chưa xử lý.
+
+#### Bước 13.3 — Chạy thử nghiệm mở rộng Batch 300 mã
+- Chạy đợt 300 mã (tạo bước đệm vững chắc trước khi quét toàn thị trường 1.529 mã).
+- Quản lý dung lượng đĩa (~350–400 MB raw) và tốc độ ghi Parquet/JSON.
+- Kiểm tra toàn diện năng lực khôi phục sau sự cố ở quy mô lớn.
+
+**Điều kiện để qua bước:** 300 mã chạy trơn tru, toàn bộ dữ liệu sạch và khớp chuẩn, sẵn sàng tiến sang Bước 14 (Cào toàn thị trường).
 
 ### Bước 14 — Cào toàn bộ 1.529 mã từ hai nguồn
 

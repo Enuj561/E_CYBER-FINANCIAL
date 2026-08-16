@@ -1,0 +1,10 @@
+[
+  "VIB", "LPB", "MSB", "OCB", "SSB", "EIB", "SHB",
+  "VCI", "BSI", "CTS", "FTS", "AGR", "ORS",
+  "PVI", "BIC", "BMI", "MIG", "VNR",
+  "KBC", "NLG", "HDG", "CEO", "DXS", "SCR", "HDC", "VCG", "CII", "HHV", "PC1",
+  "VGS", "TLH", "HT1", "BCC", "CSV", "BFC", "LAS",
+  "DGW", "FRT", "PET", "QNS", "SBT", "FMC", "IDI",
+  "CTR", "VGI", "FOX", "HAH", "VSC",
+  "AAA", "HNG"
+]

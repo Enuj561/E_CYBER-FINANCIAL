@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 import json
 import time
@@ -9,7 +10,8 @@ from typing import Any, Callable, Iterable
 
 import pandas as pd
 
-from E_Helper.E_BlackBox import get_black_box
+from E_Helper.E_BlackBox import get_black_box, get_system_telemetry
+from E_bctc_progress_repository import item_key
 from E_bctc_schema import RECORD_COLUMNS
 
 
@@ -111,10 +113,14 @@ class BCTCManager:
         normalizer: Any,
         validator: Any,
         cross_checker: Any,
+        mode: str = "sequential",
+        delay_seconds: float = 1.0,
         stop_requested: Callable[[], bool] = lambda: False,
+        sleeper: Callable[[float], None] = time.sleep,
         clock: Callable[[], float] = time.monotonic,
         logger: Any | None = None,
     ) -> None:
+
         self.run_id = run_id
         self.fireant_client = fireant_client
         self.vci_client = vci_client
@@ -123,7 +129,12 @@ class BCTCManager:
         self.normalizer = normalizer
         self.validator = validator
         self.cross_checker = cross_checker
+        self.mode = str(mode).lower().strip()
+        if self.mode not in ("parallel", "sequential"):
+            raise ValueError(f"mode không hợp lệ: {mode}. Chỉ nhận 'parallel' hoặc 'sequential'")
+        self.delay_seconds = max(0.0, float(delay_seconds))
         self.stop_requested = stop_requested
+        self.sleeper = sleeper
         self.clock = clock
         self.logger = logger or get_black_box(__file__, run_id=run_id)
 
@@ -131,16 +142,43 @@ class BCTCManager:
         normalized_symbol = str(symbol).strip().upper()
         if not normalized_symbol:
             raise ValueError("symbol không được rỗng")
+        items_list = list(work_items)
         result = BCTCRunResult(symbol=normalized_symbol)
         started_at = self.clock()
-        self.logger.info("Bắt đầu dây chuyền BCTC", symbol=normalized_symbol)
+        telemetry_start = get_system_telemetry()
+        self.logger.info(
+            "Bắt đầu dây chuyền BCTC",
+            symbol=normalized_symbol,
+            mode=self.mode,
+            telemetry=telemetry_start,
+        )
 
-        for work in work_items:
+        if self.mode == "sequential":
+            self._run_sequential(normalized_symbol, items_list, result)
+        else:
+            self._run_parallel(normalized_symbol, items_list, result)
+
+        result.cross_check = self._cross_check_valid_results(result.outcomes)
+        result.duration_seconds = max(0.0, self.clock() - started_at)
+        telemetry_end = get_system_telemetry()
+        self.logger.info(
+            "Kết thúc dây chuyền BCTC",
+            telemetry=telemetry_end,
+            **result.summary(),
+        )
+        return result
+
+    def _run_sequential(
+        self, symbol: str, work_items: list[BCTCWorkItem], result: BCTCRunResult
+    ) -> None:
+        for idx, work in enumerate(work_items):
+            if idx > 0 and self.delay_seconds > 0:
+                self.sleeper(self.delay_seconds)
             if self.stop_requested():
                 result.stopped = True
                 result.stop_reason = "user_requested_stop"
                 break
-            outcome = self._run_item(normalized_symbol, work)
+            outcome = self._run_item(symbol, work)
             result.outcomes.append(outcome)
             if outcome.status == "interrupted":
                 result.stopped = True
@@ -151,10 +189,68 @@ class BCTCManager:
                 result.stop_reason = outcome.error_type or "fatal_error"
                 break
 
-        result.cross_check = self._cross_check_valid_results(result.outcomes)
-        result.duration_seconds = max(0.0, self.clock() - started_at)
-        self.logger.info("Kết thúc dây chuyền BCTC", **result.summary())
-        return result
+    def _run_parallel(
+        self, symbol: str, work_items: list[BCTCWorkItem], result: BCTCRunResult
+    ) -> None:
+        source_groups: dict[str, list[BCTCWorkItem]] = {}
+        original_indices: dict[str, int] = {}
+        for idx, item in enumerate(work_items):
+            source_groups.setdefault(item.source, []).append(item)
+            key = item_key(
+                source=item.source,
+                provider=item.provider,
+                symbol=symbol,
+                report_type=item.report_type,
+                period_type=item.period_type,
+            )
+            original_indices[key] = idx
+
+        def _worker_for_source(source_items: list[BCTCWorkItem]) -> list[BCTCItemOutcome]:
+            worker_outcomes: list[BCTCItemOutcome] = []
+            for idx, work in enumerate(source_items):
+                if idx > 0 and self.delay_seconds > 0:
+                    self.sleeper(self.delay_seconds)
+                if self.stop_requested():
+                    break
+                outcome = self._run_item(symbol, work)
+                worker_outcomes.append(outcome)
+                if outcome.status in ("interrupted", "failed_fatal"):
+                    break
+            return worker_outcomes
+
+        collected_outcomes: list[BCTCItemOutcome] = []
+        with ThreadPoolExecutor(max_workers=len(source_groups) or 1) as executor:
+            futures = [
+                executor.submit(_worker_for_source, items)
+                for items in source_groups.values()
+            ]
+            for future in futures:
+                try:
+                    collected_outcomes.extend(future.result())
+                except Exception as error:
+                    self.logger.error(
+                        "Lỗi worker song song",
+                        error_type=type(error).__name__,
+                        error_message=str(error),
+                    )
+
+        collected_outcomes.sort(key=lambda o: original_indices.get(o.key, 999))
+        result.outcomes = collected_outcomes
+
+        if self.stop_requested():
+            result.stopped = True
+            result.stop_reason = "user_requested_stop"
+        else:
+            for outcome in result.outcomes:
+                if outcome.status == "interrupted":
+                    result.stopped = True
+                    result.stop_reason = "keyboard_interrupt"
+                    break
+                if outcome.status == "failed_fatal":
+                    result.stopped = True
+                    result.stop_reason = outcome.error_type or "fatal_error"
+                    break
+
 
     def _run_item(self, symbol: str, work: BCTCWorkItem) -> BCTCItemOutcome:
         key = self.progress_repository.ensure_item(

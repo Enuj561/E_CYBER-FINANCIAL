@@ -34,6 +34,22 @@ def new_run_id() -> str:
     return uuid4().hex[:12]
 
 
+def get_system_telemetry() -> dict[str, float]:
+    """Lấy thông số tải CPU (%) và RAM tiêu thụ (MB) của process hiện tại."""
+    try:
+        import psutil
+        process = psutil.Process()
+        mem_info = process.memory_info()
+        cpu_pct = process.cpu_percent(interval=None)
+        return {
+            "cpu_percent": round(float(cpu_pct), 2),
+            "memory_mb": round(float(mem_info.rss) / (1024 * 1024), 2),
+        }
+    except Exception:
+        return {"cpu_percent": 0.0, "memory_mb": 0.0}
+
+
+
 def _safe_value(value: Any, key: str = "") -> Any:
     """Che secret và đổi object lạ thành dữ liệu có thể ghi JSON."""
     if _SECRET_KEY.search(key):

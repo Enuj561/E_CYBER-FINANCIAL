@@ -126,19 +126,44 @@ class BCTCCrossCheckerTests(unittest.TestCase):
             collected_at="2026-08-09T00:00:00+07:00", raw_file="fireant.json",
         )
         vnstock = normalizer.normalize_vci(
-            pd.DataFrame({"item_id": ["total_assets"], "2025": [1_000_000]}),
+            pd.DataFrame({"item_id": ["asset_total"], "2025": [1_000_000]}),
             run_id="integration", symbol="FPT", company_type="general",
             report_type="balance_sheet", period_type="year",
             collected_at="2026-08-09T00:00:00+07:00", raw_file="vci.parquet",
         )
         for data in (fireant, vnstock):
-            data["canonical_item_id"] = "total_assets"
-            data["mapping_version"] = "test-confirmed"
-            data["mapping_status"] = "confirmed"
             self.assertTrue(BCTCValidator().validate(data).is_valid)
         comparison = self.checker.compare(fireant, vnstock)
         self.assertEqual(comparison.iloc[0]["comparison_status"], "matched")
+        self.assertEqual(comparison.iloc[0]["canonical_item_id"], "total_assets")
+
+    def test_bank_cross_check_automatic_matching(self):
+        normalizer = BCTCNormalizer()
+        fireant = normalizer.normalize_fireant(
+            [{"year": 2025, "quarter": 0, "companyType": "Bank",
+              "financialValues": {"CustomerLoans": 2_000_000, "ProfitAfterTax": 500_000}}],
+            run_id="bank-test", symbol="VCB", period_type="year",
+            collected_at="2026-08-16T00:00:00+07:00", raw_file="fireant.json",
+        )
+        vnstock_bs = normalizer.normalize_vci(
+            pd.DataFrame({"item_id": ["loans_and_advances_to_customers"], "2025": [2_000_000]}),
+            run_id="bank-test", symbol="VCB", company_type="bank",
+            report_type="balance_sheet", period_type="year",
+            collected_at="2026-08-16T00:00:00+07:00", raw_file="vci.parquet",
+        )
+        vnstock_is = normalizer.normalize_vci(
+            pd.DataFrame({"item_id": ["net_profit_loss_after_tax"], "2025": [500_000]}),
+            run_id="bank-test", symbol="VCB", company_type="bank",
+            report_type="income_statement", period_type="year",
+            collected_at="2026-08-16T00:00:00+07:00", raw_file="vci.parquet",
+        )
+        full_vci = pd.concat([vnstock_bs, vnstock_is], ignore_index=True)
+        comparison = self.checker.compare(fireant, full_vci)
+        summary = self.checker.summarize(comparison)
+        self.assertEqual(summary.matched, 2)
+        self.assertEqual(summary.different, 0)
 
 
 if __name__ == "__main__":
     unittest.main()
+

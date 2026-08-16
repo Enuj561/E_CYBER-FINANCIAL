@@ -27,6 +27,10 @@ BCTC_DIR = os.path.join(PHASE_1_DATA_DIR, "E_BCTC")
 BCTC_FIREANT_DIR = os.path.join(BCTC_DIR, "From_FireAnt")
 BCTC_VNSTOCK_DIR = os.path.join(BCTC_DIR, "From_vnstock")
 BCTC_STATE_DIR = os.path.join(BCTC_DIR, "state")
+BCTC_CURATED_DIR = os.path.join(BCTC_DIR, "Curated")
+BCTC_QUALITY_DIR = os.path.join(BCTC_DIR, "quality")
+BCTC_STATUS_DIR = os.path.join(BCTC_DIR, "Status")
+BCTC_MAPPINGS_DIR = os.path.join(BCTC_DIR, "Mappings")
 # Các path dưới đây là cấu trúc cũ; collector BCTC mới không ghi thêm vào đây.
 BCTC_BALANCE_SHEET_DIR = os.path.join(BCTC_DIR, "Balance_Sheet")
 BCTC_INCOME_STMT_DIR = os.path.join(BCTC_DIR, "Income_Statement")
@@ -55,6 +59,7 @@ def ensure_dirs():
     for d in [PHASE_1_DATA_DIR,
               OHLCV_DIR, VNSTOCK_DIR, FIREANT_DIR,
               BCTC_DIR, BCTC_FIREANT_DIR, BCTC_VNSTOCK_DIR, BCTC_STATE_DIR,
+              BCTC_CURATED_DIR, BCTC_QUALITY_DIR, BCTC_STATUS_DIR, BCTC_MAPPINGS_DIR,
               BCTC_BALANCE_SHEET_DIR, BCTC_INCOME_STMT_DIR,
               BCTC_CASH_FLOW_DIR, BCTC_RATIO_DIR, BCTC_NOTE_DIR,
               PHASE_5_DATA_DIR, LOG_DIR]:

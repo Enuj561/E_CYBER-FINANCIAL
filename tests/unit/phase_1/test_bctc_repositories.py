@@ -321,6 +321,21 @@ class ProgressRepositoryTests(unittest.TestCase):
         self.assertFalse(resumed.should_process(key))
         self.assertEqual(resumed.item(key)["attempt_count"], 1)
 
+    def test_partial_item_is_skipped_on_resume(self):
+        repository = self.make_repository()
+        key = self.ensure_fireant_item(repository)
+        repository.mark_running(key)
+        raw_file = self.state_dir / "partial.json"
+        raw_file.write_text("[]", encoding="utf-8")
+        repository.mark_finished(
+            key, status="partial", received_count=2, raw_file=str(raw_file)
+        )
+
+        resumed = self.make_repository()
+        self.assertFalse(resumed.should_process(key))
+        self.assertEqual(resumed.item(key)["attempt_count"], 1)
+
+
     def test_interrupted_running_item_is_retried_on_resume(self):
         repository = self.make_repository()
         key = self.ensure_fireant_item(repository)

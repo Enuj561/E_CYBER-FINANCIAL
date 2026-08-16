@@ -14,6 +14,7 @@ from typing import Any, Mapping, Sequence
 
 import pandas as pd
 
+from E_bctc_mapping import get_mapping_rule, get_canonical_item, MAPPING_VERSION
 from E_bctc_schema import RECORD_COLUMNS, SCHEMA_VERSION
 
 PERIOD_COLUMN_PATTERN = re.compile(r"^(?P<year>\d{4})(?:-Q(?P<quarter>[1-4]))?$")
@@ -171,6 +172,9 @@ def _record(
     source_item_name: str | None,
     source_item_name_en: str | None,
     source_row_number: int,
+    canonical_item_id: str | None = None,
+    mapping_version: str | None = None,
+    mapping_status: str = "unmapped",
     value: Any,
     value_type: str,
     currency: str,
@@ -209,9 +213,9 @@ def _record(
         "source_item_name_en": source_item_name_en,
         "source_row_number": source_row_number,
         "source_item_key": item_key,
-        "canonical_item_id": None,
-        "mapping_version": None,
-        "mapping_status": "unmapped",
+        "canonical_item_id": canonical_item_id,
+        "mapping_version": mapping_version,
+        "mapping_status": mapping_status,
         "value_raw": _raw_string(value),
         "value_numeric": numeric,
         "value_text": text,
@@ -302,32 +306,48 @@ class BCTCNormalizer:
             item_name_en = (
                 frame.iloc[row_number, item_en_column] if item_en_column is not None else None
             )
+            
+            # Tra cứu quy tắc mapping
+            rule = get_mapping_rule(
+                source="vnstock",
+                provider="vci",
+                source_item_id=str(item_id),
+                company_type=normalized_company,
+                report_type=report_type,
+            )
+            canonical_id = rule.canonical_item_id if rule else None
+            mapping_status = rule.mapping_status if rule else "unmapped"
+            mapping_version = rule.mapping_version if rule else None
+
             for column_number, period_key, year, quarter, occurrence in period_columns:
                 record = _record(
-                        run_id=run_id,
-                        source="vnstock",
-                        provider="vci",
-                        symbol=normalized_symbol,
-                        company_type=normalized_company,
-                        report_type=report_type,
-                        period_type=period_type,
-                        fiscal_year=year,
-                        fiscal_quarter=quarter,
-                        period_key=period_key,
-                        source_period_column_number=occurrence,
-                        source_item_id=str(item_id),
-                        source_item_name=None if pd.isna(item_name) else str(item_name),
-                        source_item_name_en=None if pd.isna(item_name_en) else str(item_name_en),
-                        source_row_number=row_number + 1,
-                        value=frame.iloc[row_number, column_number],
-                        value_type=value_type,
-                        currency=currency,
-                        source_unit=source_unit,
-                        multiplier=multiplier,
-                        period_value_mode=_period_mode(report_type, period_type),
-                        collected_at=collected_at,
-                        raw_file=raw_file,
-                    )
+                    run_id=run_id,
+                    source="vnstock",
+                    provider="vci",
+                    symbol=normalized_symbol,
+                    company_type=normalized_company,
+                    report_type=report_type,
+                    period_type=period_type,
+                    fiscal_year=year,
+                    fiscal_quarter=quarter,
+                    period_key=period_key,
+                    source_period_column_number=occurrence,
+                    source_item_id=str(item_id),
+                    source_item_name=None if pd.isna(item_name) else str(item_name),
+                    source_item_name_en=None if pd.isna(item_name_en) else str(item_name_en),
+                    source_row_number=row_number + 1,
+                    canonical_item_id=canonical_id,
+                    mapping_version=mapping_version,
+                    mapping_status=mapping_status,
+                    value=frame.iloc[row_number, column_number],
+                    value_type=value_type,
+                    currency=currency,
+                    source_unit=source_unit,
+                    multiplier=multiplier,
+                    period_value_mode=_period_mode(report_type, period_type),
+                    collected_at=collected_at,
+                    raw_file=raw_file,
+                )
                 if ignored_opposite_period_columns:
                     record["quality_flags"].append("source_mixed_period_columns")
                 records.append(record)
@@ -378,19 +398,56 @@ class BCTCNormalizer:
                 (key, value) for key, value in values.items() if key not in CONTROL_FIREANT_KEYS
             ]
             for row_number, (item_id, value) in enumerate(financial_items, start=1):
-                rule = self._fireant_item_rules.get(str(item_id))
-                report_type = rule.report_type if rule else "unknown"
-                value_type = rule.value_type if rule else "unknown"
-                currency = rule.currency if rule else "unknown"
-                source_unit = rule.source_unit if rule else "unknown"
-                multiplier = rule.unit_multiplier_to_vnd if rule else None
-                period_mode = (
-                    rule.period_value_mode_quarter
-                    if rule and period_type == "quarter"
-                    else rule.period_value_mode_year
-                    if rule
-                    else "unknown"
+                # 1. Tra cứu MappingRule từ E_bctc_mapping
+                rule = get_mapping_rule(
+                    source="fireant",
+                    provider="fireant_api",
+                    source_item_id=str(item_id),
+                    company_type=company_type,
+                    report_type="financial_data",
                 )
+                if rule:
+                    canonical_id = rule.canonical_item_id
+                    mapping_status = rule.mapping_status
+                    mapping_version = rule.mapping_version
+                    can_item = get_canonical_item(canonical_id)
+                    if can_item:
+                        report_type = can_item.report_type
+                        value_type = can_item.value_type
+                        currency = can_item.currency
+                        source_unit = can_item.source_unit
+                        multiplier = can_item.unit_multiplier_to_vnd
+                        period_mode = (
+                            can_item.period_value_mode_quarter
+                            if period_type == "quarter"
+                            else can_item.period_value_mode_year
+                        )
+                    else:
+                        report_type = "unknown"
+                        value_type = "unknown"
+                        currency = "unknown"
+                        source_unit = "unknown"
+                        multiplier = None
+                        period_mode = "unknown"
+                else:
+                    # Fallback sang cấu hình legacy rule nếu có
+                    rule_fa = self._fireant_item_rules.get(str(item_id))
+                    report_type = rule_fa.report_type if rule_fa else "unknown"
+                    value_type = rule_fa.value_type if rule_fa else "unknown"
+                    currency = rule_fa.currency if rule_fa else "unknown"
+                    source_unit = rule_fa.source_unit if rule_fa else "unknown"
+                    multiplier = rule_fa.unit_multiplier_to_vnd if rule_fa else None
+                    period_mode = (
+                        rule_fa.period_value_mode_quarter
+                        if rule_fa and period_type == "quarter"
+                        else rule_fa.period_value_mode_year
+                        if rule_fa
+                        else "unknown"
+                    )
+                    canonical_id = None
+                    mapping_status = "unmapped"
+                    mapping_version = None
+
                 records.append(
                     _record(
                         run_id=run_id,
@@ -408,6 +465,9 @@ class BCTCNormalizer:
                         source_item_name=str(item_id),
                         source_item_name_en=None,
                         source_row_number=row_number,
+                        canonical_item_id=canonical_id,
+                        mapping_version=mapping_version,
+                        mapping_status=mapping_status,
                         value=value,
                         value_type=value_type,
                         currency=currency,
@@ -419,3 +479,4 @@ class BCTCNormalizer:
                     )
                 )
         return pd.DataFrame.from_records(records, columns=OUTPUT_COLUMNS)
+

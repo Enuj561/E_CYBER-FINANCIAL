@@ -2,7 +2,7 @@
 
 > **Trạng thái:** ACTIVE — luật vận hành cấp cao của AI Agent trong repo này.
 >
-> **Workflow version:** 2026-08-09.3
+> **Workflow version:** 2026-08-09.
 >
 > **Agent phải đọc file này trước khi:** review, chẩn đoán, lập plan, sửa code, sửa tài liệu, xử lý data hoặc thay đổi cấu hình dự án.
 >

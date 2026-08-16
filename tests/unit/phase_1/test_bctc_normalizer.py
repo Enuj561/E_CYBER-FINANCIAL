@@ -212,6 +212,42 @@ class FireAntNormalizerTests(unittest.TestCase):
         self.assertTrue(result.empty)
         self.assertEqual(result.columns.tolist(), OUTPUT_COLUMNS)
 
+    def test_confirmed_mapping_populates_canonical_id_and_status(self):
+        # FireAnt General TotalAsset
+        payload = [{
+            "year": 2025, "quarter": 0, "companyType": "General",
+            "financialValues": {"TotalAsset": 5000, "UnmappedItem": 123},
+        }]
+        result_fa = BCTCNormalizer().normalize_fireant(
+            payload, run_id="run-test", symbol="FPT", period_type="year",
+            collected_at=COLLECTED_AT, raw_file="raw/fireant.json",
+        )
+        row_asset = result_fa[result_fa["source_item_id"] == "TotalAsset"].iloc[0]
+        row_unmapped = result_fa[result_fa["source_item_id"] == "UnmappedItem"].iloc[0]
+
+        self.assertEqual(row_asset["canonical_item_id"], "total_assets")
+        self.assertEqual(row_asset["mapping_status"], "confirmed")
+        self.assertEqual(row_asset["mapping_version"], "v1.0.0")
+
+        self.assertIsNone(row_unmapped["canonical_item_id"])
+        self.assertEqual(row_unmapped["mapping_status"], "unmapped")
+
+        # VCI General asset_total
+        frame_vci = pd.DataFrame({"item_id": ["asset_total", "unknown_vci"], "2025": [5000, 999]})
+        result_vci = BCTCNormalizer().normalize_vci(
+            frame_vci, run_id="run-test", symbol="FPT", company_type="general",
+            report_type="balance_sheet", period_type="year",
+            collected_at=COLLECTED_AT, raw_file="raw/vci.parquet",
+        )
+        vci_asset = result_vci[result_vci["source_item_id"] == "asset_total"].iloc[0]
+        vci_unmapped = result_vci[result_vci["source_item_id"] == "unknown_vci"].iloc[0]
+
+        self.assertEqual(vci_asset["canonical_item_id"], "total_assets")
+        self.assertEqual(vci_asset["mapping_status"], "confirmed")
+        self.assertIsNone(vci_unmapped["canonical_item_id"])
+        self.assertEqual(vci_unmapped["mapping_status"], "unmapped")
+
 
 if __name__ == "__main__":
     unittest.main()
+
